@@ -1,0 +1,18 @@
+package com.thetechnoobs.moterskillgame;
+
+public class Constants {
+    final static int BACKGROUND_STAR_MAX_SPEED = 30;
+
+    final static int ASTROID_MAX_SPEED = 50;
+
+    final static int SCALE_RATIO_NUM_Y_FOREGROUND = 14;
+    final static int SCALE_RATIO_NUM_X_FOREGROUND = SCALE_RATIO_NUM_Y_FOREGROUND/2;
+
+    final static int SCALE_RATIO_NUM_Y_BACKGROUND = 120;
+    final static int SCALE_RATIO_NUM_X_BACKGROUND = SCALE_RATIO_NUM_Y_BACKGROUND/2;
+
+    final static int SCALE_RATIO_NUM_Y_USER = 8;
+    final static int SCALE_RATIO_NUM_X_USER = SCALE_RATIO_NUM_Y_USER/2;
+
+
+}
