@@ -6,12 +6,12 @@ import android.graphics.BitmapFactory;
 import android.graphics.RectF;
 
 public class RegularBullet {
-    int CurX = 0, CurY = 0, Speed = 2;
+    float CurX = 0, CurY = 0, Speed = 2;
     int[] screenSize = {0, 0};
     Bitmap bitmap;
     RectF Hitbox;
 
-    public RegularBullet(Resources resources, int speed, int[] screenSize , int curX, int curY) {
+    public RegularBullet(Resources resources, int speed, int[] screenSize , float curX, float curY) {
         CurX = curX;
         CurY = curY;
         this.screenSize = screenSize;
@@ -25,7 +25,7 @@ public class RegularBullet {
 
 
 
-    public int getCurX() {
+    public float getCurX() {
         return CurX;
     }
 
@@ -33,7 +33,7 @@ public class RegularBullet {
         CurX = curX;
     }
 
-    public int getCurY() {
+    public float getCurY() {
         return CurY;
     }
 
@@ -41,7 +41,7 @@ public class RegularBullet {
         CurY = curY;
     }
 
-    public int getSpeed() {
+    public float getSpeed() {
         return Speed;
     }
 

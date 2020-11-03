@@ -15,9 +15,11 @@ import java.util.Random;
 public class GameView extends SurfaceView implements Runnable {
     private final Paint paint, BackgroundRectPaint;
     UserCharecter userCharecter;
-    RectF backgroundRect, test;
+    ShootButtonUI shootButtonUI;
+    RectF backgroundRect, ShootButton;
     ArrayList<BackgroundStar> backgroundStars = new ArrayList<>();
     ArrayList<Astriod> astriods = new ArrayList<>();
+    ArrayList<RegularBullet> bullets = new ArrayList<>();
     int[] screenSize = {0, 0};
     Canvas canvas;
     int Touched = 0;
@@ -42,6 +44,8 @@ public class GameView extends SurfaceView implements Runnable {
 
         userCharecter = new UserCharecter(getResources(), screenSize, (float) screenx / 2, (float) screeny - 300);
 
+        settupButtonUI(context);
+
         paint = new Paint();
         paint.setColor(Color.BLUE);
 
@@ -54,7 +58,7 @@ public class GameView extends SurfaceView implements Runnable {
     public void run() {
         while (isPlaying) {
             draw();
-            //sleep();
+            //sleep(10);
         }
     }
 
@@ -63,10 +67,14 @@ public class GameView extends SurfaceView implements Runnable {
             canvas = getHolder().lockCanvas();
             canvas.drawRect(backgroundRect, BackgroundRectPaint);//needed inorder to stop graphics from duplicating
             canvas.drawBitmap(userCharecter.bitmap, userCharecter.getCurX(), userCharecter.getCurY(), null);
+            canvas.drawBitmap(shootButtonUI.bitmap, shootButtonUI.getX(), shootButtonUI.getY(), null);
+
+            canvas.drawRect(shootButtonUI.getCollitionBox(), paint);//TODO remove when done testing
 
 
             drawBackgrounStars();
             drawAstroids();
+            drawBullets();
 
             update();
             CheckForCollision();
@@ -76,10 +84,12 @@ public class GameView extends SurfaceView implements Runnable {
 
     private void update() {
 
+        //update Bullets position
+        MoveBullets();
+
         //deal with astroid and astroid hitbox stuff
         SpawnAndDeleteAstroids();
         MoveAstroids();
-
 
         //Deal with background stuff
         moveBackgroundStars();
@@ -88,15 +98,19 @@ public class GameView extends SurfaceView implements Runnable {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        float x = event.getX();
-        float y = event.getY();
+        float x = event.getX(), y = event.getY();
+
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                updateUserPos(x, y);
+                if(!checkUIButtons(x, y)){
+                    updateUserPos(x, y);
+                }
                 invalidate();
             case MotionEvent.ACTION_MOVE:
-                updateUserPos(x, y);
+                if(!checkUIButtons(x, y)){
+                    updateUserPos(x, y);
+                }
                 invalidate();
                 break;
             case MotionEvent.ACTION_UP:
@@ -129,9 +143,20 @@ public class GameView extends SurfaceView implements Runnable {
                 astriods.remove(i);
                 Touched++;
                 ExplosionFrame(Eventx, Eventy);
-
                 Log.v("testing", "touched user: " + Touched);
             }
+        }
+    }
+
+    private void MoveBullets() {
+        for (int i = 0; i < bullets.size(); i++) {
+            bullets.get(i).setCurY((int) (bullets.get(i).getCurY() - bullets.get(i).getSpeed()));
+        }
+    }
+
+    private void drawBullets() {
+        for (RegularBullet i : bullets) {
+            canvas.drawBitmap(i.bitmap, i.getCurX(), i.getCurY(), null);
         }
     }
 
@@ -173,7 +198,6 @@ public class GameView extends SurfaceView implements Runnable {
         }
     }
 
-
     private void SpawnAndDeleteBackgroundStars() {
 
         for (int i = 0; i < backgroundStars.size(); i++) {
@@ -194,6 +218,30 @@ public class GameView extends SurfaceView implements Runnable {
         }
     }
 
+    private void settupButtonUI(Context context) {
+        BackendSettings backendSettings = new BackendSettings();
+
+        //settup shoot button
+        shootButtonUI = new ShootButtonUI(getResources(), screenSize);
+        if (backendSettings.getSavedShootButtonSide(context)) {
+            shootButtonUI = new ShootButtonUI(0, shootButtonUI.bitmap.getHeight(), true, screenSize, getResources());
+        } else {
+            shootButtonUI = new ShootButtonUI(screenx - shootButtonUI.bitmap.getWidth(), screeny - shootButtonUI.bitmap.getHeight(), true, screenSize, getResources());
+        }
+    }
+
+    private boolean checkUIButtons(float x, float y) {
+        if (x > shootButtonUI.getX() && y > shootButtonUI.getY()) {
+            SpawnBullet();
+            return true;
+        }
+        return false;
+    }
+
+    private void SpawnBullet() {
+        bullets.add(new RegularBullet(getResources(), 40, screenSize, userCharecter.getCurX() + userCharecter.bitmap.getWidth() / 2, userCharecter.getCurY()));
+    }
+
     public int randomNum(int max, int min) {
         Random random = new Random();
         int ran = random.nextInt(max);
@@ -205,9 +253,9 @@ public class GameView extends SurfaceView implements Runnable {
         return ran;
     }
 
-    private void sleep() {
+    private void sleep(int time) {
         try {
-            Thread.sleep(10);
+            Thread.sleep(time);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
