@@ -14,6 +14,7 @@ public class RegularBullet {
     public RegularBullet(Resources resources, int speed, int[] screenSize , float curX, float curY) {
         CurX = curX;
         CurY = curY;
+        this.Speed = speed;
         this.screenSize = screenSize;
 
         bitmap = BitmapFactory.decodeResource(resources, R.drawable.simple_bullet);
@@ -24,6 +25,9 @@ public class RegularBullet {
     }
 
 
+    public RectF getHitbox() {
+        return new RectF(CurX, CurY, CurX+bitmap.getWidth(), CurY+bitmap.getHeight());
+    }
 
     public float getCurX() {
         return CurX;

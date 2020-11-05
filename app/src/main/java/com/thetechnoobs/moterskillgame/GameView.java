@@ -98,18 +98,24 @@ public class GameView extends SurfaceView implements Runnable {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if(event.getPointerCount()>0){
+        }
         float x = event.getX(), y = event.getY();
 
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if(!checkUIButtons(x, y)){
+                if (!checkUIButtons(x, y)) {
                     updateUserPos(x, y);
+                } else {
+                    SpawnBullet();
                 }
                 invalidate();
             case MotionEvent.ACTION_MOVE:
-                if(!checkUIButtons(x, y)){
+                if (!checkUIButtons(x, y)) {
                     updateUserPos(x, y);
+                } else {
+                    checkUIButtons(x, y);
                 }
                 invalidate();
                 break;
@@ -132,6 +138,7 @@ public class GameView extends SurfaceView implements Runnable {
 
 
     private void CheckForCollision() {
+        BulletHitboxDetection();
 
         for (int i = 0; i < astriods.size(); i++) {
 
@@ -155,13 +162,13 @@ public class GameView extends SurfaceView implements Runnable {
     }
 
     private void drawBullets() {
-        for (RegularBullet i : bullets) {
-            canvas.drawBitmap(i.bitmap, i.getCurX(), i.getCurY(), null);
+        for (int i = 0; i < bullets.size(); i++) {
+            canvas.drawBitmap(bullets.get(i).bitmap, bullets.get(i).getCurX(), bullets.get(i).getCurY(), null);
         }
     }
 
-    private void ExplosionFrame(int eventx, int eventy) {
-        Explosion explosion = new Explosion(eventx, eventy, screenSize, getResources());
+    private void ExplosionFrame(float eventx, float eventy) {
+        Explosion explosion = new Explosion((int) eventx, (int) eventy, screenSize, getResources());
         canvas.drawBitmap(explosion.bitmap, explosion.x, explosion.y, null);
     }
 
@@ -232,14 +239,32 @@ public class GameView extends SurfaceView implements Runnable {
 
     private boolean checkUIButtons(float x, float y) {
         if (x > shootButtonUI.getX() && y > shootButtonUI.getY()) {
-            SpawnBullet();
             return true;
         }
         return false;
     }
 
     private void SpawnBullet() {
-        bullets.add(new RegularBullet(getResources(), 40, screenSize, userCharecter.getCurX() + userCharecter.bitmap.getWidth() / 2, userCharecter.getCurY()));
+        bullets.add(new RegularBullet(getResources(), 50, screenSize, userCharecter.getCurX() + userCharecter.bitmap.getWidth() / 2, userCharecter.getCurY()));
+    }
+
+    private void DespawnBullets() {
+        for (int i = 0; i < bullets.size(); i++) {
+
+        }
+    }
+
+    private void BulletHitboxDetection() {
+        for (int i = 0; i < astriods.size(); i++) {
+            for (int b = 0; b < bullets.size(); b++) {
+                if (bullets.get(b).getHitbox().intersect(astriods.get(i).getCollisionBox())) {
+                    ExplosionFrame(bullets.get(b).getCurX() - bullets.get(b).bitmap.getWidth(), bullets.get(b).getCurY());
+                    astriods.remove(i);
+                    bullets.remove(b);
+                    Log.v("testing", "hit");
+                }
+            }
+        }
     }
 
     public int randomNum(int max, int min) {
