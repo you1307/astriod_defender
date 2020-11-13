@@ -5,13 +5,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.RectF;
 
-public class ShootButtonUI {
+public class ShootRegularButtonUI {
     int x = 0, y = 0;
     boolean side;
     int[] screenSize = {0, 0};
     Bitmap bitmap;
 
-    public ShootButtonUI(int x, int y, boolean side, int[] screenSize, Resources resources) {
+    public ShootRegularButtonUI(int x, int y, boolean side, int[] screenSize, Resources resources) {
         this.x = x;
         this.y = y;
         this.side = side;
@@ -26,7 +26,7 @@ public class ShootButtonUI {
 
     }
 
-    public ShootButtonUI(Resources resources, int[] screenSize) {
+    public ShootRegularButtonUI(Resources resources, int[] screenSize) {
         bitmap = BitmapFactory.decodeResource(resources, R.drawable.shoot_button);
         bitmap = Bitmap.createScaledBitmap(bitmap,
                 screenSize[0] / Constants.SCALE_RATIO_NUM_X_BUTTONS,
@@ -39,7 +39,7 @@ public class ShootButtonUI {
     }
 
     public int getX() {
-        return x;
+        return x-bitmap.getWidth();
     }
 
     public void setX(int x) {
@@ -47,7 +47,7 @@ public class ShootButtonUI {
     }
 
     public int getY() {
-        return y;
+        return y-bitmap.getHeight();
     }
 
     public void setY(int y) {

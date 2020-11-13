@@ -11,7 +11,6 @@ public class BackendSettings {
         SharedPreferences sharedPreferences = context.getSharedPreferences("Settings", Context.MODE_PRIVATE);
         shootButonSide = sharedPreferences.getBoolean("ShootButtonSide", false);
 
-
         return shootButonSide;
     }
 

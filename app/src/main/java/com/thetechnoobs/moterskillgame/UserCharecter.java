@@ -7,6 +7,9 @@ import android.graphics.RectF;
 
 public class UserCharecter {
     float CurX, CurY;
+    public int MaxHeath = Constants.USER_MAX_HEATH;
+    public int CurHeath = MaxHeath;
+    public int userScore = 0;
     int[] screenSize;
     Bitmap bitmap;
 
@@ -42,5 +45,25 @@ public class UserCharecter {
 
     public void setCurY(float curY) {
         CurY = curY;
+    }
+
+    public int getUserScore() {
+        return userScore;
+    }
+
+    public void setUserScore(int userScore) {
+        this.userScore = userScore;
+    }
+
+    public int getHeath() {
+        return CurHeath;
+    }
+
+    public void setHeath(int heath) {
+        CurHeath = heath;
+    }
+
+    public int getMaxHeath() {
+        return MaxHeath;
     }
 }
