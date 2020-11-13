@@ -13,6 +13,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         startActivity(new Intent(MainActivity.this, GameActivity.class));
+        finish();
 
 
     }

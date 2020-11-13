@@ -1,6 +1,7 @@
 package com.thetechnoobs.moterskillgame;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -60,11 +61,15 @@ public class GameView extends SurfaceView implements Runnable {
     public void run() {
         while (isPlaying) {
             draw();
-            //sleep(10);
+            sleep(10);
         }
     }
 
     private void draw() {
+        if (userCharecter.getHeath() < 1) {//check if user is dead
+            GameOver();
+        }
+
         if (getHolder().getSurface().isValid()) {
             canvas = getHolder().lockCanvas();
             canvas.drawRect(backgroundRect, BackgroundRectPaint);//needed inorder to stop graphics from duplicating
@@ -86,10 +91,6 @@ public class GameView extends SurfaceView implements Runnable {
     }
 
     private void update() {
-        //check if user should be dead
-        if (userCharecter.getHeath() < 1) {
-            GameOver();
-        }
 
         //update Bullets position
         MoveBullets();
@@ -141,9 +142,11 @@ public class GameView extends SurfaceView implements Runnable {
     }
 
     public void GameOver() {
-        //Context context = getContext();
-        //context.startActivity(new Intent(context, EndGameScreen.class));
-        //TODO make game end, display score, save score to firebase, and give option to restart or exit
+        isPlaying = false;
+        Context context = getContext();
+        Intent GoToEndGameScreen = new Intent(context, EndGameScreen.class);
+        GoToEndGameScreen.putExtra("score", userCharecter.getUserScore());
+        context.startActivity(GoToEndGameScreen);
     }
 
     public void drawUserHealth() {
