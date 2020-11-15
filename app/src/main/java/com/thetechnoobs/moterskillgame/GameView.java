@@ -314,6 +314,7 @@ public class GameView extends SurfaceView implements Runnable {
                     astriods.remove(i);
                     bullets.remove(b);
                     userCharecter.setUserScore(userCharecter.getUserScore() + 1);
+                    return;
                 }
             }
         }
