@@ -34,10 +34,10 @@ public class GameView extends SurfaceView implements Runnable {
     ArrayList<BadGuy> EasyEnemy = new ArrayList<>();
     int[] screenSize = {0, 0};
     Canvas canvas;
+    AudioThread audioThread;
     private Thread thread;
     private boolean isPlaying = false;
     private int screenx, screeny;
-    AudioThread audioThread;
 
 
     public GameView(Context context, int screenx, int screeny) {
@@ -167,6 +167,19 @@ public class GameView extends SurfaceView implements Runnable {
         Intent GoToEndGameScreen = new Intent(context, EndGameScreen.class);
         GoToEndGameScreen.putExtra("score", userCharecter.getUserScore());
         context.startActivity(GoToEndGameScreen);
+
+        Cleanup();
+    }
+
+    private void Cleanup() {
+        backgroundStars.clear();
+        astriods.clear();
+        bullets.clear();
+
+
+        for (int e = 0; e < EasyEnemy.size(); e++) {
+            EasyEnemy.get(e).shootThread.stopThread();
+        }
     }
 
     public void drawUserHealth() {

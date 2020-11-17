@@ -24,7 +24,7 @@ public class BadGuy {
     public int speed = new Random().nextInt(Constants.DEFULT_EASY_ENEMY_SPEED);
     int CurHeath = MaxHeath;
     Boolean direction = false; //true means move right, false means move left
-    ShootThread shootThread = new ShootThread(2000);
+    public ShootThread shootThread = new ShootThread(2000);
     AudioThread audioThread;
     ArrayList<EasyEnemyBullet> bullets = new ArrayList<>();
     Resources resources;
@@ -185,6 +185,7 @@ public class BadGuy {
         }
 
         public void run() {
+
             while (!ShouldStop) {
                 try {
                     Thread.sleep(WaitTime);
