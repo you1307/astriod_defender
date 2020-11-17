@@ -1,12 +1,15 @@
-package com.thetechnoobs.moterskillgame;
+package com.thetechnoobs.moterskillgame.ui;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import com.thetechnoobs.moterskillgame.Constants;
+import com.thetechnoobs.moterskillgame.R;
+
 public class Explosion {
-    int x, y;
-    Bitmap bitmap;
+    public int x, y;
+    public Bitmap bitmap;
     int[] screenSize;
 
     public Explosion(int eventx, int eventy, int[] screenSize, Resources resources) {

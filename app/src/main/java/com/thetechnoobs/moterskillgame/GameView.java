@@ -9,6 +9,16 @@ import android.graphics.RectF;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 
+import com.thetechnoobs.moterskillgame.entites.Astriod;
+import com.thetechnoobs.moterskillgame.entites.BadGuy;
+import com.thetechnoobs.moterskillgame.entites.RegularBullet;
+import com.thetechnoobs.moterskillgame.entites.UserCharecter;
+import com.thetechnoobs.moterskillgame.ui.BackgroundStar;
+import com.thetechnoobs.moterskillgame.ui.EndGameScreen;
+import com.thetechnoobs.moterskillgame.ui.Explosion;
+import com.thetechnoobs.moterskillgame.ui.HeathHeart;
+import com.thetechnoobs.moterskillgame.ui.ShootRegularButtonUI;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -21,11 +31,13 @@ public class GameView extends SurfaceView implements Runnable {
     ArrayList<BackgroundStar> backgroundStars = new ArrayList<>();
     ArrayList<Astriod> astriods = new ArrayList<>();
     ArrayList<RegularBullet> bullets = new ArrayList<>();
+    ArrayList<BadGuy> EasyEnemy = new ArrayList<>();
     int[] screenSize = {0, 0};
     Canvas canvas;
     private Thread thread;
     private boolean isPlaying = false;
     private int screenx, screeny;
+    AudioThread audioThread;
 
 
     public GameView(Context context, int screenx, int screeny) {
@@ -44,6 +56,8 @@ public class GameView extends SurfaceView implements Runnable {
 
         settupButtonUI(context);
 
+        audioThread = new AudioThread(context);
+
         paint = new Paint();
         paint.setColor(Color.BLUE);
 
@@ -54,6 +68,7 @@ public class GameView extends SurfaceView implements Runnable {
         BackgroundRectPaint = new Paint();
         BackgroundRectPaint.setColor(Color.BLACK);
 
+
     }
 
 
@@ -61,7 +76,7 @@ public class GameView extends SurfaceView implements Runnable {
     public void run() {
         while (isPlaying) {
             draw();
-            sleep(10);
+            //sleep(5);
         }
     }
 
@@ -72,9 +87,11 @@ public class GameView extends SurfaceView implements Runnable {
 
         if (getHolder().getSurface().isValid()) {
             canvas = getHolder().lockCanvas();
-            canvas.drawRect(backgroundRect, BackgroundRectPaint);//needed inorder to stop graphics from duplicating
+            canvas.drawRect(backgroundRect, BackgroundRectPaint);
             canvas.drawBitmap(userCharecter.bitmap, userCharecter.getCurX(), userCharecter.getCurY(), null);
             canvas.drawBitmap(shootRegularButtonUI.bitmap, shootRegularButtonUI.getX(), shootRegularButtonUI.getY(), null);
+
+            SawnAnDrawEasyEnemy(3);
 
 
             drawUserHealth();
@@ -91,6 +108,9 @@ public class GameView extends SurfaceView implements Runnable {
     }
 
     private void update() {
+
+        //check for dead enemy's
+        CheckForDeadEnemys();
 
         //update Bullets position
         MoveBullets();
@@ -158,13 +178,13 @@ public class GameView extends SurfaceView implements Runnable {
             HeathHeart heart = new HeathHeart(getResources(), screenSize, xOffset, yOffset);
             heathHearts.add(heart);
 
-            if (i < userCharecter.getHeath()) {//if pos i should be full heart
-                if (i != 0) {//if pos i is not first spot
+            if (i < userCharecter.getHeath()) {//if position i should be full heart
+                if (i != 0) {//if position i is not first spot
                     heathHearts.get(i).xLoc = heathHearts.get(i).xLoc + heathHearts.get(i - 1).xLoc + heathHearts.get(i - 1).fullHeartBitmap.getWidth();
                 }
                 canvas.drawBitmap(heathHearts.get(i).fullHeartBitmap, heathHearts.get(i).xLoc, heathHearts.get(i).yLoc, paint);
-            } else {//if pos i should be empty heart
-                if (i != 0) {//if pos i is not first
+            } else {//if position i should be empty heart
+                if (i != 0) {//if position i is not first
                     heathHearts.get(i).xLoc = heathHearts.get(i).xLoc + heathHearts.get(i - 1).xLoc + heathHearts.get(i - 1).emptyHeartBitmap.getWidth();
                 }
                 canvas.drawBitmap(heathHearts.get(i).emptyHeartBitmap, heathHearts.get(i).xLoc, heathHearts.get(i).yLoc, paint);
@@ -193,6 +213,8 @@ public class GameView extends SurfaceView implements Runnable {
                 astriods.remove(i);
                 ExplosionFrame(Eventx, Eventy);
                 userCharecter.setHeath(userCharecter.getHeath() - 1);
+                audioThread.asteriodHitUserThread.run();
+                break;
             }
         }
     }
@@ -232,6 +254,24 @@ public class GameView extends SurfaceView implements Runnable {
         }
     }
 
+    public void SawnAnDrawEasyEnemy(int NumOfEnemy) {
+        if (EasyEnemy.size() < NumOfEnemy) {
+            SpawnEnemys();
+        }
+
+
+        for (int i = 0; i < EasyEnemy.size(); i++) {
+            canvas.drawBitmap(EasyEnemy.get(i).EasyEnemyAlive, EasyEnemy.get(i).getX(), EasyEnemy.get(i).getY(), null);
+            EasyEnemy.get(i).update(canvas);
+        }
+
+    }
+
+    public void SpawnEnemys() {
+        BadGuy badGuy = new BadGuy(getResources(), getContext(), userCharecter, screenSize, randomNum(screenx - (screenx / Constants.SCALE_RATIO_NUM_X_EASY_ENEMY), 0), 300);
+        EasyEnemy.add(badGuy);
+    }
+
     private void SpawnAndDeleteAstroids() {
         int maxAstroidSpawn = 6;
 
@@ -244,6 +284,7 @@ public class GameView extends SurfaceView implements Runnable {
             if (astriods.get(i).getCurY() > screeny) {
                 astriods.remove(i);
                 DeductScorePoints(1);
+                break;
             }
         }
     }
@@ -288,6 +329,7 @@ public class GameView extends SurfaceView implements Runnable {
         if (x > shootRegularButtonUI.getX() && y > shootRegularButtonUI.getY()) {
             if (ActOn) {
                 SpawnRegularBullet();
+                audioThread.simpleShootSound.run();
             }
             return true;
         }
@@ -302,23 +344,57 @@ public class GameView extends SurfaceView implements Runnable {
         for (int i = 0; i < bullets.size(); i++) {
             if (bullets.get(i).getCurY() < 0) {
                 bullets.remove(i);
+                break;
             }
         }
     }
 
     private void BulletHitboxDetection() {
-        for (int i = 0; i < astriods.size(); i++) {
+
+        //check for asteroid collision
+        for (int a = 0; a < astriods.size(); a++) {
+            boolean brake = false;
             for (int b = 0; b < bullets.size(); b++) {
-                if (bullets.get(b).getHitbox().intersect(astriods.get(i).getCollisionBox())) {
-                    ExplosionFrame(astriods.get(i).getCurX(), astriods.get(i).getCurY());
-                    astriods.remove(i);
+                if (bullets.get(b).getHitbox().intersect(astriods.get(a).getCollisionBox())) {
+                    ExplosionFrame(astriods.get(a).getCurX(), astriods.get(a).getCurY());
+                    astriods.remove(a);
                     bullets.remove(b);
                     userCharecter.setUserScore(userCharecter.getUserScore() + 1);
-                    return;
+                    audioThread.simpleShootAsteriodSound.run();
+                    brake = true;
+                    break;
                 }
+            }
+            if (brake) {
+                break;
             }
         }
 
+        //check for Enemy Collision
+        for (int e = 0; e < EasyEnemy.size(); e++) {
+            boolean brake = false;
+            for (int b = 0; b < bullets.size(); b++) {
+                if (bullets.get(b).getHitbox().intersect(EasyEnemy.get(e).getHitBox())) {
+                    EasyEnemy.get(e).setCurHeath(EasyEnemy.get(e).getCurHeath() - 1);
+                    bullets.remove(b);
+                    audioThread.easyEnemyHitSound.run();
+                    brake = true;
+                    break;
+                }
+            }
+            if (brake) {
+                break;
+            }
+        }
+
+    }
+
+    public void CheckForDeadEnemys() {
+        for (int i = 0; i < EasyEnemy.size(); i++) {
+            if (EasyEnemy.get(i).getCurHeath() < 1) {
+                EasyEnemy.remove(i);
+            }
+        }
     }
 
     public int randomNum(int max, int min) {

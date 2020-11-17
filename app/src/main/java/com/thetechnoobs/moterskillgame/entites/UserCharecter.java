@@ -1,17 +1,20 @@
-package com.thetechnoobs.moterskillgame;
+package com.thetechnoobs.moterskillgame.entites;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.RectF;
 
+import com.thetechnoobs.moterskillgame.Constants;
+import com.thetechnoobs.moterskillgame.R;
+
 public class UserCharecter {
-    float CurX, CurY;
     public int MaxHeath = Constants.USER_MAX_HEATH;
     public int CurHeath = MaxHeath;
     public int userScore = 0;
+    public Bitmap bitmap;
+    float CurX, CurY;
     int[] screenSize;
-    Bitmap bitmap;
 
 
     public UserCharecter(Resources resources, int[] screenSize, float CurX, float CurY) {
@@ -44,7 +47,11 @@ public class UserCharecter {
     }
 
     public void setCurY(float curY) {
-        CurY = curY;
+        if (curY < screenSize[1] / 2) {
+            CurY = screenSize[1] / 2;
+        } else {
+            CurY = curY;
+        }
     }
 
     public int getUserScore() {

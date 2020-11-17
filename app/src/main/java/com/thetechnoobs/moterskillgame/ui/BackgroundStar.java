@@ -1,14 +1,17 @@
-package com.thetechnoobs.moterskillgame;
+package com.thetechnoobs.moterskillgame.ui;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import com.thetechnoobs.moterskillgame.Constants;
+import com.thetechnoobs.moterskillgame.R;
+
 public class BackgroundStar {
     int CurX = 0, CurY = 10;
     int speed = 0;
     int[] screenSize;
-    Bitmap stareBitmap;
+    public Bitmap stareBitmap;
 
     public BackgroundStar(int curX, int curY, int speed, int[] screenSize, Resources res) {
         CurX = curX;

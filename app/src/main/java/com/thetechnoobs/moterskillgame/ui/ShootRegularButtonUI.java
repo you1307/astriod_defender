@@ -1,15 +1,18 @@
-package com.thetechnoobs.moterskillgame;
+package com.thetechnoobs.moterskillgame.ui;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.RectF;
 
+import com.thetechnoobs.moterskillgame.Constants;
+import com.thetechnoobs.moterskillgame.R;
+
 public class ShootRegularButtonUI {
     int x = 0, y = 0;
     boolean side;
     int[] screenSize = {0, 0};
-    Bitmap bitmap;
+    public Bitmap bitmap;
 
     public ShootRegularButtonUI(int x, int y, boolean side, int[] screenSize, Resources resources) {
         this.x = x;

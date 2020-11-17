@@ -1,4 +1,4 @@
-package com.thetechnoobs.moterskillgame;
+package com.thetechnoobs.moterskillgame.ui;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -10,6 +10,9 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+
+import com.thetechnoobs.moterskillgame.GameActivity;
+import com.thetechnoobs.moterskillgame.R;
 
 public class EndGameScreen extends Activity {
     TextView ScoreTXT;

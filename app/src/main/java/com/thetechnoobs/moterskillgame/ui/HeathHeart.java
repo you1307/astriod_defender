@@ -1,12 +1,15 @@
-package com.thetechnoobs.moterskillgame;
+package com.thetechnoobs.moterskillgame.ui;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import com.thetechnoobs.moterskillgame.Constants;
+import com.thetechnoobs.moterskillgame.R;
+
 public class HeathHeart {
-    Bitmap emptyHeartBitmap, fullHeartBitmap;
-    int xLoc, yLoc;
+    public Bitmap emptyHeartBitmap, fullHeartBitmap;
+    public int xLoc, yLoc;
 
     public HeathHeart(Resources resources,int[] screenSize , int xLoc, int yLoc) {
         this.xLoc = xLoc;

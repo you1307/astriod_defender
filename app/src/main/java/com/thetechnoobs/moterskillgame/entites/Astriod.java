@@ -1,4 +1,4 @@
-package com.thetechnoobs.moterskillgame;
+package com.thetechnoobs.moterskillgame.entites;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -6,12 +6,15 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 
+import com.thetechnoobs.moterskillgame.Constants;
+import com.thetechnoobs.moterskillgame.R;
+
 import java.util.Random;
 
 public class Astriod {
     int CurX = 0, CurY = 0, Speed = 0;
     int[] screenSize = {0, 0};
-    Bitmap bitmap;
+    public Bitmap bitmap;
     private RectF CollisionBox;
 
 
