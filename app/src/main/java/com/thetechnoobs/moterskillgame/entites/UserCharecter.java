@@ -12,6 +12,7 @@ public class UserCharecter {
     public int MaxHeath = Constants.USER_MAX_HEATH;
     public int CurHeath = MaxHeath;
     public int userScore = 0;
+    int Gold = 0;
     public Bitmap bitmap;
     float CurX, CurY;
     int[] screenSize;
@@ -72,5 +73,13 @@ public class UserCharecter {
 
     public int getMaxHeath() {
         return MaxHeath;
+    }
+
+    public int getGold() {
+        return Gold;
+    }
+
+    public void setGold(int gold) {
+        Gold = gold;
     }
 }

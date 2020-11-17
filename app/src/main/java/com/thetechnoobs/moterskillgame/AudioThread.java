@@ -10,6 +10,7 @@ public class AudioThread {
     public EasyEnemyHitSound easyEnemyHitSound = new EasyEnemyHitSound();
     public EasyEnemyShootSound easyEnemyShootSound = new EasyEnemyShootSound();
     public EasyEnemyDeathSound easyEnemyDeathSound = new EasyEnemyDeathSound();
+    public CoinCollectSound coinCollectSound = new CoinCollectSound();
     Context context;
     MediaPlayer mediaPlayer;
 
@@ -56,6 +57,13 @@ public class AudioThread {
     public class EasyEnemyDeathSound implements Runnable {
         public void run() {
             mediaPlayer = MediaPlayer.create(context, R.raw.easy_enemy_death);
+            mediaPlayer.start();
+        }
+    }
+
+    public class CoinCollectSound implements Runnable {
+        public void run() {
+            mediaPlayer = MediaPlayer.create(context, R.raw.coin_collect);
             mediaPlayer.start();
         }
     }

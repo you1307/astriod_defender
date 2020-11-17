@@ -135,7 +135,7 @@ public class BadGuy {
     }
 
     public void Shoot() {
-        EasyEnemyBullet easyEnemyBullet = new EasyEnemyBullet(resources, 20, screenSize, getX() + (int) EasyEnemyAlive.getWidth() / 2, getY() + EasyEnemyAlive.getHeight());
+        EasyEnemyBullet easyEnemyBullet = new EasyEnemyBullet(resources, 20, screenSize, getX() + (float) EasyEnemyAlive.getWidth() / 2, getY() + EasyEnemyAlive.getHeight());
         bullets.add(easyEnemyBullet);
         audioThread.easyEnemyShootSound.run();
     }

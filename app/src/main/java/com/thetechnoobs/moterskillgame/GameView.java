@@ -11,6 +11,7 @@ import android.view.SurfaceView;
 
 import com.thetechnoobs.moterskillgame.entites.Astriod;
 import com.thetechnoobs.moterskillgame.entites.BadGuy;
+import com.thetechnoobs.moterskillgame.entites.GoldCoin;
 import com.thetechnoobs.moterskillgame.entites.RegularBullet;
 import com.thetechnoobs.moterskillgame.entites.UserCharecter;
 import com.thetechnoobs.moterskillgame.ui.BackgroundStar;
@@ -32,6 +33,7 @@ public class GameView extends SurfaceView implements Runnable {
     ArrayList<Astriod> astriods = new ArrayList<>();
     ArrayList<RegularBullet> bullets = new ArrayList<>();
     ArrayList<BadGuy> EasyEnemy = new ArrayList<>();
+    ArrayList<GoldCoin> GoldCoins = new ArrayList<>();
     int[] screenSize = {0, 0};
     Canvas canvas;
     AudioThread audioThread;
@@ -82,7 +84,7 @@ public class GameView extends SurfaceView implements Runnable {
 
     private void draw() {
         if (userCharecter.getHeath() < 1) {//check if user is dead
-            GameOver();
+            //GameOver();
         }
 
         if (getHolder().getSurface().isValid()) {
@@ -93,9 +95,7 @@ public class GameView extends SurfaceView implements Runnable {
 
             SawnAnDrawEasyEnemy(3);
 
-
-            drawUserHealth();
-            drawUserScore();
+            DrawUI();
 
             drawBackgrounStars();
             drawAstroids();
@@ -107,7 +107,15 @@ public class GameView extends SurfaceView implements Runnable {
         }
     }
 
+    private void DrawUI() {
+        drawUserHealth();
+        drawUserScore();
+    }
+
     private void update() {
+
+        //update coins position
+        MoveCoins();
 
         //check for dead enemy's
         CheckForDeadEnemys();
@@ -175,6 +183,7 @@ public class GameView extends SurfaceView implements Runnable {
         backgroundStars.clear();
         astriods.clear();
         bullets.clear();
+        GoldCoins.clear();
 
 
         for (int e = 0; e < EasyEnemy.size(); e++) {
@@ -228,6 +237,15 @@ public class GameView extends SurfaceView implements Runnable {
                 userCharecter.setHeath(userCharecter.getHeath() - 1);
                 audioThread.asteriodHitUserThread.run();
                 break;
+            }
+        }
+
+        //check if coins are collected
+        for(int c = 0; c < GoldCoins.size(); c++){
+            if(GoldCoins.get(c).getHitbox().intersect(userCharecter.getHitBox())){
+                GoldCoins.remove(c);
+                audioThread.coinCollectSound.run();
+                userCharecter.setGold(userCharecter.getGold()+1);
             }
         }
     }
@@ -405,9 +423,28 @@ public class GameView extends SurfaceView implements Runnable {
     public void CheckForDeadEnemys() {
         for (int i = 0; i < EasyEnemy.size(); i++) {
             if (EasyEnemy.get(i).getCurHeath() < 1) {
+                SpawnCoin(EasyEnemy.get(i));
                 EasyEnemy.remove(i);
             }
         }
+    }
+
+    private void SpawnCoin(BadGuy badGuy) {
+        GoldCoin goldCoin = new GoldCoin(userCharecter, canvas, screenSize, getResources(), 5, badGuy.getX()+badGuy.EasyEnemyAlive.getWidth()/2, badGuy.getY()+badGuy.EasyEnemyAlive.getHeight()/2);
+        GoldCoins.add(goldCoin);
+    }
+
+    public void MoveCoins() {
+        for (int c = 0; c < GoldCoins.size(); c++) {
+            GoldCoins.get(c).setCurY(GoldCoins.get(c).getCurY()+GoldCoins.get(c).getSpeed());
+            GoldCoins.get(c).draw();
+
+            if(GoldCoins.get(c).getCurY()>screeny){
+                GoldCoins.remove(c);
+            }
+        }
+
+
     }
 
     public int randomNum(int max, int min) {
@@ -417,7 +454,6 @@ public class GameView extends SurfaceView implements Runnable {
         if (ran < min) {
             ran = min;
         }
-
         return ran;
     }
 
@@ -440,6 +476,7 @@ public class GameView extends SurfaceView implements Runnable {
         try {
             isPlaying = false;
             thread.join();
+            Cleanup();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

@@ -37,6 +37,9 @@ public class Constants {
     public final static int SCALE_RATIO_NUM_Y_EASY_ENEMY_BULLET = 50;
     public final static int SCALE_RATIO_NUM_X_EASY_ENEMY_BULLET = SCALE_RATIO_NUM_Y_EASY_ENEMY_BULLET/2;
 
+    public final static int SCALE_RATIO_NUM_Y_GOLD_COIN = 50;
+    public final static int SCALE_RATIO_NUM_X_GOLD_COIN = SCALE_RATIO_NUM_Y_GOLD_COIN/2;
+
 
 
 }
