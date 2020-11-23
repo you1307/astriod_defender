@@ -1,4 +1,4 @@
-package com.thetechnoobs.moterskillgame;
+package com.thetechnoobs.moterskillgame.asteriodgame;
 
 public class Constants {
     public final static int BACKGROUND_STAR_MAX_SPEED = 30;

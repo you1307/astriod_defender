@@ -17,11 +17,17 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".GameActivity"
-                    android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".asteriodgame.AsteroidGameActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
-        <activity android:name=".ui.EndGameScreen"/>
+        <activity android:name=".asteriodgame.EndGameScreenAsteroids" />
+
+        <activity
+            android:name=".town.TownActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
     </application>
 
 </manifest>

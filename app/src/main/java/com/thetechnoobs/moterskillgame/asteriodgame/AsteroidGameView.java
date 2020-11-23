@@ -1,4 +1,4 @@
-package com.thetechnoobs.moterskillgame;
+package com.thetechnoobs.moterskillgame.asteriodgame;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,22 +9,22 @@ import android.graphics.RectF;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 
-import com.thetechnoobs.moterskillgame.entites.Astriod;
-import com.thetechnoobs.moterskillgame.entites.BadGuy;
-import com.thetechnoobs.moterskillgame.entites.GoldCoin;
-import com.thetechnoobs.moterskillgame.entites.RegularBullet;
-import com.thetechnoobs.moterskillgame.entites.UserCharecter;
-import com.thetechnoobs.moterskillgame.ui.BackgroundStar;
-import com.thetechnoobs.moterskillgame.ui.EndGameScreen;
-import com.thetechnoobs.moterskillgame.ui.Explosion;
-import com.thetechnoobs.moterskillgame.ui.HeathHeart;
-import com.thetechnoobs.moterskillgame.ui.ShootRegularButtonUI;
+import com.thetechnoobs.moterskillgame.BackendSettings;
+import com.thetechnoobs.moterskillgame.asteriodgame.entites.Astriod;
+import com.thetechnoobs.moterskillgame.asteriodgame.entites.BadGuy;
+import com.thetechnoobs.moterskillgame.asteriodgame.entites.GoldCoin;
+import com.thetechnoobs.moterskillgame.asteriodgame.entites.RegularBullet;
+import com.thetechnoobs.moterskillgame.asteriodgame.ui.BackgroundStar;
+import com.thetechnoobs.moterskillgame.asteriodgame.ui.Explosion;
+import com.thetechnoobs.moterskillgame.asteriodgame.ui.HeathHeart;
+import com.thetechnoobs.moterskillgame.asteriodgame.ui.ShootRegularButtonUI;
+import com.thetechnoobs.moterskillgame.UserCharecter;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class GameView extends SurfaceView implements Runnable {
+public class AsteroidGameView extends SurfaceView implements Runnable {
     private final Paint paint, BackgroundRectPaint, scoreTextPaint;
     UserCharecter userCharecter;
     ShootRegularButtonUI shootRegularButtonUI;
@@ -39,16 +39,11 @@ public class GameView extends SurfaceView implements Runnable {
     AudioThread audioThread;
     private Thread thread;
     private boolean isPlaying = false;
-    private int screenx, screeny;
 
 
-    public GameView(Context context, int screenx, int screeny) {
+    public AsteroidGameView(Context context, int screenx, int screeny) {
         super(context);
 
-        this.screenx = screenx;
-        this.screeny = screeny;
-
-        //settup public screen size for ratio calculation
         screenSize[0] = screenx;
         screenSize[1] = screeny;
 
@@ -84,7 +79,7 @@ public class GameView extends SurfaceView implements Runnable {
 
     private void draw() {
         if (userCharecter.getHeath() < 1) {//check if user is dead
-            //GameOver();
+            GameOver();
         }
 
         if (getHolder().getSurface().isValid()) {
@@ -96,6 +91,7 @@ public class GameView extends SurfaceView implements Runnable {
             SawnAnDrawEasyEnemy(3);
 
             DrawUI();
+
 
             drawBackgrounStars();
             drawAstroids();
@@ -172,8 +168,10 @@ public class GameView extends SurfaceView implements Runnable {
     public void GameOver() {
         isPlaying = false;
         Context context = getContext();
-        Intent GoToEndGameScreen = new Intent(context, EndGameScreen.class);
+        Intent GoToEndGameScreen = new Intent(context, EndGameScreenAsteroids.class);
         GoToEndGameScreen.putExtra("score", userCharecter.getUserScore());
+        GoToEndGameScreen.putExtra("gold", userCharecter.getGold());
+        GoToEndGameScreen.putExtra("enemysKilled", userCharecter.getEnemysKilled());
         context.startActivity(GoToEndGameScreen);
 
         Cleanup();
@@ -192,8 +190,8 @@ public class GameView extends SurfaceView implements Runnable {
     }
 
     public void drawUserHealth() {
-        int yOffset = screeny / 20;//needed for screens with round corners so that the heath heart doesnt get hidden
-        int xOffset = screenx / 100;//added to make nice spaceing between hearts
+        int yOffset = screenSize[1] / 20;//needed for screens with round corners so that the heath heart doesnt get hidden
+        int xOffset = screenSize[0] / 100;//added to make nice spaceing between hearts
         List<HeathHeart> heathHearts = new ArrayList<>();
 
         for (int i = 0; i < userCharecter.getMaxHeath(); i++) {
@@ -215,7 +213,7 @@ public class GameView extends SurfaceView implements Runnable {
     }
 
     private void drawUserScore() {
-        canvas.drawText(String.valueOf(userCharecter.getUserScore()), (float) screenx / 2, (float) screeny / 20, scoreTextPaint);
+        canvas.drawText(String.valueOf(userCharecter.getUserScore()), (float) screenSize[0] / 2, (float) screenSize[1] / 20, scoreTextPaint);
     }
 
     private void updateUserPos(float x, float y) {
@@ -241,11 +239,11 @@ public class GameView extends SurfaceView implements Runnable {
         }
 
         //check if coins are collected
-        for(int c = 0; c < GoldCoins.size(); c++){
-            if(GoldCoins.get(c).getHitbox().intersect(userCharecter.getHitBox())){
+        for (int c = 0; c < GoldCoins.size(); c++) {
+            if (GoldCoins.get(c).getHitbox().intersect(userCharecter.getHitBox())) {
                 GoldCoins.remove(c);
                 audioThread.coinCollectSound.run();
-                userCharecter.setGold(userCharecter.getGold()+1);
+                userCharecter.setGold(userCharecter.getGold() + 1);
             }
         }
     }
@@ -299,7 +297,7 @@ public class GameView extends SurfaceView implements Runnable {
     }
 
     public void SpawnEnemys() {
-        BadGuy badGuy = new BadGuy(getResources(), getContext(), userCharecter, screenSize, randomNum(screenx - (screenx / Constants.SCALE_RATIO_NUM_X_EASY_ENEMY), 0), 300);
+        BadGuy badGuy = new BadGuy(getResources(), getContext(), userCharecter, screenSize, randomNum(screenSize[0] - (screenSize[0] / Constants.SCALE_RATIO_NUM_X_EASY_ENEMY), 0), 300);
         EasyEnemy.add(badGuy);
     }
 
@@ -307,12 +305,12 @@ public class GameView extends SurfaceView implements Runnable {
         int maxAstroidSpawn = 6;
 
         if (astriods.size() < maxAstroidSpawn) {
-            Astriod astriod = new Astriod(randomNum(screenx - (screenx / Constants.SCALE_RATIO_NUM_X_FOREGROUND), 0), 0, randomNum(Constants.ASTROID_MAX_SPEED, 5), screenSize, getResources());
+            Astriod astriod = new Astriod(randomNum(screenSize[0] - (screenSize[0] / Constants.SCALE_RATIO_NUM_X_FOREGROUND), 0), 0, randomNum(Constants.ASTROID_MAX_SPEED, 5), screenSize, getResources());
             astriods.add(astriod);
         }
 
         for (int i = 0; i < astriods.size(); i++) {
-            if (astriods.get(i).getCurY() > screeny) {
+            if (astriods.get(i).getCurY() > screenSize[1]) {
                 astriods.remove(i);
                 DeductScorePoints(1);
                 break;
@@ -327,13 +325,13 @@ public class GameView extends SurfaceView implements Runnable {
     private void SpawnAndDeleteBackgroundStars() {
 
         for (int i = 0; i < backgroundStars.size(); i++) {
-            if (backgroundStars.get(i).getCurY() > screeny - 40) {
+            if (backgroundStars.get(i).getCurY() > screenSize[1] - 40) {
                 backgroundStars.remove(i);
             }
         }
 
         if (backgroundStars.size() < 10) {
-            BackgroundStar backgroundStar = new BackgroundStar(randomNum(screenx - 20, 20), 0, randomNum(Constants.BACKGROUND_STAR_MAX_SPEED, 5), screenSize, getResources());
+            BackgroundStar backgroundStar = new BackgroundStar(randomNum(screenSize[0] - 20, 20), 0, randomNum(Constants.BACKGROUND_STAR_MAX_SPEED, 5), screenSize, getResources());
             backgroundStars.add(backgroundStar);
         }
     }
@@ -352,7 +350,7 @@ public class GameView extends SurfaceView implements Runnable {
         if (backendSettings.getSavedShootButtonSide(context)) {
             shootRegularButtonUI = new ShootRegularButtonUI(0, shootRegularButtonUI.bitmap.getHeight(), true, screenSize, getResources());
         } else {
-            shootRegularButtonUI = new ShootRegularButtonUI(screenx - shootRegularButtonUI.bitmap.getWidth(), screeny - shootRegularButtonUI.bitmap.getHeight(), true, screenSize, getResources());
+            shootRegularButtonUI = new ShootRegularButtonUI(screenSize[0] - shootRegularButtonUI.bitmap.getWidth(), screenSize[1] - shootRegularButtonUI.bitmap.getHeight(), true, screenSize, getResources());
         }
     }
 
@@ -424,22 +422,23 @@ public class GameView extends SurfaceView implements Runnable {
         for (int i = 0; i < EasyEnemy.size(); i++) {
             if (EasyEnemy.get(i).getCurHeath() < 1) {
                 SpawnCoin(EasyEnemy.get(i));
+                userCharecter.setEnemysKilled(userCharecter.getEnemysKilled() + 1);
                 EasyEnemy.remove(i);
             }
         }
     }
 
     private void SpawnCoin(BadGuy badGuy) {
-        GoldCoin goldCoin = new GoldCoin(userCharecter, canvas, screenSize, getResources(), 5, badGuy.getX()+badGuy.EasyEnemyAlive.getWidth()/2, badGuy.getY()+badGuy.EasyEnemyAlive.getHeight()/2);
+        GoldCoin goldCoin = new GoldCoin(userCharecter, canvas, screenSize, getResources(), 5, badGuy.getX() + badGuy.EasyEnemyAlive.getWidth() / 2, badGuy.getY() + badGuy.EasyEnemyAlive.getHeight() / 2);
         GoldCoins.add(goldCoin);
     }
 
     public void MoveCoins() {
         for (int c = 0; c < GoldCoins.size(); c++) {
-            GoldCoins.get(c).setCurY(GoldCoins.get(c).getCurY()+GoldCoins.get(c).getSpeed());
+            GoldCoins.get(c).setCurY(GoldCoins.get(c).getCurY() + GoldCoins.get(c).getSpeed());
             GoldCoins.get(c).draw();
 
-            if(GoldCoins.get(c).getCurY()>screeny){
+            if (GoldCoins.get(c).getCurY() > screenSize[1]) {
                 GoldCoins.remove(c);
             }
         }

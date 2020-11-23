@@ -1,13 +1,16 @@
-package com.thetechnoobs.moterskillgame;
+package com.thetechnoobs.moterskillgame.town;
 
 import android.graphics.Point;
 import android.os.Bundle;
 import android.view.WindowManager;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-public class GameActivity extends AppCompatActivity {
-    private GameView gameView;
+import com.thetechnoobs.moterskillgame.asteriodgame.AsteroidGameView;
+
+public class TownActivity extends AppCompatActivity {
+    public TownGameView townGameView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,21 +20,21 @@ public class GameActivity extends AppCompatActivity {
         Point point = new Point();
         getWindowManager().getDefaultDisplay().getSize(point);
 
-        gameView = new GameView(this, point.x, point.y);
-        setContentView(gameView);
+        townGameView = new TownGameView(this, point.x, point.y);
+        setContentView(townGameView);
 
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        gameView.pause();
+        townGameView.pause();
         finish();
     }
 
     @Override
     protected void onPostResume() {
         super.onPostResume();
-        gameView.resume();
+        townGameView.resume();
     }
 }

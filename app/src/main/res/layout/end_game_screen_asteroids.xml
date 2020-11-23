@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/GoToTownBTN"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="73dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="15dp"
+        android:text="go to town" />
+
+    <Button
+        android:id="@+id/RestartGameBTN"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/GoToTownBTN"
+        android:layout_toEndOf="@+id/GoToTownBTN"
+        android:text="Restart" />
+
+    <TextView
+        android:id="@+id/GameOverTXTView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="53dp"
+        android:text="GAME OVER"
+        android:textColor="@color/white"
+        android:textSize="50sp" />
+
+    <TextView
+        android:id="@+id/ScoreTXTView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/GameOverTXTView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:fontFamily="@font/drawing_font"
+        android:text="Score"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="35sp" />
+
+    <TextView
+        android:id="@+id/GoldTXTView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ScoreTXTView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:fontFamily="@font/drawing_font"
+        android:text="Gold"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="35sp" />
+
+    <TextView
+        android:id="@+id/MoneyRewardTXT"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/GoldTXTView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:fontFamily="@font/drawing_font"
+        android:text="Money"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="35sp" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="42dp"
+        android:layout_alignStart="@+id/MoneyRewardTXT"
+        android:layout_alignTop="@+id/MoneyRewardTXT"
+        android:layout_alignBottom="@+id/MoneyRewardTXT"
+        android:layout_marginStart="-25dp"
+        android:layout_marginTop="10dp"
+        android:layout_toStartOf="@+id/MoneyRewardTXT"
+        android:background="@drawable/dollar_sign"
+        android:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/GoldTXTView"
+        android:layout_alignTop="@+id/GoldTXTView"
+        android:layout_alignBottom="@+id/GoldTXTView"
+        android:layout_marginStart="-35dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="0dp"
+        android:layout_toStartOf="@+id/GoldTXTView"
+        android:background="@drawable/gold_coin"
+        android:visibility="visible" />
+
+    <TextView
+        android:id="@+id/TotalGoldTXT"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/TotalMoneyTXT"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="22dp"
+        android:text="Total gold"
+        android:textColor="@color/white" />
+
+    <TextView
+        android:id="@+id/TotalMoneyTXT"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/RestartGameBTN"
+        android:textColor="@color/white"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="96dp"
+        android:text="Total Money" />
+</RelativeLayout>

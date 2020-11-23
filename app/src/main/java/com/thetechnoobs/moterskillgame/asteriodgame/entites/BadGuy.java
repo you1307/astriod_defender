@@ -1,4 +1,4 @@
-package com.thetechnoobs.moterskillgame.entites;
+package com.thetechnoobs.moterskillgame.asteriodgame.entites;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -7,10 +7,10 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.RectF;
 
-import com.thetechnoobs.moterskillgame.AudioThread;
-import com.thetechnoobs.moterskillgame.Constants;
 import com.thetechnoobs.moterskillgame.R;
-import com.thetechnoobs.moterskillgame.ui.EasyEnemyBullet;
+import com.thetechnoobs.moterskillgame.asteriodgame.AudioThread;
+import com.thetechnoobs.moterskillgame.asteriodgame.Constants;
+import com.thetechnoobs.moterskillgame.UserCharecter;
 
 import java.util.ArrayList;
 import java.util.List;

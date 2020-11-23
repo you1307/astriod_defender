@@ -1,19 +1,20 @@
-package com.thetechnoobs.moterskillgame.entites;
+package com.thetechnoobs.moterskillgame;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.RectF;
 
-import com.thetechnoobs.moterskillgame.Constants;
+import com.thetechnoobs.moterskillgame.asteriodgame.Constants;
 import com.thetechnoobs.moterskillgame.R;
 
 public class UserCharecter {
     public int MaxHeath = Constants.USER_MAX_HEATH;
     public int CurHeath = MaxHeath;
     public int userScore = 0;
-    int Gold = 0;
+    public int EnemysKilled = 0;
     public Bitmap bitmap;
+    int Gold = 0;
     float CurX, CurY;
     int[] screenSize;
 
@@ -53,6 +54,14 @@ public class UserCharecter {
         } else {
             CurY = curY;
         }
+    }
+
+    public int getEnemysKilled() {
+        return EnemysKilled;
+    }
+
+    public void setEnemysKilled(int enemysKilled) {
+        EnemysKilled = enemysKilled;
     }
 
     public int getUserScore() {

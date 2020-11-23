@@ -1,7 +1,9 @@
-package com.thetechnoobs.moterskillgame;
+package com.thetechnoobs.moterskillgame.asteriodgame;
 
 import android.content.Context;
 import android.media.MediaPlayer;
+
+import com.thetechnoobs.moterskillgame.R;
 
 public class AudioThread {
     public AsteriodHitUserThread asteriodHitUserThread = new AsteriodHitUserThread();

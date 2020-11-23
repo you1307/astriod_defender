@@ -1,4 +1,4 @@
-package com.thetechnoobs.moterskillgame.entites;
+package com.thetechnoobs.moterskillgame.asteriodgame.entites;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -6,8 +6,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 
-import com.thetechnoobs.moterskillgame.Constants;
 import com.thetechnoobs.moterskillgame.R;
+import com.thetechnoobs.moterskillgame.asteriodgame.Constants;
 
 import java.util.Random;
 

@@ -1,14 +1,13 @@
-package com.thetechnoobs.moterskillgame.ui;
+package com.thetechnoobs.moterskillgame.asteriodgame.entites;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.RectF;
-import android.provider.SyncStateContract;
 
-import com.thetechnoobs.moterskillgame.Constants;
 import com.thetechnoobs.moterskillgame.R;
+import com.thetechnoobs.moterskillgame.asteriodgame.Constants;
 
 public class EasyEnemyBullet {
     float CurX = 0, CurY = 0;

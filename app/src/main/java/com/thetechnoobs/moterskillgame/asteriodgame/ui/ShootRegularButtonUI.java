@@ -1,12 +1,12 @@
-package com.thetechnoobs.moterskillgame.ui;
+package com.thetechnoobs.moterskillgame.asteriodgame.ui;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.RectF;
 
-import com.thetechnoobs.moterskillgame.Constants;
 import com.thetechnoobs.moterskillgame.R;
+import com.thetechnoobs.moterskillgame.asteriodgame.Constants;
 
 public class ShootRegularButtonUI {
     int x = 0, y = 0;
