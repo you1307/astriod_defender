@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 
@@ -20,10 +21,11 @@ public class TownGameView extends SurfaceView implements Runnable {
     Paint TextPaint;
     Town town;
     UserCharacter userCharacter;
+    AlcamistAI alcamistAI;
     List<RectF> ArrowUI;
     ControllerUI controllerUI;
     CurrencyUI currencyUI;
-    int MoveUserDirection = 0;
+    int MoveUserDirection = 2;
     private Thread thread;
     private long FPS = 0;
     private long fps;
@@ -34,9 +36,14 @@ public class TownGameView extends SurfaceView implements Runnable {
         screenSize[0] = screenx;
         screenSize[1] = screeny;
 
-        userCharacter = new UserCharacter(screenx / 2, screeny / 2, screenSize, getResources());
+
+        userCharacter = new UserCharacter((int) convertDpToPixel(410), (int) convertDpToPixel(30), screenSize, getResources());
+        userCharacter.moveUser(MoveUserDirection);//set so user is facing the right direction upon spawn
 
         town = new Town(getResources(), screenSize, userCharacter);
+
+        alcamistAI = new AlcamistAI(0, 0, screenSize, getResources());
+
 
         controllerUI = new ControllerUI(getResources(), screenSize);
         ArrowUI = controllerUI.getControllerHitBoxs();
@@ -47,6 +54,16 @@ public class TownGameView extends SurfaceView implements Runnable {
         TextPaint.setTextSize(70f);
         TextPaint.setColor(Color.BLACK);
 
+    }
+
+    public static float convertPixelsToDp(float px) {
+        DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
+        return Math.round(px / (metrics.densityDpi / 160f));
+    }
+
+    public static float convertDpToPixel(float dp) {
+        DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
+        return Math.round(dp * (metrics.densityDpi / 160f));
     }
 
     @Override
@@ -63,16 +80,28 @@ public class TownGameView extends SurfaceView implements Runnable {
 
     public void update() {
         town.update();
+        alcamistAI.update();
         userCharacter.update();
         checkBoundres();
     }
 
     private void checkBoundres() {
         List<RectF> boundres = town.getBoundaries();
+        List<RectF> AIBounds = town.getAIBoundries();
 
         for (int b = 0; b < boundres.size(); b++) {
-            if(userCharacter.getHitbox().intersect(boundres.get(b))){
+            if (userCharacter.getHitbox().intersect(boundres.get(b))) {
                 moving = false;
+                break;
+            }
+        }
+
+        for (int a = 0; a < AIBounds.size(); a++) {
+            if (userCharacter.getHitbox().intersect(AIBounds.get(a))) {
+                alcamistAI.drawAprochedText(true);
+                Log.v("testing", "Show chat for Alcamist");//TODO show chat alcmy store icon to user
+            } else {
+                alcamistAI.drawAprochedText(false);
             }
         }
     }
@@ -83,7 +112,10 @@ public class TownGameView extends SurfaceView implements Runnable {
 
             town.draw(canvas);
 
+
+            alcamistAI.draw(canvas, town);
             userCharacter.draw(canvas);
+
 
             DrawUI();
 
@@ -115,7 +147,7 @@ public class TownGameView extends SurfaceView implements Runnable {
 
         switch (maskedAction) {
             case MotionEvent.ACTION_DOWN:
-                if (MoveUI(event.getX(), event.getY())) {
+                if (MoveUI(event.getX(), event.getY(), true)) {
                     moving = true;
                 }
                 break;
@@ -123,10 +155,12 @@ public class TownGameView extends SurfaceView implements Runnable {
 
                 break;
             case MotionEvent.ACTION_MOVE:
-
+                if (!MoveUI(event.getX(), event.getY(), false)) {
+                    moving = false;
+                }
                 break;
             case MotionEvent.ACTION_UP:
-                if (MoveUI(event.getX(), event.getY())) {
+                if (MoveUI(event.getX(), event.getY(), true)) {
                     moving = false;
                 }
                 break;
@@ -140,13 +174,16 @@ public class TownGameView extends SurfaceView implements Runnable {
         return true;
     }
 
-    private boolean MoveUI(float x, float y) {
+    private boolean MoveUI(float x, float y, boolean ActOn) {
         for (int i = 0; i < ArrowUI.size(); i++) {
+
             if (x < ArrowUI.get(i).right && x > ArrowUI.get(i).left && y < ArrowUI.get(i).bottom && y > ArrowUI.get(i).top) {
+                if (ActOn) {
                     MoveUserDirection = i;
                     userCharacter.updateSprite(i);
                     town.updateMapView(i);
-                    return true;
+                }
+                return true;
             }
         }
         return false;

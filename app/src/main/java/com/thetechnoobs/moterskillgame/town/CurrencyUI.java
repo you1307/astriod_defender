@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.util.DisplayMetrics;
 
 import com.thetechnoobs.moterskillgame.R;
 import com.thetechnoobs.moterskillgame.UserInventory;
@@ -17,53 +18,53 @@ public class CurrencyUI {
     int CoinBitmapPosX, GoldTXTPosX, CoinBitmapPosY, GoldTXTPosY, MoneyBitmapPosX, MoneyTXTPosX, MoneyBitmapPosY, MoneyTXTPosY;
     Paint TextPaint = new Paint();
     UserInventory userInventory;
-    Bitmap GoldCoinBitmap, MoneyBitmap;
+    Bitmap GoldCoinUIBitmap, MoneyUIBitmap;
 
     public CurrencyUI(Context context, Resources resources, int[] screenSize) {
         userInventory = new UserInventory(context);
 
-        TextPaint.setColor(Color.BLACK);
+        TextPaint.setColor(Color.WHITE);
         TextPaint.setTextAlign(Paint.Align.CENTER);
-        TextPaint.setTextSize(40);
+        TextPaint.setTextSize(convertDpToPixel(25));
 
 
-        GoldCoinBitmap = BitmapFactory.decodeResource(resources, R.drawable.gold_coin);
-        GoldCoinBitmap = Bitmap.createScaledBitmap(GoldCoinBitmap,
-                screenSize[0] / TownConstants.GOLD_COIN_UI_SCALE_X,
-                screenSize[1] / TownConstants.GOLD_COIN_UI_SCALE_Y,
+        GoldCoinUIBitmap = BitmapFactory.decodeResource(resources, R.drawable.ui_gold);
+        GoldCoinUIBitmap = Bitmap.createScaledBitmap(GoldCoinUIBitmap,
+                TownConstants.GOLD_COIN_UI_SCALE_X,
+                TownConstants.GOLD_COIN_UI_SCALE_Y,
                 false);
 
-        MoneyBitmap = BitmapFactory.decodeResource(resources, R.drawable.dollar_sign);
-        MoneyBitmap = Bitmap.createScaledBitmap(MoneyBitmap,
-                screenSize[0] / TownConstants.DOLLAR_SIGN_UI_SCALE_X,
-                screenSize[1] / TownConstants.DOLLAR_SIGN_UI_SCALE_Y,
+        MoneyUIBitmap = BitmapFactory.decodeResource(resources, R.drawable.ui_money);
+        MoneyUIBitmap = Bitmap.createScaledBitmap(MoneyUIBitmap,
+                TownConstants.DOLLAR_SIGN_UI_SCALE_X,
+                TownConstants.DOLLAR_SIGN_UI_SCALE_Y,
                 false);
 
-        settupUI(screenSize);
+        settupUI();
 
     }
 
-    private void settupUI(int[] screenSize) {
 
-        setCoinBitmapPosX(screenSize[0] / 60);
-        setCoinBitmapPosY(screenSize[1] / 60);
+    private void settupUI() {
+        setCoinBitmapPosX((int) convertDpToPixel(4));
+        setCoinBitmapPosY((int) convertDpToPixel(4));
 
-        setGoldTXTPosX(getCoinBitmapPosX() + GoldCoinBitmap.getWidth());
-        setGoldTXTPosY(getCoinBitmapPosY() + (GoldCoinBitmap.getHeight() / 2));
+        setGoldTXTPosX((int) convertDpToPixel(60));
+        setGoldTXTPosY((int) convertDpToPixel(30));
 
-        setMoneyBitmapPosX(getCoinBitmapPosX());
-        setMoneyBitmapPosY(getCoinBitmapPosY() + GoldCoinBitmap.getHeight());
+        setMoneyBitmapPosX((int) convertDpToPixel(170));
+        setMoneyBitmapPosY((int) convertDpToPixel(4));
 
-        setMoneyTXTPosX(getMoneyBitmapPosX() + MoneyBitmap.getWidth());
-        setMoneyTXTPosY(getMoneyBitmapPosY() + (MoneyBitmap.getHeight() / 2));
+        setMoneyTXTPosX((int) convertDpToPixel(235));
+        setMoneyTXTPosY((int) convertDpToPixel(30));
     }
 
     public void draw(Canvas canvas) {
-        canvas.drawBitmap(GoldCoinBitmap, getCoinBitmapPosX(), getCoinBitmapPosY(), null);
-        canvas.drawBitmap(MoneyBitmap, getMoneyBitmapPosX(), getMoneyBitmapPosY(), null);
+        canvas.drawBitmap(GoldCoinUIBitmap, getCoinBitmapPosX(), getCoinBitmapPosY(), null);
+        canvas.drawBitmap(MoneyUIBitmap, getMoneyBitmapPosX(), getMoneyBitmapPosY(), null);
 
-        canvas.drawText(String.valueOf(getGold()), (float) (getGoldTXTPosX()+GoldCoinBitmap.getWidth()/1.7), (float) (getGoldTXTPosY()+GoldCoinBitmap.getHeight()/3.2), TextPaint);
-        canvas.drawText(String.valueOf(getMoney()), (float) (getMoneyTXTPosX()+MoneyBitmap.getWidth()), (float) (getMoneyTXTPosY()+MoneyBitmap.getHeight()/3.2), TextPaint);
+        canvas.drawText(String.valueOf(getGold()), getGoldTXTPosX(), getGoldTXTPosY(), TextPaint);
+        canvas.drawText(String.valueOf(getMoney()), getMoneyTXTPosX(), getMoneyTXTPosY(), TextPaint);
     }
 
     public int getMoney() {
@@ -74,6 +75,16 @@ public class CurrencyUI {
     public int getGold() {
         Gold = userInventory.getGoldCoins();
         return Gold;
+    }
+
+    public static float convertPixelsToDp(float px) {
+        DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
+        return Math.round(px / (metrics.densityDpi / 160f));
+    }
+
+    public static float convertDpToPixel(float dp) {
+        DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
+        return Math.round( dp * (metrics.densityDpi / 160f));
     }
 
     public int getCoinBitmapPosX() {

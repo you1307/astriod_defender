@@ -18,7 +18,6 @@ public class Town {
     UserCharacter userCharacter;
     int OffsetPosX = 0, OffsetPosY = 0;
     int OffsetPosXDP = 0, OffsetPosYDP = 0;
-    List<RectF> places = new ArrayList<>();
     int[] screenSize;
     int speed = TownConstants.USER_SPEED;
 
@@ -27,7 +26,6 @@ public class Town {
         this.userCharacter = userCharacter;
 
         TownBitmap = BitmapFactory.decodeResource(resources, R.drawable.town);
-        SettupLocations();
     }
 
     public static float convertPixelsToDp(float px) {
@@ -41,7 +39,7 @@ public class Town {
     }
 
     public void update() {
-        updateLocations();
+
     }
 
     public void updateMapView(int direction) {
@@ -51,21 +49,17 @@ public class Town {
                     case 0:
                         direction = 2;
                         userCharacter.moveUser(direction);
-                        userCharacter.moveUser(direction);
                         break;
                     case 1:
                         direction = 3;
-                        userCharacter.moveUser(direction);
                         userCharacter.moveUser(direction);
                         break;
                     case 2:
                         direction = 0;
                         userCharacter.moveUser(direction);
-                        userCharacter.moveUser(direction);
                         break;
                     case 3:
                         direction = 1;
-                        userCharacter.moveUser(direction);
                         userCharacter.moveUser(direction);
                         break;
                 }
@@ -109,19 +103,9 @@ public class Town {
     public void draw(Canvas canvas) {
         canvas.drawBitmap(TownBitmap, OffsetPosX, OffsetPosY, null);
 
-
         for (int b = 0; b < getBoundaries().size(); b++) {
             //canvas.drawRect(getBoundaries().get(b), new Paint());
         }
-    }
-
-    private void SettupLocations() {
-        //boundaries
-
-    }
-
-    private void updateLocations() {
-
     }
 
     public List<RectF> getBoundaries() {
@@ -129,20 +113,20 @@ public class Town {
         RectF BoundFence1, BoundFence2, BoundInn1, BoundInn2, BoundChem1, BoundChem2, BoundRegHouse1, BoundRegHouse2, BoundWepon1, BoundWepon2;
         boundaries.clear();
 
-        BoundFence1 = new RectF(OffsetPosX, OffsetPosY, OffsetPosX + convertDpToPixel(380), OffsetPosY + convertDpToPixel(65));
-        BoundFence2 = new RectF(OffsetPosX, OffsetPosY, OffsetPosX + convertDpToPixel(90), OffsetPosY + convertDpToPixel(290));
+        BoundFence1 = new RectF(OffsetPosX, OffsetPosY, OffsetPosX + convertDpToPixel(380), OffsetPosY + convertDpToPixel(35));
+        BoundFence2 = new RectF(OffsetPosX, OffsetPosY, OffsetPosX + convertDpToPixel(90), OffsetPosY + convertDpToPixel(270));
 
-        BoundInn1 = new RectF(OffsetPosX + convertDpToPixel(128), OffsetPosY + convertDpToPixel(95), OffsetPosX + convertDpToPixel(352), OffsetPosY + convertDpToPixel(226));
-        BoundInn2 = new RectF(OffsetPosX + convertDpToPixel(160), OffsetPosY + convertDpToPixel(226), OffsetPosX + convertDpToPixel(255), OffsetPosY + convertDpToPixel(256));
+        BoundInn1 = new RectF(OffsetPosX + convertDpToPixel(128), OffsetPosY + convertDpToPixel(95), OffsetPosX + convertDpToPixel(352), OffsetPosY + convertDpToPixel(190));
+        BoundInn2 = new RectF(OffsetPosX + convertDpToPixel(160), OffsetPosY + convertDpToPixel(190), OffsetPosX + convertDpToPixel(255), OffsetPosY + convertDpToPixel(225));
 
-        BoundChem1 = new RectF(OffsetPosX + convertDpToPixel(512), OffsetPosY + convertDpToPixel(130), OffsetPosX + convertDpToPixel(737), OffsetPosY + convertDpToPixel(256));
+        BoundChem1 = new RectF(OffsetPosX + convertDpToPixel(512), OffsetPosY + convertDpToPixel(130), OffsetPosX + convertDpToPixel(737), OffsetPosY + convertDpToPixel(225));
         BoundChem2 = new RectF(OffsetPosX + convertDpToPixel(610), OffsetPosY + convertDpToPixel(97), OffsetPosX + convertDpToPixel(737), OffsetPosY + convertDpToPixel(130));
 
-        BoundRegHouse1 = new RectF(OffsetPosX + convertDpToPixel(512), OffsetPosY + convertDpToPixel(332), OffsetPosX + convertDpToPixel(737), OffsetPosY + convertDpToPixel(470));
-        BoundRegHouse2 = new RectF(OffsetPosX + convertDpToPixel(640), OffsetPosY + convertDpToPixel(470), OffsetPosX + convertDpToPixel(737), OffsetPosY + convertDpToPixel(560));
+        BoundRegHouse1 = new RectF(OffsetPosX + convertDpToPixel(512), OffsetPosY + convertDpToPixel(332), OffsetPosX + convertDpToPixel(737), OffsetPosY + convertDpToPixel(455));
+        BoundRegHouse2 = new RectF(OffsetPosX + convertDpToPixel(640), OffsetPosY + convertDpToPixel(455), OffsetPosX + convertDpToPixel(737), OffsetPosY + convertDpToPixel(555));
 
-        BoundWepon1 = new RectF(OffsetPosX + convertDpToPixel(98), OffsetPosY + convertDpToPixel(330), OffsetPosX + convertDpToPixel(352), OffsetPosY + convertDpToPixel(478));
-        BoundWepon2 = new RectF(OffsetPosX + convertDpToPixel(98), OffsetPosY + convertDpToPixel(478), OffsetPosX + convertDpToPixel(225), OffsetPosY + convertDpToPixel(540));
+        BoundWepon1 = new RectF(OffsetPosX + convertDpToPixel(98), OffsetPosY + convertDpToPixel(330), OffsetPosX + convertDpToPixel(352), OffsetPosY + convertDpToPixel(450));
+        BoundWepon2 = new RectF(OffsetPosX + convertDpToPixel(98), OffsetPosY + convertDpToPixel(450), OffsetPosX + convertDpToPixel(225), OffsetPosY + convertDpToPixel(520));
 
         boundaries.add(BoundFence1);
         boundaries.add(BoundFence2);
@@ -157,6 +141,34 @@ public class Town {
 
 
         return boundaries;
+    }
+
+    public List<RectF> getAIBoundries(){
+        List<RectF> AIBounds = new ArrayList<>();
+        AIBounds.clear();
+
+        RectF AlcamistBound = new RectF(OffsetPosX+convertDpToPixel(535), OffsetPosY+convertDpToPixel(225), OffsetPosX+convertDpToPixel(630), OffsetPosY+convertDpToPixel(320));
+
+
+        AIBounds.add(AlcamistBound);
+
+        return AIBounds;
+    }
+
+    public int getOffsetPosX() {
+        return OffsetPosX;
+    }
+
+    public void setOffsetPosX(int offsetPosX) {
+        OffsetPosX = offsetPosX;
+    }
+
+    public int getOffsetPosY() {
+        return OffsetPosY;
+    }
+
+    public void setOffsetPosY(int offsetPosY) {
+        OffsetPosY = offsetPosY;
     }
 
     public int getPosX() {
