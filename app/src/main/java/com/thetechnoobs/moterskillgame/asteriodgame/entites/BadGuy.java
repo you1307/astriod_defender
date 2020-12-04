@@ -8,9 +8,8 @@ import android.graphics.Canvas;
 import android.graphics.RectF;
 
 import com.thetechnoobs.moterskillgame.R;
-import com.thetechnoobs.moterskillgame.asteriodgame.AudioThread;
+import com.thetechnoobs.moterskillgame.asteriodgame.AsteroidAudioThread;
 import com.thetechnoobs.moterskillgame.asteriodgame.Constants;
-import com.thetechnoobs.moterskillgame.UserCharecter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,14 +17,14 @@ import java.util.Random;
 
 public class BadGuy {
     public int x, y;
-    public int MaxHeath = Constants.BADGUY_EASY_MAX_HEATH;
+    public int MaxHeath = EnemyParameters.easyEnemyHeathMax;
     public Bitmap EasyEnemyAlive, EnemyHeathHeart;
     public int[] screenSize;
     public int speed = new Random().nextInt(Constants.DEFULT_EASY_ENEMY_SPEED);
+    public ShootThread shootThread = new ShootThread(2000);
     int CurHeath = MaxHeath;
     Boolean direction = false; //true means move right, false means move left
-    public ShootThread shootThread = new ShootThread(2000);
-    AudioThread audioThread;
+    AsteroidAudioThread asteroidAudioThread;
     ArrayList<EasyEnemyBullet> bullets = new ArrayList<>();
     Resources resources;
     UserCharecter userCharecter;
@@ -38,7 +37,7 @@ public class BadGuy {
         this.userCharecter = userCharecter;
 
         shootThread.start();
-        audioThread = new AudioThread(context);
+        asteroidAudioThread = new AsteroidAudioThread(context);
 
 
         EasyEnemyAlive = BitmapFactory.decodeResource(resources, R.drawable.enemy_alive_easy);
@@ -89,16 +88,12 @@ public class BadGuy {
                 xOffset = xOffset + heathHearts.get(i).EnemyHeathHeart.getWidth();//adjust location for next heart
             }
 
-            if (i + 1 == getMaxHeath()) {
+            if (i - 1 == getMaxHeath()) {
                 yOffset = getY() - EnemyHeathHeart.getHeight();
                 xOffset = getX();
             }
         }
 
-        if (!isAlive()) {
-            audioThread.easyEnemyDeathSound.run();
-            Cleanup();
-        }
 
         updateBullets(canvas);
         CheckBulletHitBox();
@@ -109,7 +104,7 @@ public class BadGuy {
             if (bullets.get(b).getHitbox().intersect(userCharecter.getHitBox())) {
                 bullets.remove(b);
                 userCharecter.setHeath(userCharecter.getHeath() - 2);
-                audioThread.asteriodHitUserThread.run();
+                asteroidAudioThread.asteriodHitUserThread.run();
                 break;
             }
         }
@@ -130,18 +125,14 @@ public class BadGuy {
         }
     }
 
-    private void Cleanup() {
+    public void cleanup() {
         shootThread.stopThread();
     }
 
     public void Shoot() {
         EasyEnemyBullet easyEnemyBullet = new EasyEnemyBullet(resources, 20, screenSize, getX() + (float) EasyEnemyAlive.getWidth() / 2, getY() + EasyEnemyAlive.getHeight());
         bullets.add(easyEnemyBullet);
-        audioThread.easyEnemyShootSound.run();
-    }
-
-    public boolean isAlive() {
-        return getCurHeath() >= 1;
+        asteroidAudioThread.easyEnemyShootSound.run();
     }
 
     public RectF getHitBox() {

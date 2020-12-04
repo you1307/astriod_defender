@@ -1,3 +1,25 @@
 <resources>
     <string name="app_name">Asteroid Defence</string>
+    <string name="basic_gun_title">Basic gun</string>
+    <string name="basic_gun_description">A simple gun with slow fire rate and low damage</string>
+    <string name="assault_rifle_description">A gun with a higher fire rate, but less damage</string>
+    <string name="assault_rifle_title">Assault rifle</string>
+    <string name="shot_gun_description">A gun with high damage, and many projectiles but low fire rate</string>
+    <string name="shot_gun_title">Shot gun</string>
+    <string name="ray_gun_title">Ray gun</string>
+    <string name="ray_gun_description">This is a powerful gun that shoots a constant beam of death and destruction</string>
+    <string name="upgrade_btn">Upgrade</string>
+    <string name="damage_title">Damage</string>
+    <string name="projectiles_title">Projectiles</string>
+    <string name="rate_of_fire_title">Rate of fire</string>
+    <string name="_00_place_holder">00</string>
+    <string name="basic_gun_img_content_discription">Basic gun IMG</string>
+    <string name="description_placeholder">Description</string>
+    <string name="gun_name_placeholder">Gun name</string>
+    <string name="shot_gun_img_content_discription">Shot gun IMG</string>
+    <string name="ray_gun_img_content_discription">Ray gun IMG</string>
+    <string name="assault_rifle_img_contect_discription">Assault rifle IMG</string>
+    <string name="gold_coin_view_img_content_discription">Gold coin View IMG</string>
+    <string name="cash_view_img_content_discription">Cash view IMG</string>
+    <string name="buy_button">BUY</string>
 </resources>

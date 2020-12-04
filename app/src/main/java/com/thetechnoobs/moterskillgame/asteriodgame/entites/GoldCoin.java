@@ -8,10 +8,9 @@ import android.graphics.RectF;
 
 import com.thetechnoobs.moterskillgame.R;
 import com.thetechnoobs.moterskillgame.asteriodgame.Constants;
-import com.thetechnoobs.moterskillgame.UserCharecter;
 
 public class GoldCoin {
-    Bitmap GoldCoinBitmap;
+    public Bitmap GoldCoinBitmap;
     int[] screenSize;
     int Curx, CurY, speed;
     UserCharecter userCharecter;

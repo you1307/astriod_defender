@@ -25,7 +25,7 @@ public class CurrencyUI {
 
         TextPaint.setColor(Color.WHITE);
         TextPaint.setTextAlign(Paint.Align.CENTER);
-        TextPaint.setTextSize(convertDpToPixel(25));
+        TextPaint.setTextSize(convertDpToPixel(15));
 
 
         GoldCoinUIBitmap = BitmapFactory.decodeResource(resources, R.drawable.ui_gold);
@@ -49,14 +49,14 @@ public class CurrencyUI {
         setCoinBitmapPosX((int) convertDpToPixel(4));
         setCoinBitmapPosY((int) convertDpToPixel(4));
 
-        setGoldTXTPosX((int) convertDpToPixel(60));
-        setGoldTXTPosY((int) convertDpToPixel(30));
+        setGoldTXTPosX((int) convertDpToPixel(46));
+        setGoldTXTPosY((int) convertDpToPixel(22));
 
-        setMoneyBitmapPosX((int) convertDpToPixel(170));
+        setMoneyBitmapPosX((int) convertDpToPixel(135));
         setMoneyBitmapPosY((int) convertDpToPixel(4));
 
-        setMoneyTXTPosX((int) convertDpToPixel(235));
-        setMoneyTXTPosY((int) convertDpToPixel(30));
+        setMoneyTXTPosX((int) convertDpToPixel(182));
+        setMoneyTXTPosY((int) convertDpToPixel(22));
     }
 
     public void draw(Canvas canvas) {

@@ -5,7 +5,7 @@ import android.media.MediaPlayer;
 
 import com.thetechnoobs.moterskillgame.R;
 
-public class AudioThread {
+public class AsteroidAudioThread {
     public AsteriodHitUserThread asteriodHitUserThread = new AsteriodHitUserThread();
     public SimpleShootAsteriodSound simpleShootAsteriodSound = new SimpleShootAsteriodSound();
     public SimpleShootSound simpleShootSound = new SimpleShootSound();
@@ -17,7 +17,7 @@ public class AudioThread {
     MediaPlayer mediaPlayer;
 
 
-    public AudioThread(Context context) {
+    public AsteroidAudioThread(Context context) {
         this.context = context;
     }
 

@@ -10,15 +10,16 @@ import android.view.MotionEvent;
 import android.view.SurfaceView;
 
 import com.thetechnoobs.moterskillgame.BackendSettings;
+import com.thetechnoobs.moterskillgame.UserData;
 import com.thetechnoobs.moterskillgame.asteriodgame.entites.Astriod;
 import com.thetechnoobs.moterskillgame.asteriodgame.entites.BadGuy;
 import com.thetechnoobs.moterskillgame.asteriodgame.entites.GoldCoin;
 import com.thetechnoobs.moterskillgame.asteriodgame.entites.RegularBullet;
+import com.thetechnoobs.moterskillgame.asteriodgame.entites.UserCharecter;
 import com.thetechnoobs.moterskillgame.asteriodgame.ui.BackgroundStar;
 import com.thetechnoobs.moterskillgame.asteriodgame.ui.Explosion;
 import com.thetechnoobs.moterskillgame.asteriodgame.ui.HeathHeart;
 import com.thetechnoobs.moterskillgame.asteriodgame.ui.ShootRegularButtonUI;
-import com.thetechnoobs.moterskillgame.UserCharecter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,7 @@ import java.util.Random;
 public class AsteroidGameView extends SurfaceView implements Runnable {
     private final Paint paint, BackgroundRectPaint, scoreTextPaint;
     UserCharecter userCharecter;
+    UserData userData;
     ShootRegularButtonUI shootRegularButtonUI;
     RectF backgroundRect;
     ArrayList<BackgroundStar> backgroundStars = new ArrayList<>();
@@ -36,13 +38,16 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
     ArrayList<GoldCoin> GoldCoins = new ArrayList<>();
     int[] screenSize = {0, 0};
     Canvas canvas;
-    AudioThread audioThread;
+    AsteroidAudioThread asteroidAudioThread;
+    WaveSpawnThread waveSpawnThread;
+    boolean waveDoneSending = false;
     private Thread thread;
     private boolean isPlaying = false;
 
 
     public AsteroidGameView(Context context, int screenx, int screeny) {
         super(context);
+        userData = new UserData(context);
 
         screenSize[0] = screenx;
         screenSize[1] = screeny;
@@ -53,7 +58,8 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
 
         settupButtonUI(context);
 
-        audioThread = new AudioThread(context);
+        asteroidAudioThread = new AsteroidAudioThread(context);
+        waveSpawnThread = new WaveSpawnThread(this, getContext());
 
         paint = new Paint();
         paint.setColor(Color.BLUE);
@@ -65,6 +71,7 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
         BackgroundRectPaint = new Paint();
         BackgroundRectPaint.setColor(Color.BLACK);
 
+        waveSpawnThread.start();
 
     }
 
@@ -73,13 +80,15 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
     public void run() {
         while (isPlaying) {
             draw();
+            update();
+            checkForWaveCompletion();
             //sleep(5);
         }
     }
 
     private void draw() {
         if (userCharecter.getHeath() < 1) {//check if user is dead
-            GameOver();
+            gameOver();
         }
 
         if (getHolder().getSurface().isValid()) {
@@ -88,45 +97,56 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
             canvas.drawBitmap(userCharecter.bitmap, userCharecter.getCurX(), userCharecter.getCurY(), null);
             canvas.drawBitmap(shootRegularButtonUI.bitmap, shootRegularButtonUI.getX(), shootRegularButtonUI.getY(), null);
 
-            SawnAnDrawEasyEnemy(3);
-
-            DrawUI();
+            drawUI();
 
 
             drawBackgrounStars();
             drawAstroids();
             drawBullets();
+            drawEasyEnemy();
+            drawCoins();
 
-            update();
-            CheckForCollision();
+
             getHolder().unlockCanvasAndPost(canvas);
         }
     }
 
-    private void DrawUI() {
+    private void drawUI() {
         drawUserHealth();
         drawUserScore();
     }
 
     private void update() {
+        checkForCollision();
 
         //update coins position
-        MoveCoins();
+        moveCoins();
 
         //check for dead enemy's
-        CheckForDeadEnemys();
+        checkForDeadEnemys();
 
         //update Bullets position
-        MoveBullets();
+        moveBullets();
         DespawnBullets();
 
         //deal with astroid and astroid hitbox stuff
-        SpawnAndDeleteAstroids();
-        MoveAstroids();
+        moveAstroids();
+        checkAsteroidsOutOfBounds();
 
         //Deal with background stuff
         moveBackgroundStars();
-        SpawnAndDeleteBackgroundStars();
+        spawnAndDeleteBackgroundStars();
+    }
+
+    private void checkForWaveCompletion() {
+        if (EasyEnemy.size() < 1 && astriods.size() < 1 && waveDoneSending && GoldCoins.size() < 1) {
+            userData.addOneToCurrentWaveCount();
+            gameOver();
+        }
+    }
+
+    public void waveDone() {
+        waveDoneSending = true;
     }
 
     @Override
@@ -165,7 +185,7 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
         return true;
     }
 
-    public void GameOver() {
+    public void gameOver() {
         isPlaying = false;
         Context context = getContext();
         Intent GoToEndGameScreen = new Intent(context, EndGameScreenAsteroids.class);
@@ -183,9 +203,9 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
         bullets.clear();
         GoldCoins.clear();
 
-
         for (int e = 0; e < EasyEnemy.size(); e++) {
-            EasyEnemy.get(e).shootThread.stopThread();
+            EasyEnemy.get(e).cleanup();
+            EasyEnemy.remove(e);
         }
     }
 
@@ -222,7 +242,7 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
     }
 
 
-    private void CheckForCollision() {
+    private void checkForCollision() {
         BulletHitboxDetection();
 
         for (int i = 0; i < astriods.size(); i++) {//check if astriod hits user
@@ -233,7 +253,7 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
                 astriods.remove(i);
                 ExplosionFrame(Eventx, Eventy);
                 userCharecter.setHeath(userCharecter.getHeath() - 1);
-                audioThread.asteriodHitUserThread.run();
+                asteroidAudioThread.asteriodHitUserThread.run();
                 break;
             }
         }
@@ -242,13 +262,13 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
         for (int c = 0; c < GoldCoins.size(); c++) {
             if (GoldCoins.get(c).getHitbox().intersect(userCharecter.getHitBox())) {
                 GoldCoins.remove(c);
-                audioThread.coinCollectSound.run();
+                asteroidAudioThread.coinCollectSound.run();
                 userCharecter.setGold(userCharecter.getGold() + 1);
             }
         }
     }
 
-    private void MoveBullets() {
+    private void moveBullets() {
         for (int i = 0; i < bullets.size(); i++) {
             bullets.get(i).setCurY((int) (bullets.get(i).getCurY() - bullets.get(i).getSpeed()));
         }
@@ -277,38 +297,34 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
         }
     }
 
-    private void MoveAstroids() {
+    private void moveAstroids() {
         for (int i = 0; i < astriods.size(); i++) {
             astriods.get(i).setCurY(astriods.get(i).getCurY() + astriods.get(i).getSpeed());
         }
     }
 
-    public void SawnAnDrawEasyEnemy(int NumOfEnemy) {
-        if (EasyEnemy.size() < NumOfEnemy) {
-            SpawnEnemys();
-        }
-
-
+    public void drawEasyEnemy() {
         for (int i = 0; i < EasyEnemy.size(); i++) {
             canvas.drawBitmap(EasyEnemy.get(i).EasyEnemyAlive, EasyEnemy.get(i).getX(), EasyEnemy.get(i).getY(), null);
             EasyEnemy.get(i).update(canvas);
         }
-
     }
 
-    public void SpawnEnemys() {
-        BadGuy badGuy = new BadGuy(getResources(), getContext(), userCharecter, screenSize, randomNum(screenSize[0] - (screenSize[0] / Constants.SCALE_RATIO_NUM_X_EASY_ENEMY), 0), 300);
-        EasyEnemy.add(badGuy);
+    public void spawnEasyEnemy(int numOfEnemy) {
+        for (int i = 0; i < numOfEnemy; i++) {
+            BadGuy badGuy = new BadGuy(getResources(), getContext(), userCharecter, screenSize, randomNum(screenSize[0] - (screenSize[0] / Constants.SCALE_RATIO_NUM_X_EASY_ENEMY), 0), 300);
+            EasyEnemy.add(badGuy);
+        }
     }
 
-    private void SpawnAndDeleteAstroids() {
-        int maxAstroidSpawn = 6;
-
-        if (astriods.size() < maxAstroidSpawn) {
-            Astriod astriod = new Astriod(randomNum(screenSize[0] - (screenSize[0] / Constants.SCALE_RATIO_NUM_X_FOREGROUND), 0), 0, randomNum(Constants.ASTROID_MAX_SPEED, 5), screenSize, getResources());
+    public void spawnAsteroids(int numOfAsteroids) {
+        for (int i = 0; i < numOfAsteroids; i++) {
+            Astriod astriod = new Astriod(randomNum(screenSize[0] - (screenSize[0] / Constants.SCALE_RATIO_NUM_X_FOREGROUND), 0), 0, randomNum(Constants.asteriodMaxSpeed, 5), screenSize, getResources());
             astriods.add(astriod);
         }
+    }
 
+    private void checkAsteroidsOutOfBounds() {
         for (int i = 0; i < astriods.size(); i++) {
             if (astriods.get(i).getCurY() > screenSize[1]) {
                 astriods.remove(i);
@@ -322,7 +338,7 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
         userCharecter.setUserScore(userCharecter.getUserScore() - i);
     }
 
-    private void SpawnAndDeleteBackgroundStars() {
+    private void spawnAndDeleteBackgroundStars() {
 
         for (int i = 0; i < backgroundStars.size(); i++) {
             if (backgroundStars.get(i).getCurY() > screenSize[1] - 40) {
@@ -358,7 +374,7 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
         if (x > shootRegularButtonUI.getX() && y > shootRegularButtonUI.getY()) {
             if (ActOn) {
                 SpawnRegularBullet();
-                audioThread.simpleShootSound.run();
+                asteroidAudioThread.simpleShootSound.run();
             }
             return true;
         }
@@ -389,7 +405,7 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
                     astriods.remove(a);
                     bullets.remove(b);
                     userCharecter.setUserScore(userCharecter.getUserScore() + 1);
-                    audioThread.simpleShootAsteriodSound.run();
+                    asteroidAudioThread.simpleShootAsteriodSound.run();
                     brake = true;
                     break;
                 }
@@ -406,7 +422,7 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
                 if (bullets.get(b).getHitbox().intersect(EasyEnemy.get(e).getHitBox())) {
                     EasyEnemy.get(e).setCurHeath(EasyEnemy.get(e).getCurHeath() - 1);
                     bullets.remove(b);
-                    audioThread.easyEnemyHitSound.run();
+                    asteroidAudioThread.easyEnemyHitSound.run();
                     brake = true;
                     break;
                 }
@@ -418,11 +434,12 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
 
     }
 
-    public void CheckForDeadEnemys() {
+    public void checkForDeadEnemys() {
         for (int i = 0; i < EasyEnemy.size(); i++) {
             if (EasyEnemy.get(i).getCurHeath() < 1) {
                 SpawnCoin(EasyEnemy.get(i));
                 userCharecter.setEnemysKilled(userCharecter.getEnemysKilled() + 1);
+                EasyEnemy.get(i).cleanup();
                 EasyEnemy.remove(i);
             }
         }
@@ -433,7 +450,7 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
         GoldCoins.add(goldCoin);
     }
 
-    public void MoveCoins() {
+    public void moveCoins() {
         for (int c = 0; c < GoldCoins.size(); c++) {
             GoldCoins.get(c).setCurY(GoldCoins.get(c).getCurY() + GoldCoins.get(c).getSpeed());
             GoldCoins.get(c).draw();
@@ -444,6 +461,12 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
         }
 
 
+    }
+
+    public void drawCoins() {
+        for (int c = 0; c < GoldCoins.size(); c++) {
+            canvas.drawBitmap(GoldCoins.get(c).GoldCoinBitmap, GoldCoins.get(c).getCurx(), GoldCoins.get(c).getCurY(), null);
+        }
     }
 
     public int randomNum(int max, int min) {

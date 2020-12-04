@@ -1,13 +1,13 @@
 package com.thetechnoobs.moterskillgame.town;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 
@@ -22,10 +22,12 @@ public class TownGameView extends SurfaceView implements Runnable {
     Town town;
     UserCharacter userCharacter;
     AlcamistAI alcamistAI;
+    WeaponSmithAI weaponSmithAI;
     List<RectF> ArrowUI;
-    ControllerUI controllerUI;
+    ButtonUI buttonUI;
     CurrencyUI currencyUI;
     int MoveUserDirection = 2;
+    TownAudioThread townAudioThread;
     private Thread thread;
     private long FPS = 0;
     private long fps;
@@ -42,13 +44,15 @@ public class TownGameView extends SurfaceView implements Runnable {
 
         town = new Town(getResources(), screenSize, userCharacter);
 
-        alcamistAI = new AlcamistAI(0, 0, screenSize, getResources());
+        alcamistAI = new AlcamistAI(0, 0, screenSize, getResources(), userCharacter, town);
+        weaponSmithAI = new WeaponSmithAI(0, 0, screenSize, getResources(), userCharacter, town);
 
-
-        controllerUI = new ControllerUI(getResources(), screenSize);
-        ArrowUI = controllerUI.getControllerHitBoxs();
+        buttonUI = new ButtonUI(getResources(), screenSize);
+        ArrowUI = buttonUI.getControllerHitBoxs();
 
         currencyUI = new CurrencyUI(getContext(), getResources(), screenSize);
+
+        townAudioThread = new TownAudioThread(context);
 
         TextPaint = new Paint();
         TextPaint.setTextSize(70f);
@@ -82,28 +86,33 @@ public class TownGameView extends SurfaceView implements Runnable {
         town.update();
         alcamistAI.update();
         userCharacter.update();
+        weaponSmithAI.update();
         checkBoundres();
     }
 
     private void checkBoundres() {
         List<RectF> boundres = town.getBoundaries();
-        List<RectF> AIBounds = town.getAIBoundries();
 
-        for (int b = 0; b < boundres.size(); b++) {
+        for (int b = 0; b < boundres.size(); b++) {//check for unpassable bounderys
             if (userCharacter.getHitbox().intersect(boundres.get(b))) {
                 moving = false;
                 break;
             }
         }
 
-        for (int a = 0; a < AIBounds.size(); a++) {
-            if (userCharacter.getHitbox().intersect(AIBounds.get(a))) {
-                alcamistAI.drawAprochedText(true);
-                Log.v("testing", "Show chat for Alcamist");//TODO show chat alcmy store icon to user
-            } else {
-                alcamistAI.drawAprochedText(false);
-            }
+        if (userCharacter.getHitbox().intersect(weaponSmithAI.getBoundry())) {
+            weaponSmithAI.drawAprochedText(true);
+            buttonUI.drawShopBtnUI(true, 2);
+        } else if (userCharacter.getHitbox().intersect(alcamistAI.getBoudry())) {
+            alcamistAI.drawAprochedText(true);
+            buttonUI.drawShopBtnUI(true, 1);
+        } else {
+            weaponSmithAI.drawAprochedText(false);
+            buttonUI.drawShopBtnUI(false);
+            alcamistAI.drawAprochedText(false);
+            buttonUI.drawShopBtnUI(false);
         }
+
     }
 
     public void draw() {
@@ -114,6 +123,7 @@ public class TownGameView extends SurfaceView implements Runnable {
 
 
             alcamistAI.draw(canvas, town);
+            weaponSmithAI.draw(canvas, town);
             userCharacter.draw(canvas);
 
 
@@ -129,7 +139,7 @@ public class TownGameView extends SurfaceView implements Runnable {
     }
 
     private void DrawUI() {
-        controllerUI.draw(canvas);
+        buttonUI.draw(canvas);
         currencyUI.draw(canvas);
     }
 
@@ -150,6 +160,7 @@ public class TownGameView extends SurfaceView implements Runnable {
                 if (MoveUI(event.getX(), event.getY(), true)) {
                     moving = true;
                 }
+                CheckUI(event.getX(), event.getY());
                 break;
             case MotionEvent.ACTION_POINTER_DOWN:
 
@@ -190,6 +201,26 @@ public class TownGameView extends SurfaceView implements Runnable {
     }
 
     private boolean CheckUI(float x, float y) {
+        RectF touchPoint = new RectF(x, y, x + 10, y + 10);
+
+        if (buttonUI.getShopBtnHitbox() != null && touchPoint.intersect(buttonUI.getShopBtnHitbox())) {
+            buttonUI.shopBtn = buttonUI.shopBtnPushed;
+
+            switch (buttonUI.shopToGoTo) {//1 = chem, 2 = wepons
+                case 1:
+                    Intent GoToChemShop = new Intent(getContext(), ChemShopActivity.class);
+                    getContext().startActivity(GoToChemShop);
+                    pause();
+                    break;
+                case 2:
+                    Intent GoToWeponShop = new Intent(getContext(), WeponShopActivity.class);
+                    getContext().startActivity(GoToWeponShop);
+                    pause();
+                    break;
+            }
+
+        }
+
 
         return false;
     }

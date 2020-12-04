@@ -3,7 +3,8 @@ package com.thetechnoobs.moterskillgame.asteriodgame;
 public class Constants {
     public final static int BACKGROUND_STAR_MAX_SPEED = 30;
 
-    public final static int ASTROID_MAX_SPEED = 3;
+    public static int asteriodMaxSpeed = 3;
+    public static int asteriodMaxSpawn = 3;
 
     public final static int USER_MAX_HEATH = 5;
 

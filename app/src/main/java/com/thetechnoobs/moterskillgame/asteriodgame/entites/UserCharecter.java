@@ -1,4 +1,4 @@
-package com.thetechnoobs.moterskillgame;
+package com.thetechnoobs.moterskillgame.asteriodgame.entites;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;

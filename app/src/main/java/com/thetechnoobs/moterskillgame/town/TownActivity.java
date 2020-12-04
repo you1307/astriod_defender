@@ -4,10 +4,7 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.view.WindowManager;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.thetechnoobs.moterskillgame.asteriodgame.AsteroidGameView;
 
 public class TownActivity extends AppCompatActivity {
     public TownGameView townGameView;

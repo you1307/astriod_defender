@@ -7,11 +7,11 @@ public class TownConstants {
 
     public static final int USER_SPEED = (int) convertDpToPixel(6);
 
-    public static final int GOLD_COIN_UI_SCALE_X = (int) convertDpToPixel(160);
-    public static final int GOLD_COIN_UI_SCALE_Y = (int) convertDpToPixel(35);
+    public static final int GOLD_COIN_UI_SCALE_X = (int) convertDpToPixel(125);
+    public static final int GOLD_COIN_UI_SCALE_Y = (int) convertDpToPixel(25);
 
-    public static final int DOLLAR_SIGN_UI_SCALE_X = (int) convertDpToPixel(160);
-    public static final int DOLLAR_SIGN_UI_SCALE_Y = (int) convertDpToPixel(35);
+    public static final int DOLLAR_SIGN_UI_SCALE_X = (int) convertDpToPixel(125);
+    public static final int DOLLAR_SIGN_UI_SCALE_Y = (int) convertDpToPixel(25);
 
 
     public static float convertPixelsToDp(float px){

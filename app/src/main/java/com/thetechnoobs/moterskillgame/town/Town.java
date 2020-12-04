@@ -4,7 +4,6 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.DisplayMetrics;
 
@@ -35,7 +34,7 @@ public class Town {
 
     public static float convertDpToPixel(float dp) {
         DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
-        return Math.round( dp * (metrics.densityDpi / 160f));
+        return Math.round(dp * (metrics.densityDpi / 160f));
     }
 
     public void update() {
@@ -67,10 +66,12 @@ public class Town {
         }
 
 
-        switch (direction) {//simulate moving character
+        switch (direction) {//move map, or character in a direction
             //up=0 right=1 down=2 left=3
             case 0:
                 if (OffsetPosY == 0) {
+                    userCharacter.moveUser(direction);
+                } else if (userCharacter.getCurY() > screenSize[1] / 2 && OffsetPosY != 0) {
                     userCharacter.moveUser(direction);
                 } else {
                     setPosY(getPosY() + speed);
@@ -79,12 +80,16 @@ public class Town {
             case 1:
                 if (OffsetPosX + TownBitmap.getWidth() < screenSize[0]) {
                     userCharacter.moveUser(direction);
+                } else if (userCharacter.getCurX() < screenSize[0] / 2 && OffsetPosX + TownBitmap.getWidth() > screenSize[0]) {
+                    userCharacter.moveUser(direction);
                 } else {
                     setPosX(getPosX() - speed);
                 }
                 return;
             case 2:
                 if (OffsetPosY + TownBitmap.getHeight() < screenSize[1]) {
+                    userCharacter.moveUser(direction);
+                } else if (userCharacter.getCurY() < screenSize[1] / 2 && OffsetPosY + TownBitmap.getHeight() > screenSize[1]) {
                     userCharacter.moveUser(direction);
                 } else {
                     setPosY(getPosY() - speed);
@@ -93,19 +98,18 @@ public class Town {
             case 3:
                 if (OffsetPosX == 0) {
                     userCharacter.moveUser(direction);
+                } else if (userCharacter.getCurX() > screenSize[0] / 2 && OffsetPosX != 0) {
+                    userCharacter.moveUser(direction);
                 } else {
                     setPosX(getPosX() + speed);
                 }
                 return;
         }
+
     }
 
     public void draw(Canvas canvas) {
         canvas.drawBitmap(TownBitmap, OffsetPosX, OffsetPosY, null);
-
-        for (int b = 0; b < getBoundaries().size(); b++) {
-            //canvas.drawRect(getBoundaries().get(b), new Paint());
-        }
     }
 
     public List<RectF> getBoundaries() {
@@ -141,18 +145,6 @@ public class Town {
 
 
         return boundaries;
-    }
-
-    public List<RectF> getAIBoundries(){
-        List<RectF> AIBounds = new ArrayList<>();
-        AIBounds.clear();
-
-        RectF AlcamistBound = new RectF(OffsetPosX+convertDpToPixel(535), OffsetPosY+convertDpToPixel(225), OffsetPosX+convertDpToPixel(630), OffsetPosY+convertDpToPixel(320));
-
-
-        AIBounds.add(AlcamistBound);
-
-        return AIBounds;
     }
 
     public int getOffsetPosX() {

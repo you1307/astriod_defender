@@ -4,28 +4,24 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.DisplayMetrics;
 
 import com.thetechnoobs.moterskillgame.R;
 
-public class AlcamistAI {
+public class WeaponSmithAI {
     int CurX, CurY;
+    int Spritewidth, Spriteheight;
+    int xSpriteSheetLoc = 1, ySpriteSheetLoc = 1;
     int[] screenSize;
-    Bitmap AlcamistAIBitmap;
     UserCharacter userCharacter;
     ChatBubble chatBubble;
-    int Spritewidth, Spriteheight;
-    Paint displayTextPaint = new Paint();
     Town town;
-    int xSpriteSheetLoc = 1;
-    int ySpriteSheetLoc = 4;
+    Bitmap weaponSmithSpriteSheet;
     private boolean drawAprochText = false;
 
-    public AlcamistAI(int curX, int curY, int[] screenSize, Resources resources, UserCharacter userCharacter, Town town) {
+    public WeaponSmithAI(int curX, int curY, int[] screenSize, Resources resources, UserCharacter userCharacter, Town town) {
         CurX = curX;
         CurY = curY;
         this.screenSize = screenSize;
@@ -33,14 +29,8 @@ public class AlcamistAI {
         this.town = town;
         chatBubble = new ChatBubble(resources, screenSize);
 
-        displayTextPaint.setColor(Color.BLACK);
-        displayTextPaint.setStrokeWidth(convertDpToPixel(50));
-        displayTextPaint.setTextSize(convertDpToPixel(30));
-
-        AlcamistAIBitmap = BitmapFactory.decodeResource(resources, R.drawable.alchemist_sprite_sheet);
-
+        weaponSmithSpriteSheet = BitmapFactory.decodeResource(resources, R.drawable.knight_idel_sprites_sheet);
         settupSpriteSheet();
-
     }
 
     public static float convertPixelsToDp(float px) {
@@ -53,23 +43,19 @@ public class AlcamistAI {
         return Math.round(dp * (metrics.densityDpi / 160f));
     }
 
-    private void settupSpriteSheet() {
-        Spritewidth = AlcamistAIBitmap.getWidth() / 8;
-        Spriteheight = AlcamistAIBitmap.getHeight() / 4;
-    }
-
     public void draw(Canvas canvas, Town town) {
         int x = Spritewidth * xSpriteSheetLoc - Spritewidth;
         int y = Spriteheight * ySpriteSheetLoc - Spriteheight;
 
         Rect spriteFrame = new Rect(x, y, x + Spritewidth, y + Spriteheight);
-        RectF destination = new RectF(town.getOffsetPosX() + convertDpToPixel(545), town.getOffsetPosY() + convertDpToPixel(225), town.getOffsetPosX() + convertDpToPixel(570) + Spritewidth, town.getOffsetPosY() + convertDpToPixel(265) + Spriteheight);
+        RectF destination = new RectF(town.getOffsetPosX() + convertDpToPixel(235), town.getOffsetPosY() + convertDpToPixel(430), town.getOffsetPosX() + convertDpToPixel(215) + Spritewidth, town.getOffsetPosY() + convertDpToPixel(420) + Spriteheight);
 
-        canvas.drawBitmap(AlcamistAIBitmap, spriteFrame, destination, null);
+        canvas.drawBitmap(weaponSmithSpriteSheet, spriteFrame, destination, null);
 
         if (drawAprochText) {
-            canvas.drawBitmap(chatBubble.getChatBubbleCemWelcomBitmap(), town.getOffsetPosX() + convertDpToPixel(575), town.getOffsetPosY() + convertDpToPixel(200), null);
+            canvas.drawBitmap(chatBubble.getChatBubbleWeponWelcomBitmap(), town.getOffsetPosX() + convertDpToPixel(250), town.getOffsetPosY() + convertDpToPixel(415), null);
         }
+
     }
 
     public void update() {
@@ -83,8 +69,13 @@ public class AlcamistAI {
         drawAprochText = draw;
     }
 
-    public RectF getBoudry() {
-        return new RectF(town.OffsetPosX + convertDpToPixel(535), town.OffsetPosY + convertDpToPixel(225), town.OffsetPosX + convertDpToPixel(630), town.OffsetPosY + convertDpToPixel(320));
+    private void settupSpriteSheet() {
+        Spritewidth = weaponSmithSpriteSheet.getWidth() / 4;
+        Spriteheight = weaponSmithSpriteSheet.getHeight();
+    }
+
+    public RectF getBoundry() {
+        return new RectF(town.OffsetPosX + convertDpToPixel(220), town.OffsetPosY + convertDpToPixel(450), town.OffsetPosX + convertDpToPixel(300), town.OffsetPosY + convertDpToPixel(570));
     }
 
     public int getCurX() {
@@ -102,6 +93,4 @@ public class AlcamistAI {
     public void setCurY(int curY) {
         CurY = curY;
     }
-
-
 }

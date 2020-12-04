@@ -3,14 +3,30 @@ package com.thetechnoobs.moterskillgame;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class UserInventory {
-    int Money, Kills;
     Context context;
 
     public UserInventory(Context context){
         this.context = context;
+    }
+
+    //0 = none, 1 = basic gun, 2 = assault rifle, 3 = shot gun, 4 = ray gun
+    public int getEquippedWeapon() {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("inventory", Context.MODE_PRIVATE);
+        return sharedPreferences.getInt("equippedWeapon", 1);
+    }
 
 
+    //0 = none, 1 = basic gun, 2 = assault rifle, 3 = shot gun, 4 = ray gun
+    public void setEquippedWeapon(int weapon){
+        SharedPreferences sharedPreferences = context.getSharedPreferences("inventory", Context.MODE_PRIVATE);
+        SharedPreferences.Editor prefE = sharedPreferences.edit();
+
+        prefE.putInt("equippedWeapon", weapon);
+        prefE.apply();
     }
 
     public int getGoldCoins() {
