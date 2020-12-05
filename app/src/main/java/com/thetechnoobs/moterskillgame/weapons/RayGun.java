@@ -10,6 +10,18 @@ public class RayGun {
         this.context = context;
     }
 
+    public void setLvl(int lvl){
+        SharedPreferences sharedPreferences = context.getSharedPreferences("RayGun", Context.MODE_PRIVATE);
+        SharedPreferences.Editor prefE = sharedPreferences.edit();
+
+        prefE.putInt("lvl", lvl);
+        prefE.apply();
+    }
+
+    public int getlvl(){
+        SharedPreferences sharedPreferences = context.getSharedPreferences("RayGun", Context.MODE_PRIVATE);
+        return sharedPreferences.getInt("lvl", 1);
+    }
     public int getDamage() {
         SharedPreferences sharedPreferences = context.getSharedPreferences("RayGun", Context.MODE_PRIVATE);
         return sharedPreferences.getInt("damage", 50);

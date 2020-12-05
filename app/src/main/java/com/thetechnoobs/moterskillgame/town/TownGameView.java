@@ -11,6 +11,11 @@ import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 
+import com.thetechnoobs.moterskillgame.town.AI.AlcamistAI;
+import com.thetechnoobs.moterskillgame.town.AI.WeaponSmithAI;
+import com.thetechnoobs.moterskillgame.town.ui.ButtonUI;
+import com.thetechnoobs.moterskillgame.town.ui.CurrencyUI;
+
 import java.util.List;
 
 public class TownGameView extends SurfaceView implements Runnable {

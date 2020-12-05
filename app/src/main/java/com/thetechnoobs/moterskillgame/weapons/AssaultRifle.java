@@ -11,6 +11,23 @@ public class AssaultRifle {
 
     }
 
+    public int getBuyPrice() {
+        return 200;
+    }
+
+    public void setLvl(int lvl) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("AssaultRifle", Context.MODE_PRIVATE);
+        SharedPreferences.Editor prefE = sharedPreferences.edit();
+
+        prefE.putInt("lvl", lvl);
+        prefE.apply();
+    }
+
+    public int getlvl() {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("AssaultRifle", Context.MODE_PRIVATE);
+        return sharedPreferences.getInt("lvl", 1);
+    }
+
     public int getDamage() {
         SharedPreferences sharedPreferences = context.getSharedPreferences("AssaultRifle", Context.MODE_PRIVATE);
         return sharedPreferences.getInt("damage", 2);
@@ -26,7 +43,7 @@ public class AssaultRifle {
 
     public int getFireRate() {
         SharedPreferences sharedPreferences = context.getSharedPreferences("AssaultRifle", Context.MODE_PRIVATE);
-        return sharedPreferences.getInt("fireRate", 5);
+        return sharedPreferences.getInt("fireRate", 400);
     }
 
     public void setFireRate(int fireRate) {
@@ -37,7 +54,12 @@ public class AssaultRifle {
         prefE.apply();
     }
 
-    public void setNumberOfProjectiles(int projectiles){
+    public int getNumberOfProjectiles() {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("AssaultRifle", Context.MODE_PRIVATE);
+        return sharedPreferences.getInt("projectiles", 1);
+    }
+
+    public void setNumberOfProjectiles(int projectiles) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("AssaultRifle", Context.MODE_PRIVATE);
         SharedPreferences.Editor prefE = sharedPreferences.edit();
 
@@ -45,12 +67,7 @@ public class AssaultRifle {
         prefE.apply();
     }
 
-    public int getNumberOfProjectiles(){
-        SharedPreferences sharedPreferences = context.getSharedPreferences("AssaultRifle", Context.MODE_PRIVATE);
-        return sharedPreferences.getInt("projectiles", 1);
-    }
-
-    public void setPurchased(Boolean isPurchased){
+    public void setPurchased(Boolean isPurchased) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("AssaultRifle", Context.MODE_PRIVATE);
         SharedPreferences.Editor prefE = sharedPreferences.edit();
 
@@ -58,7 +75,7 @@ public class AssaultRifle {
         prefE.apply();
     }
 
-    public Boolean isPurchased(){
+    public Boolean isPurchased() {
         SharedPreferences sharedPreferences = context.getSharedPreferences("AssaultRifle", Context.MODE_PRIVATE);
         return sharedPreferences.getBoolean("purchased", false);
     }

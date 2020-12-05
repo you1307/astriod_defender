@@ -1,4 +1,4 @@
-package com.thetechnoobs.moterskillgame.town;
+package com.thetechnoobs.moterskillgame.town.AI;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -9,6 +9,9 @@ import android.graphics.RectF;
 import android.util.DisplayMetrics;
 
 import com.thetechnoobs.moterskillgame.R;
+import com.thetechnoobs.moterskillgame.town.ui.ChatBubble;
+import com.thetechnoobs.moterskillgame.town.Town;
+import com.thetechnoobs.moterskillgame.town.UserCharacter;
 
 public class WeaponSmithAI {
     int CurX, CurY;
@@ -75,7 +78,7 @@ public class WeaponSmithAI {
     }
 
     public RectF getBoundry() {
-        return new RectF(town.OffsetPosX + convertDpToPixel(220), town.OffsetPosY + convertDpToPixel(450), town.OffsetPosX + convertDpToPixel(300), town.OffsetPosY + convertDpToPixel(570));
+        return new RectF(town.getOffsetPosX() + convertDpToPixel(220), town.getOffsetPosY() + convertDpToPixel(450), town.getOffsetPosX() + convertDpToPixel(300), town.getOffsetPosY() + convertDpToPixel(570));
     }
 
     public int getCurX() {

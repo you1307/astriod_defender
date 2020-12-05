@@ -6,8 +6,25 @@ import android.content.SharedPreferences;
 public class BasicGun {
     Context context;
 
-    public BasicGun(Context context){
+    public BasicGun(Context context) {
         this.context = context;
+    }
+
+    public int getNextLevelCost() {
+        return getlvl() * 130;
+    }
+
+    public void setLvl(int lvl) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("BasicGun", Context.MODE_PRIVATE);
+        SharedPreferences.Editor prefE = sharedPreferences.edit();
+
+        prefE.putInt("lvl", lvl);
+        prefE.apply();
+    }
+
+    public int getlvl() {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("BasicGun", Context.MODE_PRIVATE);
+        return sharedPreferences.getInt("lvl", 1);
     }
 
     public int getDamage() {
@@ -23,7 +40,12 @@ public class BasicGun {
         prefE.apply();
     }
 
-    public void setNumberOfProjectiles(int projectiles){
+    public int getNumberOfProjectiles() {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("BasicGun", Context.MODE_PRIVATE);
+        return sharedPreferences.getInt("projectiles", 1);
+    }
+
+    public void setNumberOfProjectiles(int projectiles) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("BasicGun", Context.MODE_PRIVATE);
         SharedPreferences.Editor prefE = sharedPreferences.edit();
 
@@ -31,14 +53,9 @@ public class BasicGun {
         prefE.apply();
     }
 
-    public int getNumberOfProjectiles(){
-        SharedPreferences sharedPreferences = context.getSharedPreferences("BasicGun", Context.MODE_PRIVATE);
-        return sharedPreferences.getInt("projectiles", 1);
-    }
-
     public int getFireRate() {
         SharedPreferences sharedPreferences = context.getSharedPreferences("BasicGun", Context.MODE_PRIVATE);
-        return sharedPreferences.getInt("fireRate", 2);
+        return sharedPreferences.getInt("fireRate", 1000);
     }
 
     public void setFireRate(int fireRate) {

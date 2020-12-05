@@ -1,4 +1,4 @@
-package com.thetechnoobs.moterskillgame.town;
+package com.thetechnoobs.moterskillgame.town.AI;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -11,6 +11,9 @@ import android.graphics.RectF;
 import android.util.DisplayMetrics;
 
 import com.thetechnoobs.moterskillgame.R;
+import com.thetechnoobs.moterskillgame.town.ui.ChatBubble;
+import com.thetechnoobs.moterskillgame.town.Town;
+import com.thetechnoobs.moterskillgame.town.UserCharacter;
 
 public class AlcamistAI {
     int CurX, CurY;
@@ -84,7 +87,7 @@ public class AlcamistAI {
     }
 
     public RectF getBoudry() {
-        return new RectF(town.OffsetPosX + convertDpToPixel(535), town.OffsetPosY + convertDpToPixel(225), town.OffsetPosX + convertDpToPixel(630), town.OffsetPosY + convertDpToPixel(320));
+        return new RectF(town.getOffsetPosX() + convertDpToPixel(535), town.getOffsetPosY() + convertDpToPixel(225), town.getOffsetPosX() + convertDpToPixel(630), town.getOffsetPosY() + convertDpToPixel(320));
     }
 
     public int getCurX() {

@@ -1,4 +1,4 @@
-package com.thetechnoobs.moterskillgame.town;
+package com.thetechnoobs.moterskillgame.town.ui;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;

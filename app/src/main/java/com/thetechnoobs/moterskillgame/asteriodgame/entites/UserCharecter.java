@@ -77,7 +77,7 @@ public class UserCharecter {
     }
 
     public void setHeath(int heath) {
-        CurHeath = heath;
+        //CurHeath = heath;TODO remove comment later so user can take damage
     }
 
     public int getMaxHeath() {

@@ -22,4 +22,7 @@
     <string name="gold_coin_view_img_content_discription">Gold coin View IMG</string>
     <string name="cash_view_img_content_discription">Cash view IMG</string>
     <string name="buy_button">BUY</string>
+    <string name="not_enough_money">not enough money</string>
+    <string name="level_title">level</string>
+    <string name="max_level">Max Level</string>
 </resources>

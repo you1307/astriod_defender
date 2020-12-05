@@ -1,4 +1,4 @@
-package com.thetechnoobs.moterskillgame.town;
+package com.thetechnoobs.moterskillgame.town.ui;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -14,11 +14,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ButtonUI {
-    Bitmap RightBitmap, LeftBitmap, UpBitmap, DownBitmap, shopBtn, shopBtnPushed;
+    public Bitmap RightBitmap, LeftBitmap, UpBitmap, DownBitmap, shopBtn, shopBtnPushed;
     int UpX, UpY, DownX, DownY, LeftX, LeftY, RightX, RightY;
     int ShopBtnPosX, ShopBtnPosY;
     int[] screenSize;
-    int shopToGoTo = 1;
+    public int shopToGoTo = 1;
     boolean drawShopBtnUI = false;
 
     public ButtonUI(Resources resources, int[] screenSize) {

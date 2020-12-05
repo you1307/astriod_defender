@@ -1,4 +1,4 @@
-package com.thetechnoobs.moterskillgame.town;
+package com.thetechnoobs.moterskillgame.town.ui;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -12,6 +12,7 @@ import android.util.DisplayMetrics;
 
 import com.thetechnoobs.moterskillgame.R;
 import com.thetechnoobs.moterskillgame.UserInventory;
+import com.thetechnoobs.moterskillgame.town.TownConstants;
 
 public class CurrencyUI {
     int Money, Gold;

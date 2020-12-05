@@ -11,6 +11,7 @@ import android.view.SurfaceView;
 
 import com.thetechnoobs.moterskillgame.BackendSettings;
 import com.thetechnoobs.moterskillgame.UserData;
+import com.thetechnoobs.moterskillgame.UserInventory;
 import com.thetechnoobs.moterskillgame.asteriodgame.entites.Astriod;
 import com.thetechnoobs.moterskillgame.asteriodgame.entites.BadGuy;
 import com.thetechnoobs.moterskillgame.asteriodgame.entites.GoldCoin;
@@ -20,6 +21,7 @@ import com.thetechnoobs.moterskillgame.asteriodgame.ui.BackgroundStar;
 import com.thetechnoobs.moterskillgame.asteriodgame.ui.Explosion;
 import com.thetechnoobs.moterskillgame.asteriodgame.ui.HeathHeart;
 import com.thetechnoobs.moterskillgame.asteriodgame.ui.ShootRegularButtonUI;
+import com.thetechnoobs.moterskillgame.weapons.BasicGun;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +30,7 @@ import java.util.Random;
 public class AsteroidGameView extends SurfaceView implements Runnable {
     private final Paint paint, BackgroundRectPaint, scoreTextPaint;
     UserCharecter userCharecter;
+    UserInventory userInventory;
     UserData userData;
     ShootRegularButtonUI shootRegularButtonUI;
     RectF backgroundRect;
@@ -40,9 +43,11 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
     Canvas canvas;
     AsteroidAudioThread asteroidAudioThread;
     WaveSpawnThread waveSpawnThread;
+    GunBulletThreads gunBulletThreads;
     boolean waveDoneSending = false;
     private Thread thread;
     private boolean isPlaying = false;
+    private boolean shooting = false;
 
 
     public AsteroidGameView(Context context, int screenx, int screeny) {
@@ -55,11 +60,13 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
         backgroundRect = new RectF(0, 0, screenx, screeny);
 
         userCharecter = new UserCharecter(getResources(), screenSize, (float) screenx / 2, (float) screeny - 300);
+        userInventory = new UserInventory(context);
 
         settupButtonUI(context);
 
         asteroidAudioThread = new AsteroidAudioThread(context);
         waveSpawnThread = new WaveSpawnThread(this, getContext());
+        gunBulletThreads = new GunBulletThreads(this, context);
 
         paint = new Paint();
         paint.setColor(Color.BLUE);
@@ -94,11 +101,8 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
         if (getHolder().getSurface().isValid()) {
             canvas = getHolder().lockCanvas();
             canvas.drawRect(backgroundRect, BackgroundRectPaint);
-            canvas.drawBitmap(userCharecter.bitmap, userCharecter.getCurX(), userCharecter.getCurY(), null);
-            canvas.drawBitmap(shootRegularButtonUI.bitmap, shootRegularButtonUI.getX(), shootRegularButtonUI.getY(), null);
 
             drawUI();
-
 
             drawBackgrounStars();
             drawAstroids();
@@ -106,7 +110,10 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
             drawEasyEnemy();
             drawCoins();
 
+            checkForCollision();//needs to be in draw for collision explosion
 
+            canvas.drawBitmap(shootRegularButtonUI.bitmap, shootRegularButtonUI.getX(), shootRegularButtonUI.getY(), null);
+            canvas.drawBitmap(userCharecter.bitmap, userCharecter.getCurX(), userCharecter.getCurY(), null);
             getHolder().unlockCanvasAndPost(canvas);
         }
     }
@@ -117,8 +124,6 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
     }
 
     private void update() {
-        checkForCollision();
-
         //update coins position
         moveCoins();
 
@@ -163,10 +168,13 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
 
         switch (maskedAction) {
             case MotionEvent.ACTION_DOWN:
-                checkUIButtons(event.getX(), event.getY(), true);
+
                 break;
             case MotionEvent.ACTION_POINTER_DOWN:
-                checkUIButtons(event.getX(pointerIndex), event.getY(pointerIndex), true);
+                if (checkUIButtons(event.getX(pointerIndex), event.getY(pointerIndex), true)) {
+                    shooting = true;
+                }
+
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (!checkUIButtons(event.getX(), event.getY(), false)) {
@@ -174,8 +182,12 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
                 }
                 break;
             case MotionEvent.ACTION_UP:
+
                 break;
             case MotionEvent.ACTION_POINTER_UP:
+                if (checkUIButtons(event.getX(pointerIndex), event.getY(pointerIndex), false)) {
+                    shooting = false;
+                }
                 break;
             case MotionEvent.ACTION_CANCEL:
                 break;
@@ -183,6 +195,41 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
         invalidate();
 
         return true;
+    }
+
+    private boolean checkUIButtons(float x, float y, boolean actOn) {
+        if (x > shootRegularButtonUI.getX() && y > shootRegularButtonUI.getY()) {
+            if (actOn) {
+                switch (userInventory.getEquippedWeapon()) {
+                    case 1:
+                        if (!gunBulletThreads.spawnRegularBulletThread.running) {
+                            gunBulletThreads.startBasicGunShot();
+                        }
+                        break;
+                    case 2:
+                        if (!gunBulletThreads.assaultRifleShootThread.running) {
+                            gunBulletThreads.startAssultRifleGunShot();
+                        }
+                        break;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public boolean getShouldShoot() {
+        return shooting;
+    }
+
+    public void spawnAssaultBullet() {
+        bullets.add(new RegularBullet(getResources(), 50, screenSize, userCharecter.getCurX() + (float) userCharecter.bitmap.getWidth() / 2, userCharecter.getCurY()));
+        asteroidAudioThread.assaultRifleShootSound.run();
+    }
+
+    public void spawnRegularBullet() {
+        bullets.add(new RegularBullet(getResources(), 50, screenSize, userCharecter.getCurX() + (float) userCharecter.bitmap.getWidth() / 2, userCharecter.getCurY()));
+        asteroidAudioThread.simpleShootSound.run();
     }
 
     public void gameOver() {
@@ -247,11 +294,8 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
 
         for (int i = 0; i < astriods.size(); i++) {//check if astriod hits user
             if (astriods.get(i).getCollisionBox().intersect(userCharecter.getHitBox())) {
-                int Eventx, Eventy;
-                Eventx = astriods.get(i).getCurX();
-                Eventy = astriods.get(i).getCurY();
+                explosionFrame(astriods.get(i).getCurX(), astriods.get(i).getCurY());
                 astriods.remove(i);
-                ExplosionFrame(Eventx, Eventy);
                 userCharecter.setHeath(userCharecter.getHeath() - 1);
                 asteroidAudioThread.asteriodHitUserThread.run();
                 break;
@@ -280,9 +324,9 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
         }
     }
 
-    private void ExplosionFrame(float eventx, float eventy) {
+    private void explosionFrame(float eventx, float eventy) {
         Explosion explosion = new Explosion((int) eventx, (int) eventy, screenSize, getResources());
-        canvas.drawBitmap(explosion.bitmap, explosion.x, explosion.y, null);
+        canvas.drawBitmap(explosion.bitmap, explosion.getX(), explosion.getY(), null);
     }
 
     private void drawBackgrounStars() {
@@ -370,21 +414,6 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
         }
     }
 
-    private boolean checkUIButtons(float x, float y, boolean ActOn) {
-        if (x > shootRegularButtonUI.getX() && y > shootRegularButtonUI.getY()) {
-            if (ActOn) {
-                SpawnRegularBullet();
-                asteroidAudioThread.simpleShootSound.run();
-            }
-            return true;
-        }
-        return false;
-    }
-
-    private void SpawnRegularBullet() {
-        bullets.add(new RegularBullet(getResources(), 50, screenSize, userCharecter.getCurX() + (float) userCharecter.bitmap.getWidth() / 2, userCharecter.getCurY()));
-    }
-
     private void DespawnBullets() {
         for (int i = 0; i < bullets.size(); i++) {
             if (bullets.get(i).getCurY() < 0) {
@@ -401,7 +430,7 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
             boolean brake = false;
             for (int b = 0; b < bullets.size(); b++) {
                 if (bullets.get(b).getHitbox().intersect(astriods.get(a).getCollisionBox())) {
-                    ExplosionFrame(astriods.get(a).getCurX(), astriods.get(a).getCurY());
+                    explosionFrame(astriods.get(a).getCurX(), astriods.get(a).getCurY());
                     astriods.remove(a);
                     bullets.remove(b);
                     userCharecter.setUserScore(userCharecter.getUserScore() + 1);
@@ -420,7 +449,7 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
             boolean brake = false;
             for (int b = 0; b < bullets.size(); b++) {
                 if (bullets.get(b).getHitbox().intersect(EasyEnemy.get(e).getHitBox())) {
-                    EasyEnemy.get(e).setCurHeath(EasyEnemy.get(e).getCurHeath() - 1);
+                    EasyEnemy.get(e).setCurHeath(EasyEnemy.get(e).getCurHeath() - new BasicGun(getContext()).getDamage());
                     bullets.remove(b);
                     asteroidAudioThread.easyEnemyHitSound.run();
                     brake = true;
@@ -441,6 +470,7 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
                 userCharecter.setEnemysKilled(userCharecter.getEnemysKilled() + 1);
                 EasyEnemy.get(i).cleanup();
                 EasyEnemy.remove(i);
+                asteroidAudioThread.easyEnemyDeathSound.run();
             }
         }
     }
@@ -496,9 +526,10 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
 
     public void pause() {
         try {
+            Cleanup();
             isPlaying = false;
             thread.join();
-            Cleanup();
+
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
