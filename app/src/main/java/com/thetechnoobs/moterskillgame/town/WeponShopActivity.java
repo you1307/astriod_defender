@@ -25,7 +25,7 @@ import com.thetechnoobs.moterskillgame.weapons.ShotGun;
 public class WeponShopActivity extends AppCompatActivity {
     ImageView BasicGunIMG, AssaultRifleIMG, ShotGunIMG, RayGunIMG;
     TextView GunNameTXT, GunDescriptionTXT, GunDamageTXT, GunFireRateTXT, projectileTXT, UserGoldTXT, UserMoneyTXT, gunlevelTXT;
-    TextView assualtRiflePriceTXT;
+    TextView assualtRiflePriceTXT, shotGunPriceTXT;
     Button BuyUpgradeBTN;
     int GunInView = 1;//0 = none, 1 = basic gun, 2 = assault rifle, 3 = shot gun, 4 = ray gun
     UserInventory userInventory = new UserInventory(this);
@@ -63,8 +63,9 @@ public class WeponShopActivity extends AppCompatActivity {
         UserMoneyTXT = findViewById(R.id.UserMoneyTXT);
         gunlevelTXT = findViewById(R.id.levelTXT);
 
-
+        //prices text view
         assualtRiflePriceTXT = findViewById(R.id.assualtRifleBuyAmountTXT);
+        shotGunPriceTXT =findViewById(R.id.ShotGunBuyAmountTXT);
 
         BuyUpgradeBTN = findViewById(R.id.BuyUpgradeBTN);
 
@@ -95,6 +96,14 @@ public class WeponShopActivity extends AppCompatActivity {
         } else {
             assualtRiflePriceTXT.setText("$" + assaultRifle.getBuyPrice());
         }
+
+        if(shotGun.isPurchased()){
+            shotGunPriceTXT.setVisibility(View.INVISIBLE);
+            ShotGunIMG.setImageResource(R.drawable.shot_gun);
+        }else{
+            shotGunPriceTXT.setText("$"+shotGun.getBuyPrice());
+        }
+
     }
 
     private void LoadEquippedWeapon() {
@@ -255,7 +264,7 @@ public class WeponShopActivity extends AppCompatActivity {
                 break;
             case 2:
                 if (assaultRifle.isPurchased()) {
-                    //upgradeAssaultRifle();
+                    //upgradeAssaultRifle(); TODO implement upgrade feature
                 } else {
                     purchaseAssaultRifle();
                 }
@@ -271,14 +280,31 @@ public class WeponShopActivity extends AppCompatActivity {
         loadData();
     }
 
+    private void upgradeAssaultRifle() {
+        if (userInventory.getMoney() >= assaultRifle.getNextLevelCost()) {
+            userInventory.removeMoney(assaultRifle.getNextLevelCost());
+
+            if (assaultRifle.getlvl() == 9) {
+                assaultRifle.setDamage(assaultRifle.getDamage() + 1);
+                assaultRifle.setFireRate(assaultRifle.getFireRate() - 50);//TODO change values to something more appropriate
+                assaultRifle.setLvl(assaultRifle.getlvl() + 1);
+            } else {
+                assaultRifle.setDamage(assaultRifle.getDamage() + 1);
+                assaultRifle.setFireRate(assaultRifle.getFireRate() - 50);
+                assaultRifle.setLvl(assaultRifle.getlvl() + 1);
+            }
+
+        } else {
+            Toast.makeText(this, "Not enough money", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private void upgradeBasicGun() {
         if (userInventory.getMoney() >= basicGun.getNextLevelCost()) {
             userInventory.removeMoney(basicGun.getNextLevelCost());
 
-            if (basicGun.getlvl() == 9) {
-                basicGun.setDamage(basicGun.getDamage() + 1);
-                basicGun.setFireRate(basicGun.getFireRate() - 50);
-                basicGun.setLvl(basicGun.getlvl() + 1);
+            if (basicGun.getlvl() == 10) {
+                Toast.makeText(this, "Gun is max level", Toast.LENGTH_SHORT).show();
             } else {
                 basicGun.setDamage(basicGun.getDamage() + 1);
                 basicGun.setFireRate(basicGun.getFireRate() - 50);

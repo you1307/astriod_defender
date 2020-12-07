@@ -137,11 +137,12 @@
                     android:id="@+id/assualtRifleBuyAmountTXT"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentTop="true"
-                    android:layout_marginStart="86dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="71dp"
                     android:layout_marginTop="23dp"
+                    android:layout_marginEnd="72dp"
                     android:text="@string/_00_place_holder"
                     android:textColor="@color/gold"
                     android:textSize="30sp" />
@@ -265,12 +266,11 @@
         android:id="@+id/UserGoldTXT"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
+        android:layout_marginStart="35dp"
         android:layout_marginBottom="4dp"
         android:text="@string/_00_place_holder"
         android:textColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="@+id/imageView11"
-        app:layout_constraintEnd_toEndOf="@+id/imageView11"
         app:layout_constraintStart_toStartOf="@+id/imageView11"
         app:layout_constraintTop_toTopOf="@+id/imageView11"
         app:layout_constraintVertical_bias="0.615" />
@@ -289,15 +289,14 @@
         android:id="@+id/UserMoneyTXT"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
+        android:layout_marginStart="35dp"
         android:layout_marginBottom="4dp"
         android:text="@string/_00_place_holder"
         android:textColor="#FFFAFA"
         app:layout_constraintBottom_toBottomOf="@+id/imageView12"
-        app:layout_constraintEnd_toEndOf="@+id/imageView12"
         app:layout_constraintStart_toEndOf="@+id/imageView11"
         app:layout_constraintTop_toTopOf="@+id/imageView12"
-        app:layout_constraintVertical_bias="0.61" />
+        app:layout_constraintVertical_bias="0.666" />
 
     <Button
         android:id="@+id/BuyUpgradeBTN"

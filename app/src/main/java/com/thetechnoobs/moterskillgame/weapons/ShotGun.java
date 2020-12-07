@@ -74,4 +74,8 @@ public class ShotGun {
         SharedPreferences sharedPreferences = context.getSharedPreferences("ShotGun", Context.MODE_PRIVATE);
         return sharedPreferences.getBoolean("purchased", false);
     }
+
+    public int getBuyPrice() {
+        return 500;
+    }
 }
