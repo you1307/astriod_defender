@@ -168,7 +168,9 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
 
         switch (maskedAction) {
             case MotionEvent.ACTION_DOWN:
-
+                if (checkUIButtons(event.getX(), event.getY(), true)) {
+                    shooting = true;
+                }
                 break;
             case MotionEvent.ACTION_POINTER_DOWN:
                 if (checkUIButtons(event.getX(pointerIndex), event.getY(pointerIndex), true)) {
@@ -182,7 +184,9 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
                 }
                 break;
             case MotionEvent.ACTION_UP:
-
+                if (checkUIButtons(event.getX(), event.getY(), false)) {
+                    shooting = false;
+                }
                 break;
             case MotionEvent.ACTION_POINTER_UP:
                 if (checkUIButtons(event.getX(pointerIndex), event.getY(pointerIndex), false)) {
