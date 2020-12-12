@@ -26,6 +26,7 @@ public class WeponShopActivity extends AppCompatActivity {
     ImageView BasicGunIMG, AssaultRifleIMG, ShotGunIMG, RayGunIMG;
     TextView GunNameTXT, GunDescriptionTXT, GunDamageTXT, GunFireRateTXT, projectileTXT, UserGoldTXT, UserMoneyTXT, gunlevelTXT;
     TextView assualtRiflePriceTXT, shotGunPriceTXT;
+    ImageView goldCoinIMG;
     Button BuyUpgradeBTN;
     int GunInView = 1;//0 = none, 1 = basic gun, 2 = assault rifle, 3 = shot gun, 4 = ray gun
     UserInventory userInventory = new UserInventory(this);
@@ -52,6 +53,7 @@ public class WeponShopActivity extends AppCompatActivity {
         AssaultRifleIMG = findViewById(R.id.AssaltRifleIMG);
         ShotGunIMG = findViewById(R.id.ShotGunIMG);
         RayGunIMG = findViewById(R.id.RayGunIMG);
+        goldCoinIMG = findViewById(R.id.goldCoinIMG);
 
         //data views
         GunNameTXT = findViewById(R.id.GunNameTXT);
@@ -65,7 +67,7 @@ public class WeponShopActivity extends AppCompatActivity {
 
         //prices text view
         assualtRiflePriceTXT = findViewById(R.id.assualtRifleBuyAmountTXT);
-        shotGunPriceTXT =findViewById(R.id.ShotGunBuyAmountTXT);
+        shotGunPriceTXT = findViewById(R.id.ShotGunBuyAmountTXT);
 
         BuyUpgradeBTN = findViewById(R.id.BuyUpgradeBTN);
 
@@ -76,8 +78,7 @@ public class WeponShopActivity extends AppCompatActivity {
         startActivity(new Intent(this, AsteroidGameActivity.class));//TODO remove and make game start menu
         finish();
 
-        assaultRifle.setPurchased(false);
-        userInventory.addMoney(500);
+        userInventory.addGoldCoins(9999999);
         loadData();
     }
 
@@ -97,11 +98,11 @@ public class WeponShopActivity extends AppCompatActivity {
             assualtRiflePriceTXT.setText("$" + assaultRifle.getBuyPrice());
         }
 
-        if(shotGun.isPurchased()){
+        if (shotGun.isPurchased()) {
             shotGunPriceTXT.setVisibility(View.INVISIBLE);
             ShotGunIMG.setImageResource(R.drawable.shot_gun);
-        }else{
-            shotGunPriceTXT.setText("$"+shotGun.getBuyPrice());
+        } else {
+            shotGunPriceTXT.setText("$" + shotGun.getBuyPrice());
         }
 
     }
@@ -183,12 +184,14 @@ public class WeponShopActivity extends AppCompatActivity {
 
         if (assaultRifle.isPurchased()) {
             userInventory.setEquippedWeapon(2);
-            BuyUpgradeBTN.setText(R.string.upgrade_btn);
+            BuyUpgradeBTN.setText(String.valueOf(assaultRifle.getNextLevelCost()));
             AssaultRifleIMG.setImageResource(R.drawable.assalt_rifle);
+            goldCoinIMG.setVisibility(View.VISIBLE);
         } else {
             BuyUpgradeBTN.setText(R.string.buy_button);
             AssaultRifleIMG.setImageResource(R.drawable.assalt_rifle_locked);
             assualtRiflePriceTXT.setVisibility(View.VISIBLE);
+            goldCoinIMG.setVisibility(View.GONE);
         }
     }
 
@@ -208,8 +211,10 @@ public class WeponShopActivity extends AppCompatActivity {
 
         if (basicGun.getlvl() == 10) {
             BuyUpgradeBTN.setText(R.string.max_level);
+            goldCoinIMG.setVisibility(View.GONE);
         } else {
-            BuyUpgradeBTN.setText(R.string.upgrade_btn);
+            BuyUpgradeBTN.setText(String.valueOf(basicGun.getNextLevelCost()));
+            goldCoinIMG.setVisibility(View.VISIBLE);
         }
 
     }
@@ -300,13 +305,18 @@ public class WeponShopActivity extends AppCompatActivity {
     }
 
     private void upgradeBasicGun() {
-        if (userInventory.getMoney() >= basicGun.getNextLevelCost()) {
-            userInventory.removeMoney(basicGun.getNextLevelCost());
+        if (userInventory.getGoldCoins() >= basicGun.getNextLevelCost()) {
+            userInventory.removeGoldCoins(basicGun.getNextLevelCost());
 
-            if (basicGun.getlvl() == 10) {
+            if (basicGun.getlvl() == 10) {//add damage
                 Toast.makeText(this, "Gun is max level", Toast.LENGTH_SHORT).show();
             } else {
-                basicGun.setDamage(basicGun.getDamage() + 1);
+                if(basicGun.getlvl() == 5){//add damage
+                    basicGun.setDamage(basicGun.getDamage() + 1);
+                }else if(basicGun.getlvl() == 9){
+                    basicGun.setDamage(basicGun.getDamage() + 1);
+                }
+
                 basicGun.setFireRate(basicGun.getFireRate() - 50);
                 basicGun.setLvl(basicGun.getlvl() + 1);
             }

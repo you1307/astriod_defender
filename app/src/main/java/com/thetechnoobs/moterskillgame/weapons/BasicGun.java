@@ -11,7 +11,7 @@ public class BasicGun {
     }
 
     public int getNextLevelCost() {
-        return getlvl() * 130;
+        return getlvl() * 2;
     }
 
     public void setLvl(int lvl) {

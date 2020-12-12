@@ -32,7 +32,7 @@ public class WaveSpawnThread extends Thread {
     }
 
     private int getAmountOfAsteroidToSpawn() {
-        return numberOfWavesCompleted * 5;
+        return numberOfWavesCompleted * 4;
     }
 
     @Override
