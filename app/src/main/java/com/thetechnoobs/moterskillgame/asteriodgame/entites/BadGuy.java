@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.RectF;
+import android.util.Log;
 
 import com.thetechnoobs.moterskillgame.R;
 import com.thetechnoobs.moterskillgame.asteriodgame.AsteroidAudioThread;
@@ -21,7 +22,7 @@ public class BadGuy {
     public Bitmap EasyEnemyAlive, EnemyHeathHeart;
     public int[] screenSize;
     public int speed = new Random().nextInt(Constants.DEFULT_EASY_ENEMY_SPEED);
-    public ShootThread shootThread = new ShootThread(2000);
+    public ShootThread shootThread = new ShootThread(3000);
     int CurHeath = MaxHeath;
     Boolean direction = false; //true means move right, false means move left
     AsteroidAudioThread asteroidAudioThread;
@@ -36,9 +37,8 @@ public class BadGuy {
         this.resources = resources;
         this.userCharecter = userCharecter;
 
-        shootThread.start();
         asteroidAudioThread = new AsteroidAudioThread(context);
-
+        shootThread.start();
 
         EasyEnemyAlive = BitmapFactory.decodeResource(resources, R.drawable.enemy_alive_easy);
         EasyEnemyAlive = Bitmap.createScaledBitmap(EasyEnemyAlive,
@@ -168,7 +168,7 @@ public class BadGuy {
     }
 
     public class ShootThread extends Thread {
-        public boolean ShouldStop = false;
+        public boolean run = true;
         long WaitTime;
 
         ShootThread(int WaitTime) {
@@ -177,10 +177,16 @@ public class BadGuy {
 
         public void run() {
 
-            while (!ShouldStop) {
+            while (run) {
                 try {
+
                     Thread.sleep(WaitTime);
-                    Shoot();
+                    if (!run) {
+                        this.join();
+                    } else {
+                        Shoot();
+                    }
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -188,7 +194,7 @@ public class BadGuy {
         }
 
         public void stopThread() {
-            ShouldStop = true;
+            run = false;
         }
     }
 }

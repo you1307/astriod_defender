@@ -78,7 +78,6 @@ public class WeponShopActivity extends AppCompatActivity {
         startActivity(new Intent(this, AsteroidGameActivity.class));//TODO remove and make game start menu
         finish();
 
-        userInventory.addGoldCoins(9999999);
         loadData();
     }
 
@@ -186,7 +185,13 @@ public class WeponShopActivity extends AppCompatActivity {
             userInventory.setEquippedWeapon(2);
             BuyUpgradeBTN.setText(String.valueOf(assaultRifle.getNextLevelCost()));
             AssaultRifleIMG.setImageResource(R.drawable.assalt_rifle);
-            goldCoinIMG.setVisibility(View.VISIBLE);
+
+            if (assaultRifle.getlvl() == 10) {
+                goldCoinIMG.setVisibility(View.GONE);
+                BuyUpgradeBTN.setText(R.string.max_level);
+            } else {
+                goldCoinIMG.setVisibility(View.VISIBLE);
+            }
         } else {
             BuyUpgradeBTN.setText(R.string.buy_button);
             AssaultRifleIMG.setImageResource(R.drawable.assalt_rifle_locked);
@@ -269,7 +274,7 @@ public class WeponShopActivity extends AppCompatActivity {
                 break;
             case 2:
                 if (assaultRifle.isPurchased()) {
-                    //upgradeAssaultRifle(); TODO implement upgrade feature
+                    upgradeAssaultRifle();
                 } else {
                     purchaseAssaultRifle();
                 }
@@ -289,16 +294,18 @@ public class WeponShopActivity extends AppCompatActivity {
         if (userInventory.getMoney() >= assaultRifle.getNextLevelCost()) {
             userInventory.removeMoney(assaultRifle.getNextLevelCost());
 
-            if (assaultRifle.getlvl() == 9) {
-                assaultRifle.setDamage(assaultRifle.getDamage() + 1);
-                assaultRifle.setFireRate(assaultRifle.getFireRate() - 50);//TODO change values to something more appropriate
-                assaultRifle.setLvl(assaultRifle.getlvl() + 1);
+            if (assaultRifle.getlvl() == 10) {
+                Toast.makeText(this, "Gun is max level", Toast.LENGTH_SHORT).show();
             } else {
-                assaultRifle.setDamage(assaultRifle.getDamage() + 1);
-                assaultRifle.setFireRate(assaultRifle.getFireRate() - 50);
+                if (assaultRifle.getlvl() == 5) {
+                    assaultRifle.setDamage(assaultRifle.getDamage() + 1);
+                } else if (assaultRifle.getlvl() == 9) {
+                    assaultRifle.setDamage(assaultRifle.getDamage() + 1);
+                }
+
+                assaultRifle.setFireRate(assaultRifle.getFireRate() - 40);
                 assaultRifle.setLvl(assaultRifle.getlvl() + 1);
             }
-
         } else {
             Toast.makeText(this, "Not enough money", Toast.LENGTH_SHORT).show();
         }
@@ -311,9 +318,9 @@ public class WeponShopActivity extends AppCompatActivity {
             if (basicGun.getlvl() == 10) {//add damage
                 Toast.makeText(this, "Gun is max level", Toast.LENGTH_SHORT).show();
             } else {
-                if(basicGun.getlvl() == 5){//add damage
+                if (basicGun.getlvl() == 5) {//add damage
                     basicGun.setDamage(basicGun.getDamage() + 1);
-                }else if(basicGun.getlvl() == 9){
+                } else if (basicGun.getlvl() == 9) {
                     basicGun.setDamage(basicGun.getDamage() + 1);
                 }
 

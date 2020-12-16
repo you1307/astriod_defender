@@ -13,6 +13,7 @@ public class WaveSpawnThread extends Thread {
     SpawnEasyEnemy spawnEasyEnemy;
     SpawnAsteroid spawnAsteroid;
     Thread enemyThread, asteroidThread;
+    private boolean goToEndScreen = true;
 
     public WaveSpawnThread(AsteroidGameView asteroidGameView, Context context) {
         this.asteroidGameView = asteroidGameView;
@@ -28,11 +29,17 @@ public class WaveSpawnThread extends Thread {
     }
 
     private int getAmountOfEnemyToSpawn() {
-        return (int) (numberOfWavesCompleted * 1.5);
+        return (int) (numberOfWavesCompleted++);
     }
 
     private int getAmountOfAsteroidToSpawn() {
-        return numberOfWavesCompleted * 4;
+        int increaseCount = 1;
+
+        if (numberOfWavesCompleted > 14) {
+            increaseCount = 4;
+        }
+
+        return numberOfWavesCompleted * increaseCount;
     }
 
     @Override
@@ -44,7 +51,9 @@ public class WaveSpawnThread extends Thread {
 
 
     private void waveDone() {
-        asteroidGameView.waveDone();
+        if (goToEndScreen) {
+            asteroidGameView.waveDone();
+        }
     }
 
     private void delay(int milli) {
@@ -55,6 +64,18 @@ public class WaveSpawnThread extends Thread {
         }
     }
 
+    public void stopAll() {
+        goToEndScreen = false;
+        spawnAsteroid.stopThread();
+        spawnEasyEnemy.stopThread();
+
+        try{
+            spawnAsteroid.join();
+            spawnEasyEnemy.join();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 }
 
 
@@ -62,6 +83,7 @@ class SpawnAsteroid extends Thread {
     int totalAmountToSpawn;
     int curWave;
     AsteroidGameView asteroidGameView;
+    boolean run = true;
 
     SpawnAsteroid(int amount, AsteroidGameView asteroidGameView, int curWave) {
         totalAmountToSpawn = amount;
@@ -71,8 +93,7 @@ class SpawnAsteroid extends Thread {
 
     @Override
     public void run() {
-
-        while (totalAmountToSpawn > 0) {
+        while (totalAmountToSpawn > 0 && run) {
             if (asteroidGameView.EasyEnemy.size() < 5) {
                 asteroidGameView.spawnAsteroids(1);
                 totalAmountToSpawn -= 1;
@@ -84,8 +105,10 @@ class SpawnAsteroid extends Thread {
                 e.printStackTrace();
             }
         }
+    }
 
-
+    public void stopThread() {
+        run = false;
     }
 }
 
@@ -93,6 +116,7 @@ class SpawnAsteroid extends Thread {
 class SpawnEasyEnemy extends Thread {
     int totalAmountToSpawn;
     int curWave;
+    boolean run = true;
     AsteroidGameView asteroidGameView;
 
     SpawnEasyEnemy(int amount, AsteroidGameView asteroidGameView, int curWave) {
@@ -103,8 +127,7 @@ class SpawnEasyEnemy extends Thread {
 
     @Override
     public void run() {
-
-        while (totalAmountToSpawn > 0) {
+        while (totalAmountToSpawn > 0 && run) {
             if (asteroidGameView.EasyEnemy.size() < 4) {
                 asteroidGameView.spawnEasyEnemy(1);
                 totalAmountToSpawn -= 1;
@@ -116,7 +139,9 @@ class SpawnEasyEnemy extends Thread {
                 e.printStackTrace();
             }
         }
+    }
 
-
+    public void stopThread() {
+        run = false;
     }
 }

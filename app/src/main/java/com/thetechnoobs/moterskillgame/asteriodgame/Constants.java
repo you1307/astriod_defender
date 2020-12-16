@@ -6,7 +6,7 @@ public class Constants {
     public static int asteriodMaxSpeed = 3;
     public static int asteriodMaxSpawn = 3;
 
-    public final static int USER_MAX_HEATH = 5;
+    public final static int BASE_USER_MAX_HEATH = 5;
 
     public static final int BADGUY_EASY_MAX_HEATH = 3;
     public static final int DEFULT_EASY_ENEMY_SPEED = 10;

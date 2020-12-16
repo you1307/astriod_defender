@@ -9,10 +9,11 @@ import com.thetechnoobs.moterskillgame.asteriodgame.Constants;
 import com.thetechnoobs.moterskillgame.R;
 
 public class UserCharecter {
-    public int MaxHeath = Constants.USER_MAX_HEATH;
+    public int MaxHeath = Constants.BASE_USER_MAX_HEATH;
     public int CurHeath = MaxHeath;
-    public int userScore = 0;
+    public int userScore = 1;
     public int EnemysKilled = 0;
+    public int damageTaken;
     public Bitmap bitmap;
     int Gold = 0;
     float CurX, CurY;
@@ -56,6 +57,14 @@ public class UserCharecter {
         }
     }
 
+    public int getDamageTaken() {
+        return damageTaken;
+    }
+
+    public void setDamageTaken(int damageTaken) {
+        this.damageTaken = damageTaken;
+    }
+
     public int getEnemysKilled() {
         return EnemysKilled;
     }
@@ -77,7 +86,7 @@ public class UserCharecter {
     }
 
     public void setHeath(int heath) {
-        //CurHeath = heath;TODO remove comment later so user can take damage
+        CurHeath = heath;
     }
 
     public int getMaxHeath() {

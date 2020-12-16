@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 
@@ -48,6 +49,7 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
     private Thread thread;
     private boolean isPlaying = false;
     private boolean shooting = false;
+    private int ammoLeft;
 
 
     public AsteroidGameView(Context context, int screenx, int screeny) {
@@ -81,7 +83,6 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
         waveSpawnThread.start();
 
     }
-
 
     @Override
     public void run() {
@@ -121,6 +122,7 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
     private void drawUI() {
         drawUserHealth();
         drawUserScore();
+        drawAmmoLeft();
     }
 
     private void update() {
@@ -243,12 +245,13 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
         GoToEndGameScreen.putExtra("score", userCharecter.getUserScore());
         GoToEndGameScreen.putExtra("gold", userCharecter.getGold());
         GoToEndGameScreen.putExtra("enemysKilled", userCharecter.getEnemysKilled());
+        GoToEndGameScreen.putExtra("damageTaken", userCharecter.getDamageTaken());
         context.startActivity(GoToEndGameScreen);
-
         Cleanup();
     }
 
     private void Cleanup() {
+        waveSpawnThread.stopAll();
         backgroundStars.clear();
         astriods.clear();
         bullets.clear();
@@ -256,8 +259,21 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
 
         for (int e = 0; e < EasyEnemy.size(); e++) {
             EasyEnemy.get(e).cleanup();
-            EasyEnemy.remove(e);
+            //EasyEnemy.remove(e);
         }
+
+        EasyEnemy.clear();
+    }
+
+    public void setAmmoLeft(int ammoLeft) {
+        this.ammoLeft = ammoLeft;
+    }
+
+    public void drawAmmoLeft(){
+        Paint ammoText = new Paint();
+        ammoText.setTextSize(30);
+        ammoText.setColor(Color.RED);
+        canvas.drawText(String.valueOf(ammoLeft), 300, 300, ammoText);
     }
 
     public void drawUserHealth() {
@@ -301,6 +317,7 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
                 explosionFrame(astriods.get(i).getCurX(), astriods.get(i).getCurY());
                 astriods.remove(i);
                 userCharecter.setHeath(userCharecter.getHeath() - 1);
+                userCharecter.setDamageTaken(userCharecter.getDamageTaken() + 1);
                 asteroidAudioThread.asteriodHitUserThread.run();
                 break;
             }

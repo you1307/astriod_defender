@@ -106,7 +106,7 @@ class SpawnRegularBulletThread implements Runnable {
             running = true;
             shots++;
             asteroidGameView.spawnRegularBullet();
-
+            asteroidGameView.setAmmoLeft(basicGun.getMaxAmmo() - shots);
 
             if (shots == 6) {
                 shots = 0;

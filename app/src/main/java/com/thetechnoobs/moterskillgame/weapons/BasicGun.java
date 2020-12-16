@@ -40,6 +40,19 @@ public class BasicGun {
         prefE.apply();
     }
 
+    public void setMaxAmmo(int newMaxAmmo){
+        SharedPreferences sharedPreferences = context.getSharedPreferences("BasicGun", Context.MODE_PRIVATE);
+        SharedPreferences.Editor prefE = sharedPreferences.edit();
+
+        prefE.putInt("maxAmmo", newMaxAmmo);
+        prefE.apply();
+    }
+
+    public int getMaxAmmo(){
+        SharedPreferences sharedPreferences = context.getSharedPreferences("BasicGun", Context.MODE_PRIVATE);
+        return sharedPreferences.getInt("maxAmmo", 6);
+    }
+
     public int getNumberOfProjectiles() {
         SharedPreferences sharedPreferences = context.getSharedPreferences("BasicGun", Context.MODE_PRIVATE);
         return sharedPreferences.getInt("projectiles", 1);
@@ -55,7 +68,7 @@ public class BasicGun {
 
     public int getFireRate() {
         SharedPreferences sharedPreferences = context.getSharedPreferences("BasicGun", Context.MODE_PRIVATE);
-        return sharedPreferences.getInt("fireRate", 1000);
+        return sharedPreferences.getInt("fireRate", 800);
     }
 
     public void setFireRate(int fireRate) {

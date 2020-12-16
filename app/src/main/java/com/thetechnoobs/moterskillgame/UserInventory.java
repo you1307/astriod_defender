@@ -9,7 +9,7 @@ import java.util.List;
 public class UserInventory {
     Context context;
 
-    public UserInventory(Context context){
+    public UserInventory(Context context) {
         this.context = context;
     }
 
@@ -21,7 +21,7 @@ public class UserInventory {
 
 
     //0 = none, 1 = basic gun, 2 = assault rifle, 3 = shot gun, 4 = ray gun
-    public void setEquippedWeapon(int weapon){
+    public void setEquippedWeapon(int weapon) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("inventory", Context.MODE_PRIVATE);
         SharedPreferences.Editor prefE = sharedPreferences.edit();
 
@@ -34,11 +34,11 @@ public class UserInventory {
         return pref.getInt("goldCoins", 0);
     }
 
-    public void removeGoldCoins(int Amount){
+    public void removeGoldCoins(int Amount) {
         SharedPreferences pref = context.getSharedPreferences("inventory", Context.MODE_PRIVATE);
         SharedPreferences.Editor prefE = pref.edit();
 
-        int totalCoins = getGoldCoins()-Amount;
+        int totalCoins = getGoldCoins() - Amount;
 
         prefE.putInt("goldCoins", totalCoins);
         prefE.apply();
@@ -48,7 +48,7 @@ public class UserInventory {
         SharedPreferences pref = context.getSharedPreferences("inventory", Context.MODE_PRIVATE);
         SharedPreferences.Editor prefE = pref.edit();
 
-        int totalCoins = getGoldCoins()+NewGoldCoins;
+        int totalCoins = getGoldCoins() + NewGoldCoins;
 
         prefE.putInt("goldCoins", totalCoins);
         prefE.apply();
@@ -59,11 +59,11 @@ public class UserInventory {
         return pref.getInt("money", 0);
     }
 
-    public void removeMoney(int Amount){
+    public void removeMoney(int Amount) {
         SharedPreferences pref = context.getSharedPreferences("inventory", Context.MODE_PRIVATE);
         SharedPreferences.Editor prefE = pref.edit();
 
-        int totalMoney = getMoney()-Amount;
+        int totalMoney = getMoney() - Math.abs(Amount);
 
         prefE.putInt("money", totalMoney);
         prefE.apply();
@@ -73,7 +73,7 @@ public class UserInventory {
         SharedPreferences pref = context.getSharedPreferences("inventory", Context.MODE_PRIVATE);
         SharedPreferences.Editor prefE = pref.edit();
 
-        int totalMoney = getMoney()+NewMoney;
+        int totalMoney = getMoney() + NewMoney;
 
         prefE.putInt("money", totalMoney);
         prefE.apply();
@@ -88,7 +88,7 @@ public class UserInventory {
         SharedPreferences pref = context.getSharedPreferences("inventory", Context.MODE_PRIVATE);
         SharedPreferences.Editor prefE = pref.edit();
 
-        int totalKills = getKills()+Newkills;
+        int totalKills = getKills() + Newkills;
 
         prefE.putInt("kills", totalKills);
         prefE.apply();

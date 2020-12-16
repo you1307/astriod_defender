@@ -17,7 +17,7 @@ import com.thetechnoobs.moterskillgame.town.TownActivity;
 
 public class EndGameScreenAsteroids extends Activity {
     TextView ScoreTXT, GoldTXT, MoneyTXT, TotalMoneyTXT, TotalGoldTXT;
-    String userScore, userGold, enemysKilled;
+    String userScore, userGold, enemysKilled, damageTaken;
     Button RestartBTN, GoToTownBTN;
     UserInventory userInventory = new UserInventory(this);
 
@@ -38,6 +38,7 @@ public class EndGameScreenAsteroids extends Activity {
             userScore = bundle.get("score").toString();
             userGold = bundle.get("gold").toString();
             enemysKilled = bundle.get("enemysKilled").toString();
+            damageTaken = bundle.get("damageTaken").toString();
 
 
             addDataToInv();
@@ -50,7 +51,7 @@ public class EndGameScreenAsteroids extends Activity {
     }
 
     private void setTXTviews() {
-        MoneyTXT.setText(String.valueOf(calculateMoney(enemysKilled, userScore, userGold)));
+        MoneyTXT.setText(String.valueOf(calculateMoney(enemysKilled, userScore, userGold, damageTaken)));
         GoldTXT.setText(userGold);
         ScoreTXT.setText("Score: " + userScore);
         TotalMoneyTXT.setText("Total Money: " + userInventory.getMoney());
@@ -59,21 +60,22 @@ public class EndGameScreenAsteroids extends Activity {
 
     private void addDataToInv() {
         userInventory.addGoldCoins(Integer.parseInt(userGold));
-        userInventory.addMoney(calculateMoney(enemysKilled, userScore, userGold));
+        int moneyEarned = calculateMoney(enemysKilled, userScore, userGold, damageTaken);
+
+        if (moneyEarned < 0) {//if money earned from wave is negative then remove money
+            userInventory.removeMoney(moneyEarned);
+        } else {
+            userInventory.addMoney(moneyEarned);
+        }
     }
 
-    private int calculateMoney(String enemysKilled, String userScore, String Gold) {
+    private int calculateMoney(String enemysKilled, String userScore, String Gold, String damageTaken) {
         int KilledEnemys = Integer.parseInt(enemysKilled);
         int score = Integer.parseInt(userScore);
         int gold = Integer.parseInt(Gold);
-        int result = 0;
+        int damage = Integer.parseInt(damageTaken);
 
-        if (score != 0 || KilledEnemys != 0 || gold != 0) {
-            result = score / KilledEnemys * gold;
-        }
-
-
-        return result;
+        return (KilledEnemys * gold) + (int) (score * 1.5) - damage;
     }
 
 
@@ -90,22 +92,14 @@ public class EndGameScreenAsteroids extends Activity {
     }
 
     private void SettupOnclickLiseners() {
-        RestartBTN.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                RestartGame();
-                finish();
-            }
+        RestartBTN.setOnClickListener(view -> {
+            RestartGame();
+            finish();
         });
 
-        GoToTownBTN.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                GoToTown();
-                finish();
-            }
-
-
+        GoToTownBTN.setOnClickListener(view -> {
+            GoToTown();
+            finish();
         });
     }
 
