@@ -1,106 +1,94 @@
 package com.thetechnoobs.moterskillgame.asteriodgame;
 
 import android.content.Context;
-import android.media.MediaPlayer;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.SoundPool;
+import android.os.Build;
 
 import com.thetechnoobs.moterskillgame.R;
 
 public class AsteroidAudioThread {
-    public AsteriodHitUserThread asteriodHitUserThread = new AsteriodHitUserThread();
-    public SimpleShootAsteriodSound simpleShootAsteriodSound = new SimpleShootAsteriodSound();
-    public SimpleShootSound simpleShootSound = new SimpleShootSound();
-    public EasyEnemyHitSound easyEnemyHitSound = new EasyEnemyHitSound();
-    public EasyEnemyShootSound easyEnemyShootSound = new EasyEnemyShootSound();
-    public EasyEnemyDeathSound easyEnemyDeathSound = new EasyEnemyDeathSound();
-    public CoinCollectSound coinCollectSound = new CoinCollectSound();
-    public AssaultRifleShootSound assaultRifleShootSound = new AssaultRifleShootSound();
-    public BasicGunReloadSound basicGunReloadSound = new BasicGunReloadSound();
-    public AssaultRifleReloadSound assaultRifleReloadSound = new AssaultRifleReloadSound();
+    private static final int MAX_NUM_OF_SOUNDS = 20;
     Context context;
-    MediaPlayer mediaPlayer;
-
+    SoundPool soundPool;
+    int assaultRifleSound, astriodExplosionSound, userHitSound, coinCollectedSound, easyEnemyHitSound, assaultRifleReloadSound, easyEnemyDeadSound, basicGunShootSound;
+    int easyEnemyShootingSound, basicGunReloadSound;
 
     public AsteroidAudioThread(Context context) {
         this.context = context;
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_GAME)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .build();
+
+            soundPool = new SoundPool.Builder()
+                    .setMaxStreams(MAX_NUM_OF_SOUNDS)
+                    .setAudioAttributes(audioAttributes)
+                    .build();
+        } else {
+            soundPool = new SoundPool(MAX_NUM_OF_SOUNDS, AudioManager.STREAM_MUSIC, 0);
+        }
+
+        assaultRifleSound = soundPool.load(context, R.raw.smg_double_shot, 0);
+        astriodExplosionSound = soundPool.load(context, R.raw.crash, 0);
+        userHitSound = soundPool.load(context, R.raw.hit_by_asteroid, 0);
+        coinCollectedSound = soundPool.load(context, R.raw.coin_collect, 0);
+        easyEnemyHitSound = soundPool.load(context, R.raw.easy_enemy_hit, 0);
+        assaultRifleReloadSound = soundPool.load(context, R.raw.assault_rifle_reload, 0);
+        easyEnemyDeadSound = soundPool.load(context, R.raw.easy_enemy_death, 0);
+        basicGunShootSound = soundPool.load(context, R.raw.simple_gun, 0);
+        easyEnemyShootingSound = soundPool.load(context, R.raw.easy_enemy_shoot, 0);
+        basicGunReloadSound = soundPool.load(context, R.raw.reload_basic_gun, 0);
     }
 
-    public class AssaultRifleReloadSound implements Runnable {
-        @Override
-        public void run() {
-            mediaPlayer = MediaPlayer.create(context, R.raw.assault_rifle_reload);
-            mediaPlayer.start();
-        }
+    public void startAssaultRifleSound() {
+        soundPool.play(assaultRifleSound, 1, 1, 0, 0, 1.2f);
     }
 
-    public class BasicGunReloadSound implements Runnable {
-        @Override
-        public void run() {
-            mediaPlayer = MediaPlayer.create(context, R.raw.reload_basic_gun);
-            mediaPlayer.start();
-        }
+    public void startAssaultRifleReloadSound() {
+        soundPool.play(assaultRifleReloadSound, 1, 1, 0, 0, 1);
     }
 
-    public class AssaultRifleShootSound implements Runnable {
-        @Override
-        public void run() {
-            mediaPlayer = MediaPlayer.create(context, R.raw.smg_double_shot);
-            mediaPlayer.start();
-        }
+    public void startAsteroidExplosionSound() {
+        soundPool.play(astriodExplosionSound, 0.5F, 0.5F, 0, 0, 1.5F);
     }
 
-    public class AsteriodHitUserThread implements Runnable {
-        @Override
-        public void run() {
-            mediaPlayer = MediaPlayer.create(context, R.raw.hit_by_asteroid);
-            mediaPlayer.start();
-        }
+    public void startUserHitSound() {
+        soundPool.play(userHitSound, 1, 1, 0, 0, 1);
     }
 
-    public class SimpleShootAsteriodSound implements Runnable {
-        @Override
-        public void run() {
-            mediaPlayer = MediaPlayer.create(context, R.raw.crash);
-            mediaPlayer.start();
-        }
+    public void startCoinCollectSound() {
+        soundPool.play(coinCollectedSound, 1, 1, 0, 0, 1);
     }
 
-    public class SimpleShootSound implements Runnable {
-        @Override
-        public void run() {
-            mediaPlayer = MediaPlayer.create(context, R.raw.simple_gun);
-            mediaPlayer.start();
-        }
+    public void startEasyEnemyHitSound() {
+        soundPool.play(easyEnemyHitSound, 1, 1, 0, 0, 1);
     }
 
-    public class EasyEnemyHitSound implements Runnable {
-        @Override
-        public void run() {
-            mediaPlayer = MediaPlayer.create(context, R.raw.easy_enemy_hit);
-            mediaPlayer.start();
-        }
+    public void startEasyEnemyShootingSound() {
+        soundPool.play(easyEnemyShootingSound, 1, 1, 0, 0, 1);
     }
 
-    public class EasyEnemyShootSound implements Runnable {
-        @Override
-        public void run() {
-            mediaPlayer = MediaPlayer.create(context, R.raw.easy_enemy_shoot);
-            mediaPlayer.start();
-        }
+    public void startDeadEnemySound() {
+        soundPool.play(easyEnemyDeadSound, 1, 1, 0, 0, 1);
     }
 
-    public class EasyEnemyDeathSound implements Runnable {
-        @Override
-        public void run() {
-            mediaPlayer = MediaPlayer.create(context, R.raw.easy_enemy_death);
-            mediaPlayer.start();
-        }
+    public void startBasicGunShootSound() {
+        soundPool.play(basicGunShootSound, 1, 1, 0, 0, 1);
     }
 
-    public class CoinCollectSound implements Runnable {
-        @Override
-        public void run() {
-            mediaPlayer = MediaPlayer.create(context, R.raw.coin_collect);
-            mediaPlayer.start();
-        }
+    public void startBasicGunReload() {
+        soundPool.play(basicGunReloadSound, 1, 1, 0, 0, 1);
     }
+
+    public void releaseAll() {
+        soundPool.release();
+    }
+
+
+
 }

@@ -22,4 +22,12 @@ public class UserData {
         prefE.putInt("WaveCount", getCurrentWaveCount()+1);
         prefE.apply();
     }
+
+    public void subtractOneFromWaveCount(){
+        SharedPreferences sharedPreferences = context.getSharedPreferences("AsteroidGameData", Context.MODE_PRIVATE);
+        SharedPreferences.Editor prefE = sharedPreferences.edit();
+
+        prefE.putInt("WaveCount", getCurrentWaveCount()-1);
+        prefE.apply();
+    }
 }

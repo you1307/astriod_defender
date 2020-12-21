@@ -32,6 +32,19 @@ public class AssaultRifle {
         return sharedPreferences.getInt("lvl", 1);
     }
 
+    public void setMaxAmmo(int newMaxAmmo){
+        SharedPreferences sharedPreferences = context.getSharedPreferences("AssaultRifle", Context.MODE_PRIVATE);
+        SharedPreferences.Editor prefE = sharedPreferences.edit();
+
+        prefE.putInt("maxAmmo", newMaxAmmo);
+        prefE.apply();
+    }
+
+    public int getMaxAmmo(){
+        SharedPreferences sharedPreferences = context.getSharedPreferences("AssaultRifle", Context.MODE_PRIVATE);
+        return sharedPreferences.getInt("maxAmmo", 33);
+    }
+
     public int getDamage() {
         SharedPreferences sharedPreferences = context.getSharedPreferences("AssaultRifle", Context.MODE_PRIVATE);
         return sharedPreferences.getInt("damage", 2);

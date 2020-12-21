@@ -40,18 +40,16 @@ class AssaultRifleShootThread implements Runnable {
     @Override
     public void run() {
         AssaultRifle assaultRifle = new AssaultRifle(context);
-        int shots = 0;
 
         while (asteroidGameView.getShouldShoot()) {
             running = true;
             burstFire();
-            shots += 3;
 
-            if (shots == 33) {
-                shots = 0;
+            if (asteroidGameView.getAmmoLeft() == 0) {
                 try {
-                    asteroidGameView.asteroidAudioThread.assaultRifleReloadSound.run();
+                    asteroidGameView.asteroidAudioThread.startAssaultRifleReloadSound();
                     Thread.sleep(3000);
+                    asteroidGameView.setAmmoLeft(assaultRifle.getMaxAmmo());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -101,21 +99,18 @@ class SpawnRegularBulletThread implements Runnable {
     @Override
     public void run() {
         BasicGun basicGun = new BasicGun(context);
-        int shots = 0;
         while (asteroidGameView.getShouldShoot()) {
             running = true;
-            shots++;
             asteroidGameView.spawnRegularBullet();
-            asteroidGameView.setAmmoLeft(basicGun.getMaxAmmo() - shots);
 
-            if (shots == 6) {
-                shots = 0;
+            if (asteroidGameView.getAmmoLeft() == 0) {
                 try {
-                    asteroidGameView.asteroidAudioThread.basicGunReloadSound.run();
+                    asteroidGameView.asteroidAudioThread.startBasicGunReload();
                     Thread.sleep(3500);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                asteroidGameView.setAmmoLeft(basicGun.getMaxAmmo());
             } else {
                 try {
                     Thread.sleep(basicGun.getFireRate());
@@ -123,7 +118,6 @@ class SpawnRegularBulletThread implements Runnable {
                     e.printStackTrace();
                 }
             }
-
         }
         running = false;
     }

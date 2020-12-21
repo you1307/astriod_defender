@@ -104,7 +104,7 @@ public class BadGuy {
             if (bullets.get(b).getHitbox().intersect(userCharecter.getHitBox())) {
                 bullets.remove(b);
                 userCharecter.setHeath(userCharecter.getHeath() - 2);
-                asteroidAudioThread.asteriodHitUserThread.run();
+                asteroidAudioThread.startUserHitSound();
                 break;
             }
         }
@@ -126,13 +126,14 @@ public class BadGuy {
     }
 
     public void cleanup() {
+        shootThread.interrupt();
         shootThread.stopThread();
     }
 
     public void Shoot() {
         EasyEnemyBullet easyEnemyBullet = new EasyEnemyBullet(resources, 20, screenSize, getX() + (float) EasyEnemyAlive.getWidth() / 2, getY() + EasyEnemyAlive.getHeight());
         bullets.add(easyEnemyBullet);
-        asteroidAudioThread.easyEnemyShootSound.run();
+        asteroidAudioThread.startEasyEnemyShootingSound();
     }
 
     public RectF getHitBox() {
@@ -175,26 +176,23 @@ public class BadGuy {
             this.WaitTime = WaitTime;
         }
 
+        public void stopThread() {
+            shootThread.run = false;
+        }
+
+
         public void run() {
 
             while (run) {
                 try {
-
                     Thread.sleep(WaitTime);
-                    if (!run) {
-                        this.join();
-                    } else {
-                        Shoot();
-                    }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                   break;
                 }
+                Shoot();
             }
         }
 
-        public void stopThread() {
-            run = false;
-        }
+
     }
 }

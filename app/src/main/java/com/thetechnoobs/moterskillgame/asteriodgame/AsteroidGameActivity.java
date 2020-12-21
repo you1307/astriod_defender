@@ -1,13 +1,11 @@
 package com.thetechnoobs.moterskillgame.asteriodgame;
 
-import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.thetechnoobs.moterskillgame.town.TownActivity;
 
 public class AsteroidGameActivity extends AppCompatActivity {
     private AsteroidGameView asteroidGameView;
@@ -36,5 +34,12 @@ public class AsteroidGameActivity extends AppCompatActivity {
     protected void onPostResume() {
         super.onPostResume();
         asteroidGameView.resume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        asteroidGameView.destroy();
+        Log.v("testing", "destroyed");
     }
 }

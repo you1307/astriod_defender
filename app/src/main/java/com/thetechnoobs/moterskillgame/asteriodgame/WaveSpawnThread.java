@@ -1,6 +1,7 @@
 package com.thetechnoobs.moterskillgame.asteriodgame;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.thetechnoobs.moterskillgame.UserData;
 
@@ -26,6 +27,8 @@ public class WaveSpawnThread extends Thread {
         enemyThread = new Thread(spawnEasyEnemy);
         asteroidThread = new Thread(spawnAsteroid);
 
+
+        Log.v("testing", "wave: "+ userData.getCurrentWaveCount());
     }
 
     private int getAmountOfEnemyToSpawn() {
@@ -53,14 +56,6 @@ public class WaveSpawnThread extends Thread {
     private void waveDone() {
         if (goToEndScreen) {
             asteroidGameView.waveDone();
-        }
-    }
-
-    private void delay(int milli) {
-        try {
-            Thread.sleep(milli);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
