@@ -481,7 +481,10 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
                 if (bullets.get(b).getHitbox().intersect(EasyEnemy.get(e).getHitBox())) {
                     EasyEnemy.get(e).setCurHeath(EasyEnemy.get(e).getCurHeath() - new BasicGun(getContext()).getDamage());
                     bullets.remove(b);
-                    asteroidAudioThread.startEasyEnemyHitSound();
+                    userCharecter.setUserScore(userCharecter.getUserScore()+3);
+                    if(EasyEnemy.get(e).getCurHeath() > 0){
+                        asteroidAudioThread.startEasyEnemyHitSound();
+                    }
                     brake = true;
                     break;
                 }

@@ -34,7 +34,7 @@
         android:layout_marginTop="53dp"
         android:text="GAME OVER"
         android:textColor="@color/white"
-        android:textSize="50sp" />
+        android:textSize="40sp" />
 
     <TextView
         android:id="@+id/ScoreTXTView"

@@ -25,4 +25,7 @@
     <string name="not_enough_money">not enough money</string>
     <string name="level_title">level</string>
     <string name="max_level">Max Level</string>
+    <string name="next_wave">NEXT WAVE</string>
+    <string name="restart">Restart</string>
+    <string name="wave_complete">Wave Complete</string>
 </resources>

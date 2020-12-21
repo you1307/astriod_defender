@@ -96,8 +96,8 @@ class SpawnAsteroid extends Thread {
 
             try {
                 Thread.sleep(500);
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (InterruptedException e) {
+                break;
             }
         }
     }
@@ -130,8 +130,8 @@ class SpawnEasyEnemy extends Thread {
 
             try {
                 Thread.sleep(1000);
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (InterruptedException e) {
+                break;
             }
         }
     }
