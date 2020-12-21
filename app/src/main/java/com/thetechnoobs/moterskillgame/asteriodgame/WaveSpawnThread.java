@@ -9,8 +9,6 @@ public class WaveSpawnThread extends Thread {
     AsteroidGameView asteroidGameView;
     int numberOfWavesCompleted;
     UserData userData;
-    int numOfEnenmyToSpawn;
-    int numOfAsteriodsToSpawn;
     SpawnEasyEnemy spawnEasyEnemy;
     SpawnAsteroid spawnAsteroid;
     Thread enemyThread, asteroidThread;
@@ -32,7 +30,7 @@ public class WaveSpawnThread extends Thread {
     }
 
     private int getAmountOfEnemyToSpawn() {
-        return (int) (numberOfWavesCompleted++);
+        return numberOfWavesCompleted++;
     }
 
     private int getAmountOfAsteroidToSpawn() {

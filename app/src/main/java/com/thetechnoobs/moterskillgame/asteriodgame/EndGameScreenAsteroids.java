@@ -1,10 +1,10 @@
 package com.thetechnoobs.moterskillgame.asteriodgame;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
@@ -12,14 +12,17 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 
 import com.thetechnoobs.moterskillgame.R;
+import com.thetechnoobs.moterskillgame.UserData;
 import com.thetechnoobs.moterskillgame.UserInventory;
 import com.thetechnoobs.moterskillgame.town.TownActivity;
 
 public class EndGameScreenAsteroids extends Activity {
-    TextView ScoreTXT, GoldTXT, MoneyTXT, TotalMoneyTXT, TotalGoldTXT;
+    TextView ScoreTXT, GoldTXT, MoneyTXT, TotalMoneyTXT, TotalGoldTXT, TitleTextView;
     String userScore, userGold, enemysKilled, damageTaken;
+    boolean waveCompleted;
     Button RestartBTN, GoToTownBTN;
     UserInventory userInventory = new UserInventory(this);
+    UserData userData = new UserData(this);
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -39,7 +42,7 @@ public class EndGameScreenAsteroids extends Activity {
             userGold = bundle.get("gold").toString();
             enemysKilled = bundle.get("enemysKilled").toString();
             damageTaken = bundle.get("damageTaken").toString();
-
+            waveCompleted = bundle.getBoolean("WaveComplete");
 
             addDataToInv();
             setTXTviews();
@@ -50,12 +53,22 @@ public class EndGameScreenAsteroids extends Activity {
 
     }
 
+    @SuppressLint("SetTextI18n")
     private void setTXTviews() {
         MoneyTXT.setText(String.valueOf(calculateMoney(enemysKilled, userScore, userGold, damageTaken)));
         GoldTXT.setText(userGold);
         ScoreTXT.setText("Score: " + userScore);
         TotalMoneyTXT.setText("Total Money: " + userInventory.getMoney());
         TotalGoldTXT.setText("Total GoldCoins: " + userInventory.getGoldCoins());
+
+        if (waveCompleted) {
+            TitleTextView.setText("Wave " + (userData.getCurrentWaveCount() - 1) + " Completed");
+            TitleTextView.setTextColor(getResources().getColor(R.color.green_800));
+            RestartBTN.setText(R.string.next_wave);
+        } else {
+            TitleTextView.setTextColor(getResources().getColor(R.color.red_800));
+            RestartBTN.setText(R.string.restart);
+        }
     }
 
     private void addDataToInv() {
@@ -87,6 +100,7 @@ public class EndGameScreenAsteroids extends Activity {
         GoToTownBTN = findViewById(R.id.GoToTownBTN);
         TotalMoneyTXT = findViewById(R.id.TotalMoneyTXT);
         TotalGoldTXT = findViewById(R.id.TotalGoldTXT);
+        TitleTextView = findViewById(R.id.GameOverTXTView);
 
         SettupOnclickLiseners();
     }
