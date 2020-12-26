@@ -13,7 +13,7 @@ public class AsteroidAudioThread {
     Context context;
     SoundPool soundPool;
     int assaultRifleSound, astriodExplosionSound, userHitSound, coinCollectedSound, easyEnemyHitSound, assaultRifleReloadSound, easyEnemyDeadSound, basicGunShootSound;
-    int easyEnemyShootingSound, basicGunReloadSound;
+    int easyEnemyShootingSound, basicGunReloadSound, shotGunReloadSound, shotGunShotSound;
 
     public AsteroidAudioThread(Context context) {
         this.context = context;
@@ -43,6 +43,16 @@ public class AsteroidAudioThread {
         basicGunShootSound = soundPool.load(context, R.raw.simple_gun, 0);
         easyEnemyShootingSound = soundPool.load(context, R.raw.easy_enemy_shoot, 0);
         basicGunReloadSound = soundPool.load(context, R.raw.reload_basic_gun, 0);
+        shotGunReloadSound = soundPool.load(context, R.raw.shotgun_reload, 0);
+        shotGunShotSound = soundPool.load(context, R.raw.shotgun_shot, 0);
+    }
+
+    public void startShotGunShotSound(){
+        soundPool.play(shotGunShotSound, 1,1 , 0, 0, 1);
+    }
+
+    public void startShotgunReloadSound(){
+        soundPool.play(shotGunReloadSound, 1, 1, 0, 0, 1);
     }
 
     public void startAssaultRifleSound() {

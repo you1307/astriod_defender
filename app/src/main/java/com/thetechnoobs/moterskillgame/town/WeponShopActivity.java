@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,9 +26,9 @@ import com.thetechnoobs.moterskillgame.weapons.ShotGun;
 public class WeponShopActivity extends AppCompatActivity {
     ImageView BasicGunIMG, AssaultRifleIMG, ShotGunIMG, RayGunIMG;
     TextView GunNameTXT, GunDescriptionTXT, GunDamageTXT, GunFireRateTXT, projectileTXT, UserGoldTXT, UserMoneyTXT, gunlevelTXT;
-    TextView assualtRiflePriceTXT, shotGunPriceTXT;
     ImageView goldCoinIMG;
     Button BuyUpgradeBTN;
+    private HorizontalScrollView gunScrollView;
     int GunInView = 1;//0 = none, 1 = basic gun, 2 = assault rifle, 3 = shot gun, 4 = ray gun
     UserInventory userInventory = new UserInventory(this);
     RayGun rayGun = new RayGun(this);
@@ -65,13 +66,12 @@ public class WeponShopActivity extends AppCompatActivity {
         UserMoneyTXT = findViewById(R.id.UserMoneyTXT);
         gunlevelTXT = findViewById(R.id.levelTXT);
 
-        //prices text view
-        assualtRiflePriceTXT = findViewById(R.id.assualtRifleBuyAmountTXT);
-        shotGunPriceTXT = findViewById(R.id.ShotGunBuyAmountTXT);
-
         BuyUpgradeBTN = findViewById(R.id.BuyUpgradeBTN);
 
+        gunScrollView = findViewById(R.id.horizontalScrollView);
+
         loadData();
+        setScrollViewLocation();
     }
 
     public void test(View v) {
@@ -82,26 +82,36 @@ public class WeponShopActivity extends AppCompatActivity {
     }
 
     private void loadData() {
-        LoadPrices();
+        loadImgs();
         LoadEquippedWeapon();
         LoadUserCurrency();
     }
 
+    private void setScrollViewLocation() {
+            //0 = none, 1 = basic gun, 2 = assault rifle, 3 = shot gun, 4 = ray gun
+            switch (userInventory.getEquippedWeapon()) {
+                case 2:
+                    gunScrollView.post(() -> gunScrollView.smoothScrollTo(AssaultRifleIMG.getRight(),0));
+                    break;
+                case 4:
+                    gunScrollView.post(() -> gunScrollView.smoothScrollTo(RayGunIMG.getMaxWidth(),0));
+                    break;
+            }
+    }
+
     @SuppressLint("SetTextI18n")
-    private void LoadPrices() {
+    private void loadImgs() {
 
         if (assaultRifle.isPurchased()) {
-            assualtRiflePriceTXT.setVisibility(View.INVISIBLE);
             AssaultRifleIMG.setImageResource(R.drawable.assalt_rifle);
-        } else {
-            assualtRiflePriceTXT.setText("$" + assaultRifle.getBuyPrice());
         }
 
         if (shotGun.isPurchased()) {
-            shotGunPriceTXT.setVisibility(View.INVISIBLE);
             ShotGunIMG.setImageResource(R.drawable.shot_gun);
-        } else {
-            shotGunPriceTXT.setText("$" + shotGun.getBuyPrice());
+        }
+
+        if(rayGun.isPurchased()){
+            RayGunIMG.setImageResource(R.drawable.ray_gun);
         }
 
     }
@@ -128,8 +138,6 @@ public class WeponShopActivity extends AppCompatActivity {
     }
 
     private void loadRayGunData() {
-        RayGun rayGun = new RayGun(getApplicationContext());
-
         GunNameTXT.setText(getString(R.string.ray_gun_title));
         GunDescriptionTXT.setText(getString(R.string.ray_gun_description));
         GunDamageTXT.setText(String.valueOf(rayGun.getDamage()));
@@ -141,15 +149,25 @@ public class WeponShopActivity extends AppCompatActivity {
 
         if (rayGun.isPurchased()) {
             userInventory.setEquippedWeapon(4);
-            BuyUpgradeBTN.setText(R.string.upgrade_btn);
+            goldCoinIMG.setImageResource(R.drawable.gold_coin);
+            RayGunIMG.setImageResource(R.drawable.ray_gun);
+
+            if(rayGun.getlvl() == 10){
+                goldCoinIMG.setVisibility(View.GONE);
+                BuyUpgradeBTN.setText(R.string.max_level);
+            }else{
+                goldCoinIMG.setVisibility(View.VISIBLE);
+                BuyUpgradeBTN.setText(String.valueOf(rayGun.getNextLevelCost()));
+            }
         } else {
-            BuyUpgradeBTN.setText(R.string.buy_button);
+            goldCoinIMG.setVisibility(View.VISIBLE);
+            goldCoinIMG.setImageResource(R.drawable.dollar_sign_scaled);
+            BuyUpgradeBTN.setText(String.valueOf(rayGun.getBuyPrice()));
+            ShotGunIMG.setImageResource(R.drawable.ray_gun_locked);
         }
     }
 
     private void loadShotGunData() {
-        ShotGun shotGun = new ShotGun(getApplicationContext());
-
         GunNameTXT.setText(getString(R.string.shot_gun_title));
         GunDescriptionTXT.setText(getString(R.string.shot_gun_description));
         GunDamageTXT.setText(String.valueOf(shotGun.getDamage()));
@@ -161,16 +179,26 @@ public class WeponShopActivity extends AppCompatActivity {
 
         if (shotGun.isPurchased()) {
             userInventory.setEquippedWeapon(3);
-            BuyUpgradeBTN.setText(R.string.upgrade_btn);
+            goldCoinIMG.setImageResource(R.drawable.gold_coin);
+            AssaultRifleIMG.setImageResource(R.drawable.assalt_rifle);
+
+            if(shotGun.getlvl() == 10){
+                goldCoinIMG.setVisibility(View.GONE);
+                BuyUpgradeBTN.setText(R.string.max_level);
+            }else{
+                goldCoinIMG.setVisibility(View.VISIBLE);
+                BuyUpgradeBTN.setText(String.valueOf(shotGun.getNextLevelCost()));
+            }
         } else {
-            BuyUpgradeBTN.setText(R.string.buy_button);
+            goldCoinIMG.setVisibility(View.VISIBLE);
+            goldCoinIMG.setImageResource(R.drawable.dollar_sign_scaled);
+            BuyUpgradeBTN.setText(String.valueOf(shotGun.getBuyPrice()));
+            ShotGunIMG.setImageResource(R.drawable.shot_gun_locked);
         }
     }
 
     @SuppressLint("SetTextI18n")
     private void loadAssaultRifleData() {
-        AssaultRifle assaultRifle = new AssaultRifle(getApplicationContext());
-
         GunNameTXT.setText(getString(R.string.assault_rifle_title));
         GunDescriptionTXT.setText(getString(R.string.assault_rifle_description));
         GunDamageTXT.setText(String.valueOf(assaultRifle.getDamage()));
@@ -191,18 +219,17 @@ public class WeponShopActivity extends AppCompatActivity {
                 BuyUpgradeBTN.setText(R.string.max_level);
             } else {
                 goldCoinIMG.setVisibility(View.VISIBLE);
+                goldCoinIMG.setImageResource(R.drawable.gold_coin);
             }
         } else {
-            BuyUpgradeBTN.setText(R.string.buy_button);
+            goldCoinIMG.setVisibility(View.VISIBLE);
+            BuyUpgradeBTN.setText(String.valueOf(assaultRifle.getBuyPrice()));
             AssaultRifleIMG.setImageResource(R.drawable.assalt_rifle_locked);
-            assualtRiflePriceTXT.setVisibility(View.VISIBLE);
-            goldCoinIMG.setVisibility(View.GONE);
+            goldCoinIMG.setImageResource(R.drawable.dollar_sign_scaled);
         }
     }
 
     private void loadBasicGunData() {
-        BasicGun basicGun = new BasicGun(getApplicationContext());
-
         GunNameTXT.setText(getString(R.string.basic_gun_title));
         GunDescriptionTXT.setText(getString(R.string.basic_gun_description));
         GunDamageTXT.setText(String.valueOf(basicGun.getDamage()));
@@ -213,6 +240,7 @@ public class WeponShopActivity extends AppCompatActivity {
         GunInView = 1;
 
         userInventory.setEquippedWeapon(1);
+        goldCoinIMG.setImageResource(R.drawable.gold_coin);
 
         if (basicGun.getlvl() == 10) {
             BuyUpgradeBTN.setText(R.string.max_level);
@@ -280,23 +308,88 @@ public class WeponShopActivity extends AppCompatActivity {
                 }
                 break;
             case 3:
-
+                if(shotGun.isPurchased()){
+                    upgradeShotGun();
+                }else{
+                    purchaseShotGun();
+                }
                 break;
             case 4:
-
+                if(rayGun.isPurchased()){
+                    //upgradeRayGun();
+                }else{
+                    purchaseRayGun();
+                }
                 break;
         }
 
         loadData();
     }
 
-    private void upgradeAssaultRifle() {
-        if (userInventory.getMoney() >= assaultRifle.getNextLevelCost()) {
-            userInventory.removeMoney(assaultRifle.getNextLevelCost());
+    private void purchaseRayGun() {
+        if (userInventory.getMoney() >= rayGun.getBuyPrice()) {
+            userInventory.removeMoney(rayGun.getBuyPrice());
+            userInventory.setEquippedWeapon(3);
+            rayGun.setPurchased(true);
 
-            if (assaultRifle.getlvl() == 10) {
-                Toast.makeText(this, "Gun is max level", Toast.LENGTH_SHORT).show();
+            loadData();
+        } else {
+            Toast.makeText(this, "Not enough money", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void upgradeShotGun() {
+        if (shotGun.getlvl() == 10) {
+            Toast.makeText(this, "Gun is max level", Toast.LENGTH_SHORT).show();
+        } else {
+            if (userInventory.getMoney() >= shotGun.getNextLevelCost()) {
+                userInventory.removeGoldCoins(shotGun.getNextLevelCost());
+                shotGun.setLvl(shotGun.getlvl() + 1);
+
+                if(isEven(shotGun.getlvl())){
+                    shotGun.setNumberOfProjectiles(shotGun.getNumberOfProjectiles()+1);
+                }
+
+                if (shotGun.getlvl() == 5) {
+                    shotGun.setDamage(shotGun.getDamage() + 1);
+                } else if (shotGun.getlvl() == 9) {
+                    shotGun.setDamage(shotGun.getDamage() + 2);
+                }
             } else {
+                Toast.makeText(this, "Not enough money", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private boolean isEven(int num) {
+        if(num % 2 == 0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    private void purchaseShotGun() {
+        if (userInventory.getMoney() >= shotGun.getBuyPrice()) {
+            userInventory.removeMoney(shotGun.getBuyPrice());
+            userInventory.setEquippedWeapon(3);
+            shotGun.setPurchased(true);
+
+            loadData();
+        } else {
+            Toast.makeText(this, "Not enough money", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void upgradeAssaultRifle() {
+
+        if (assaultRifle.getlvl() == 10) {
+            Toast.makeText(this, "Gun is max level", Toast.LENGTH_SHORT).show();
+        } else {
+            if (userInventory.getMoney() >= assaultRifle.getNextLevelCost()) {
+
+                userInventory.removeGoldCoins(assaultRifle.getNextLevelCost());
+
                 if (assaultRifle.getlvl() == 5) {
                     assaultRifle.setDamage(assaultRifle.getDamage() + 1);
                 } else if (assaultRifle.getlvl() == 9) {
@@ -305,10 +398,12 @@ public class WeponShopActivity extends AppCompatActivity {
 
                 assaultRifle.setFireRate(assaultRifle.getFireRate() - 40);
                 assaultRifle.setLvl(assaultRifle.getlvl() + 1);
+
+            } else {
+                Toast.makeText(this, "Not enough money", Toast.LENGTH_SHORT).show();
             }
-        } else {
-            Toast.makeText(this, "Not enough money", Toast.LENGTH_SHORT).show();
         }
+
     }
 
     private void upgradeBasicGun() {

@@ -56,6 +56,8 @@ public class BadGuy {
     public void update(Canvas canvas) {
         Move();
         DrawHeath(canvas);
+        updateBullets(canvas);
+        CheckBulletHitBox();
     }
 
     public void Move() {
@@ -93,10 +95,6 @@ public class BadGuy {
                 xOffset = getX();
             }
         }
-
-
-        updateBullets(canvas);
-        CheckBulletHitBox();
     }
 
     private void CheckBulletHitBox() {

@@ -4,15 +4,17 @@ import android.content.Context;
 
 import com.thetechnoobs.moterskillgame.weapons.AssaultRifle;
 import com.thetechnoobs.moterskillgame.weapons.BasicGun;
+import com.thetechnoobs.moterskillgame.weapons.ShotGun;
 
 public class GunBulletThreads {
     SpawnRegularBulletThread spawnRegularBulletThread;
     AssaultRifleShootThread assaultRifleShootThread;
+    ShotGunShootThread shotGunShootThread;
 
     GunBulletThreads(AsteroidGameView asteroidGameView, Context context) {
         spawnRegularBulletThread = new SpawnRegularBulletThread(asteroidGameView, context);
         assaultRifleShootThread = new AssaultRifleShootThread(asteroidGameView, context);
-
+        shotGunShootThread = new ShotGunShootThread(asteroidGameView, context);
     }
 
     public void startBasicGunShot() {
@@ -25,6 +27,48 @@ public class GunBulletThreads {
         assaultRifleShoot.start();
     }
 
+    public void startShotGunShot() {
+        Thread shotGunShoot = new Thread(shotGunShootThread);
+        shotGunShoot.start();
+    }
+
+}
+
+class ShotGunShootThread implements Runnable {
+    AsteroidGameView asteroidGameView;
+    Context context;
+    boolean running = false;
+
+    public ShotGunShootThread(AsteroidGameView asteroidGameView, Context context) {
+        this.asteroidGameView = asteroidGameView;
+        this.context = context;
+    }
+
+    @Override
+    public void run() {
+        ShotGun shotGun = new ShotGun(context);
+        while (asteroidGameView.getShouldShoot()) {
+            running = true;
+            asteroidGameView.spawnShotGunBulletSet();
+
+            try {
+                Thread.sleep(shotGun.getFireRate());
+            } catch (InterruptedException e) {
+                return;
+            }
+
+            if(asteroidGameView.getAmmoLeft() == 0){
+                asteroidGameView.asteroidAudioThread.startShotgunReloadSound();
+                try{
+                    Thread.sleep(2000);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+                asteroidGameView.setAmmoLeft(shotGun.getMaxAmmo());
+            }
+        }
+        running = false;
+    }
 }
 
 class AssaultRifleShootThread implements Runnable {

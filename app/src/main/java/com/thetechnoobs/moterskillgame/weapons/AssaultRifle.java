@@ -12,11 +12,11 @@ public class AssaultRifle {
     }
 
     public int getNextLevelCost() {
-        return getlvl() * 130;
+        return getlvl() * 20;
     }
 
     public int getBuyPrice() {
-        return 200;
+        return 1000;
     }
 
     public void setLvl(int lvl) {

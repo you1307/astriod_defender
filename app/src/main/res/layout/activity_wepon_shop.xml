@@ -126,26 +126,12 @@
                 android:layout_height="wrap_content">
 
                 <ImageView
-                    android:id="@+id/AssaltRifleIMG"
+                    android:id="@+id/ShotGunIMG"
                     android:layout_width="210dp"
                     android:layout_height="140dp"
-                    android:contentDescription="@string/assault_rifle_img_contect_discription"
+                    android:contentDescription="@string/shot_gun_img_content_discription"
                     android:onClick="gunPressed"
-                    app:srcCompat="@drawable/assalt_rifle_locked" />
-
-                <TextView
-                    android:id="@+id/assualtRifleBuyAmountTXT"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginStart="71dp"
-                    android:layout_marginTop="23dp"
-                    android:layout_marginEnd="72dp"
-                    android:text="@string/_00_place_holder"
-                    android:textColor="@color/green_A700"
-                    android:textSize="30sp" />
+                    app:srcCompat="@drawable/shot_gun_locked" />
 
             </RelativeLayout>
 
@@ -154,26 +140,12 @@
                 android:layout_height="wrap_content">
 
                 <ImageView
-                    android:id="@+id/ShotGunIMG"
+                    android:id="@+id/AssaltRifleIMG"
                     android:layout_width="210dp"
                     android:layout_height="140dp"
-                    android:contentDescription="@string/shot_gun_img_content_discription"
+                    android:contentDescription="@string/assault_rifle_img_contect_discription"
                     android:onClick="gunPressed"
-                    app:srcCompat="@drawable/shot_gun_locked" />
-
-                <TextView
-                    android:id="@+id/ShotGunBuyAmountTXT"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:textAlignment="center"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginStart="86dp"
-                    android:layout_marginTop="23dp"
-                    android:text="@string/_00_place_holder"
-                    android:textColor="@color/green_A700"
-                    android:textSize="30sp" />
+                    app:srcCompat="@drawable/assalt_rifle_locked" />
 
             </RelativeLayout>
 
@@ -189,20 +161,6 @@
                     android:contentDescription="@string/ray_gun_img_content_discription"
                     android:onClick="gunPressed"
                     app:srcCompat="@drawable/ray_gun_locked" />
-
-                <TextView
-                    android:id="@+id/RayGunBuyAmountTXT"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:textAlignment="center"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginStart="86dp"
-                    android:layout_marginTop="23dp"
-                    android:text="@string/_00_place_holder"
-                    android:textColor="@color/green_A700"
-                    android:textSize="30sp" />
 
             </RelativeLayout>
 

@@ -12,7 +12,7 @@ public class ShotGun {
 
     public int getDamage() {
         SharedPreferences sharedPreferences = context.getSharedPreferences("ShotGun", Context.MODE_PRIVATE);
-        return sharedPreferences.getInt("damage", 4);
+        return sharedPreferences.getInt("damage", 1);
     }
 
     public void setLvl(int lvl){
@@ -36,6 +36,11 @@ public class ShotGun {
         prefE.apply();
     }
 
+    public int getMaxAmmo(){
+        SharedPreferences sharedPreferences = context.getSharedPreferences("ShotGun", Context.MODE_PRIVATE);
+        return sharedPreferences.getInt("maxAmmo", 2);
+    }
+
     public void setNumberOfProjectiles(int projectiles){
         SharedPreferences sharedPreferences = context.getSharedPreferences("ShotGun", Context.MODE_PRIVATE);
         SharedPreferences.Editor prefE = sharedPreferences.edit();
@@ -51,7 +56,7 @@ public class ShotGun {
 
     public int getFireRate() {
         SharedPreferences sharedPreferences = context.getSharedPreferences("ShotGun", Context.MODE_PRIVATE);
-        return sharedPreferences.getInt("fireRate", 2);
+        return sharedPreferences.getInt("fireRate", 100);
     }
 
     public void setFireRate(int fireRate) {
@@ -77,5 +82,9 @@ public class ShotGun {
 
     public int getBuyPrice() {
         return 500;
+    }
+
+    public int getNextLevelCost() {
+        return getlvl()*100;
     }
 }

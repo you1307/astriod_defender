@@ -73,4 +73,12 @@ public class RayGun {
         SharedPreferences sharedPreferences = context.getSharedPreferences("RayGun", Context.MODE_PRIVATE);
         return sharedPreferences.getBoolean("purchased", false);
     }
+
+    public int getBuyPrice() {
+        return 20000;
+    }
+
+    public int getNextLevelCost() {
+        return getlvl()*15;
+    }
 }

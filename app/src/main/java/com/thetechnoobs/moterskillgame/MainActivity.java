@@ -19,10 +19,10 @@ public class MainActivity extends AppCompatActivity {
         //startActivity(new Intent(MainActivity.this, AsteroidGameActivity.class));//TODO remove and make game start menu
         //finish();
 
-        startActivity(new Intent(MainActivity.this, TownActivity.class));//TODO remove and make game start menu
-        finish();
-
-        //startActivity(new Intent(MainActivity.this, WeponShopActivity.class));//TODO remove and make game start menu
+        //startActivity(new Intent(MainActivity.this, TownActivity.class));//TODO remove and make game start menu
         //finish();
+
+        startActivity(new Intent(MainActivity.this, WeponShopActivity.class));//TODO remove and make game start menu
+        finish();
     }
 }
