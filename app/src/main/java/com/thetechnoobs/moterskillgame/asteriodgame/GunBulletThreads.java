@@ -4,17 +4,20 @@ import android.content.Context;
 
 import com.thetechnoobs.moterskillgame.weapons.AssaultRifle;
 import com.thetechnoobs.moterskillgame.weapons.BasicGun;
+import com.thetechnoobs.moterskillgame.weapons.RayGun;
 import com.thetechnoobs.moterskillgame.weapons.ShotGun;
 
 public class GunBulletThreads {
     SpawnRegularBulletThread spawnRegularBulletThread;
     AssaultRifleShootThread assaultRifleShootThread;
     ShotGunShootThread shotGunShootThread;
+    RayGunShootThread rayGunShootThread;
 
     GunBulletThreads(AsteroidGameView asteroidGameView, Context context) {
         spawnRegularBulletThread = new SpawnRegularBulletThread(asteroidGameView, context);
         assaultRifleShootThread = new AssaultRifleShootThread(asteroidGameView, context);
         shotGunShootThread = new ShotGunShootThread(asteroidGameView, context);
+        rayGunShootThread = new RayGunShootThread(asteroidGameView, context);
     }
 
     public void startBasicGunShot() {
@@ -30,6 +33,11 @@ public class GunBulletThreads {
     public void startShotGunShot() {
         Thread shotGunShoot = new Thread(shotGunShootThread);
         shotGunShoot.start();
+    }
+
+    public void startRayGunShot() {
+        Thread rayGunShot = new Thread(rayGunShootThread);
+        rayGunShot.start();
     }
 
 }
@@ -57,11 +65,11 @@ class ShotGunShootThread implements Runnable {
                 return;
             }
 
-            if(asteroidGameView.getAmmoLeft() == 0){
+            if (asteroidGameView.getAmmoLeft() == 0) {
                 asteroidGameView.asteroidAudioThread.startShotgunReloadSound();
-                try{
+                try {
                     Thread.sleep(2000);
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 asteroidGameView.setAmmoLeft(shotGun.getMaxAmmo());
@@ -69,6 +77,55 @@ class ShotGunShootThread implements Runnable {
         }
         running = false;
     }
+}
+
+class RayGunShootThread implements Runnable {
+    AsteroidGameView asteroidGameView;
+    Context context;
+    boolean running = false;
+
+    public RayGunShootThread(AsteroidGameView asteroidGameView, Context context) {
+        this.asteroidGameView = asteroidGameView;
+        this.context = context;
+    }
+
+    @Override
+    public void run() {
+        RayGun rayGun = new RayGun(context);
+
+        while (asteroidGameView.getShouldShoot()) {
+            running = true;
+
+            if (asteroidGameView.getAmmoLeft() == 0) {
+                try{
+                    asteroidGameView.rayGunBeam = null;
+                    Thread.sleep(2000);
+                }catch (InterruptedException e){
+                    e.printStackTrace();
+                }
+
+                asteroidGameView.setAmmoLeft(rayGun.getMaxAmmo());
+            } else {
+
+                if (asteroidGameView.rayGunBeam == null) {
+                    asteroidGameView.spawnRayBeam(true);
+                }else{
+                    asteroidGameView.setAmmoLeft(asteroidGameView.getAmmoLeft()-1);
+                }
+
+
+                try{
+                    Thread.sleep(50);
+                }catch (InterruptedException e){
+                    e.printStackTrace();
+                }
+            }
+
+        }
+        asteroidGameView.spawnRayBeam(false);
+        running = false;
+    }
+
 }
 
 class AssaultRifleShootThread implements Runnable {

@@ -329,7 +329,7 @@ public class WeponShopActivity extends AppCompatActivity {
     private void purchaseRayGun() {
         if (userInventory.getMoney() >= rayGun.getBuyPrice()) {
             userInventory.removeMoney(rayGun.getBuyPrice());
-            userInventory.setEquippedWeapon(3);
+            userInventory.setEquippedWeapon(4);
             rayGun.setPurchased(true);
 
             loadData();

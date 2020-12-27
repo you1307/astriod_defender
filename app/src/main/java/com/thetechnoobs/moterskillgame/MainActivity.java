@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
         //startActivity(new Intent(MainActivity.this, TownActivity.class));//TODO remove and make game start menu
         //finish();
 
-        startActivity(new Intent(MainActivity.this, WeponShopActivity.class));//TODO remove and make game start menu
-        finish();
+        //startActivity(new Intent(MainActivity.this, WeponShopActivity.class));//TODO remove and make game start menu
+        //finish();
     }
 }

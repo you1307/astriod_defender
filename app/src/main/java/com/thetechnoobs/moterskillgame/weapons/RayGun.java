@@ -22,6 +22,11 @@ public class RayGun {
         SharedPreferences sharedPreferences = context.getSharedPreferences("RayGun", Context.MODE_PRIVATE);
         return sharedPreferences.getInt("lvl", 1);
     }
+
+    public int getMaxAmmo(){
+        SharedPreferences sharedPreferences = context.getSharedPreferences("ShotGun", Context.MODE_PRIVATE);
+        return sharedPreferences.getInt("maxAmmo", 300);
+    }
     public int getDamage() {
         SharedPreferences sharedPreferences = context.getSharedPreferences("RayGun", Context.MODE_PRIVATE);
         return sharedPreferences.getInt("damage", 50);
@@ -50,7 +55,7 @@ public class RayGun {
 
     public int getFireRate() {
         SharedPreferences sharedPreferences = context.getSharedPreferences("RayGun", Context.MODE_PRIVATE);
-        return sharedPreferences.getInt("fireRate", 100);
+        return sharedPreferences.getInt("fireRate", 0);
     }
 
     public void setFireRate(int fireRate) {
