@@ -93,7 +93,7 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
         BackgroundRectPaint = new Paint();
         BackgroundRectPaint.setColor(Color.BLACK);
 
-        //waveSpawnThread.start();
+        waveSpawnThread.start();
 
         setAmmoData();
 
@@ -126,10 +126,6 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
         if (userCharecter.getHeath() < 1) {//check if user is dead
             userData.subtractOneFromWaveCount();
             gameOver();
-        }
-
-        if (astriods.size() < 3) {
-            spawnAsteroids(3);
         }
 
         if (getHolder().getSurface().isValid()) {

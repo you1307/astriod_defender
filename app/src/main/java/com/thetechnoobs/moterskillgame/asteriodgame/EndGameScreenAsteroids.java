@@ -14,7 +14,6 @@ import androidx.annotation.Nullable;
 import com.thetechnoobs.moterskillgame.R;
 import com.thetechnoobs.moterskillgame.UserData;
 import com.thetechnoobs.moterskillgame.UserInventory;
-import com.thetechnoobs.moterskillgame.town.TownActivity;
 
 public class EndGameScreenAsteroids extends Activity {
     TextView ScoreTXT, GoldTXT, MoneyTXT, TotalMoneyTXT, TotalGoldTXT, TitleTextView;
@@ -32,10 +31,14 @@ public class EndGameScreenAsteroids extends Activity {
 
 
         Settup();
-        Load();
+        LoadIntentData();
+        addDataToInv();
+        setTXTviews();
+
+        startStarBackground();
     }
 
-    private void Load() {
+    private void LoadIntentData() {
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             userScore = bundle.get("score").toString();
@@ -43,9 +46,6 @@ public class EndGameScreenAsteroids extends Activity {
             enemysKilled = bundle.get("enemysKilled").toString();
             damageTaken = bundle.get("damageTaken").toString();
             waveCompleted = bundle.getBoolean("WaveComplete");
-
-            addDataToInv();
-            setTXTviews();
         } else {
             Log.v("testing", "Error Loading Score");
         }
@@ -97,7 +97,7 @@ public class EndGameScreenAsteroids extends Activity {
         GoldTXT = findViewById(R.id.GoldTXTView);
         MoneyTXT = findViewById(R.id.MoneyRewardTXT);
         RestartBTN = findViewById(R.id.RestartGameBTN);
-        GoToTownBTN = findViewById(R.id.GoToTownBTN);
+        GoToTownBTN = findViewById(R.id.GoToStoreBTN);
         TotalMoneyTXT = findViewById(R.id.TotalMoneyTXT);
         TotalGoldTXT = findViewById(R.id.TotalGoldTXT);
         TitleTextView = findViewById(R.id.GameOverTXTView);
@@ -112,13 +112,17 @@ public class EndGameScreenAsteroids extends Activity {
         });
 
         GoToTownBTN.setOnClickListener(view -> {
-            GoToTown();
+            GoToStore();
             finish();
         });
     }
 
-    private void GoToTown() {
-        Intent GoToTown = new Intent(this, TownActivity.class);
+    private void startStarBackground() {
+
+    }
+
+    private void GoToStore() {
+        Intent GoToTown = new Intent(this, WeponShopActivity.class);
         startActivity(GoToTown);
     }
 

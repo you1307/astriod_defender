@@ -6,8 +6,7 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.thetechnoobs.moterskillgame.asteriodgame.AsteroidGameActivity;
-import com.thetechnoobs.moterskillgame.town.TownActivity;
-import com.thetechnoobs.moterskillgame.town.WeponShopActivity;
+import com.thetechnoobs.moterskillgame.asteriodgame.WeponShopActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -15,14 +14,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        UserData userData = new UserData(getApplicationContext());
 
-        //startActivity(new Intent(MainActivity.this, AsteroidGameActivity.class));//TODO remove and make game start menu
-        //finish();
 
-        startActivity(new Intent(MainActivity.this, TownActivity.class));//TODO remove and make game start menu
+        if(userData.isNewPLayer()){
+            userData.saveNewPlayer(false);
+            startActivity(new Intent(MainActivity.this, AsteroidGameActivity.class));
+        }else{
+            startActivity(new Intent(MainActivity.this, WeponShopActivity.class));
+        }
+
         finish();
 
-        //startActivity(new Intent(MainActivity.this, WeponShopActivity.class));//TODO remove and make game start menu
-        //finish();
     }
 }

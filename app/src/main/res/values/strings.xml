@@ -28,4 +28,5 @@
     <string name="next_wave">NEXT WAVE</string>
     <string name="restart">Restart</string>
     <string name="wave_complete">Wave Complete</string>
+    <string name="go_to_wave">Go to wave %d</string>
 </resources>

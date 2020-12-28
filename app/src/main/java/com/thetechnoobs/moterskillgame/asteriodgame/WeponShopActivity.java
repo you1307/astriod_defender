@@ -1,4 +1,4 @@
-package com.thetechnoobs.moterskillgame.town;
+package com.thetechnoobs.moterskillgame.asteriodgame;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -16,8 +16,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.thetechnoobs.moterskillgame.R;
+import com.thetechnoobs.moterskillgame.UserData;
 import com.thetechnoobs.moterskillgame.UserInventory;
-import com.thetechnoobs.moterskillgame.asteriodgame.AsteroidGameActivity;
 import com.thetechnoobs.moterskillgame.weapons.AssaultRifle;
 import com.thetechnoobs.moterskillgame.weapons.BasicGun;
 import com.thetechnoobs.moterskillgame.weapons.RayGun;
@@ -27,7 +27,7 @@ public class WeponShopActivity extends AppCompatActivity {
     ImageView BasicGunIMG, AssaultRifleIMG, ShotGunIMG, RayGunIMG;
     TextView GunNameTXT, GunDescriptionTXT, GunDamageTXT, GunFireRateTXT, projectileTXT, UserGoldTXT, UserMoneyTXT, gunlevelTXT;
     ImageView goldCoinIMG;
-    Button BuyUpgradeBTN;
+    Button BuyUpgradeBTN, GoToGameBtn;
     private HorizontalScrollView gunScrollView;
     int GunInView = 1;//0 = none, 1 = basic gun, 2 = assault rifle, 3 = shot gun, 4 = ray gun
     UserInventory userInventory = new UserInventory(this);
@@ -35,8 +35,7 @@ public class WeponShopActivity extends AppCompatActivity {
     ShotGun shotGun = new ShotGun(this);
     AssaultRifle assaultRifle = new AssaultRifle(this);
     BasicGun basicGun = new BasicGun(this);
-
-    Button test;
+    UserData userData = new UserData(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,8 +47,6 @@ public class WeponShopActivity extends AppCompatActivity {
     }
 
     private void settup() {
-        test = findViewById(R.id.button);
-
         BasicGunIMG = findViewById(R.id.BasicGunIMG);
         AssaultRifleIMG = findViewById(R.id.AssaltRifleIMG);
         ShotGunIMG = findViewById(R.id.ShotGunIMG);
@@ -67,6 +64,7 @@ public class WeponShopActivity extends AppCompatActivity {
         gunlevelTXT = findViewById(R.id.levelTXT);
 
         BuyUpgradeBTN = findViewById(R.id.BuyUpgradeBTN);
+        GoToGameBtn = findViewById(R.id.GoToGameBTN);
 
         gunScrollView = findViewById(R.id.horizontalScrollView);
 
@@ -74,17 +72,17 @@ public class WeponShopActivity extends AppCompatActivity {
         setScrollViewLocation();
     }
 
-    public void test(View v) {
-        startActivity(new Intent(this, AsteroidGameActivity.class));//TODO remove and make game start menu
+    public void goToGame(View v) {
+        startActivity(new Intent(this, AsteroidGameActivity.class));
         finish();
-
-        loadData();
     }
 
     private void loadData() {
         loadImgs();
-        LoadEquippedWeapon();
-        LoadUserCurrency();
+        loadEquippedWeapon();
+        loadUserCurrency();
+
+        GoToGameBtn.setText(getResources().getString(R.string.go_to_wave, userData.getCurrentWaveCount()+1));
     }
 
     private void setScrollViewLocation() {
@@ -116,7 +114,7 @@ public class WeponShopActivity extends AppCompatActivity {
 
     }
 
-    private void LoadEquippedWeapon() {
+    private void loadEquippedWeapon() {
         //0 = none, 1 = basic gun, 2 = assault rifle, 3 = shot gun, 4 = ray gun
         SharedPreferences sharedPreferences = getSharedPreferences("inventory", MODE_PRIVATE);
         int weapon = sharedPreferences.getInt("equippedWeapon", 1);
@@ -163,7 +161,7 @@ public class WeponShopActivity extends AppCompatActivity {
             goldCoinIMG.setVisibility(View.VISIBLE);
             goldCoinIMG.setImageResource(R.drawable.dollar_sign_scaled);
             BuyUpgradeBTN.setText(String.valueOf(rayGun.getBuyPrice()));
-            ShotGunIMG.setImageResource(R.drawable.ray_gun_locked);
+            RayGunIMG.setImageResource(R.drawable.ray_gun_locked);
         }
     }
 
@@ -285,7 +283,7 @@ public class WeponShopActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Intent GoToTown = new Intent(this, TownActivity.class);
+        Intent GoToTown = new Intent(this, AsteroidGameActivity.class);
         startActivity(GoToTown);
         finish();
     }
@@ -342,7 +340,7 @@ public class WeponShopActivity extends AppCompatActivity {
         if (shotGun.getlvl() == 10) {
             Toast.makeText(this, "Gun is max level", Toast.LENGTH_SHORT).show();
         } else {
-            if (userInventory.getMoney() >= shotGun.getNextLevelCost()) {
+            if (userInventory.getGoldCoins() >= shotGun.getNextLevelCost()) {
                 userInventory.removeGoldCoins(shotGun.getNextLevelCost());
                 shotGun.setLvl(shotGun.getlvl() + 1);
 
@@ -386,8 +384,7 @@ public class WeponShopActivity extends AppCompatActivity {
         if (assaultRifle.getlvl() == 10) {
             Toast.makeText(this, "Gun is max level", Toast.LENGTH_SHORT).show();
         } else {
-            if (userInventory.getMoney() >= assaultRifle.getNextLevelCost()) {
-
+            if (userInventory.getGoldCoins() >= assaultRifle.getNextLevelCost()) {
                 userInventory.removeGoldCoins(assaultRifle.getNextLevelCost());
 
                 if (assaultRifle.getlvl() == 5) {
@@ -455,7 +452,7 @@ public class WeponShopActivity extends AppCompatActivity {
     }
 
 
-    private void LoadUserCurrency() {
+    private void loadUserCurrency() {
         UserMoneyTXT.setText(String.valueOf(userInventory.getMoney()));
         UserGoldTXT.setText(String.valueOf(userInventory.getGoldCoins()));
     }

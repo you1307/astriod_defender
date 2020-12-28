@@ -6,23 +6,23 @@
     android:orientation="vertical">
 
     <Button
-        android:id="@+id/GoToTownBTN"
+        android:id="@+id/GoToStoreBTN"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
-        android:layout_marginStart="73dp"
+        android:layout_marginStart="100dp"
         android:layout_marginTop="15dp"
         android:layout_marginEnd="15dp"
         android:layout_marginBottom="15dp"
-        android:text="go to town" />
+        android:text="Store" />
 
     <Button
         android:id="@+id/RestartGameBTN"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/GoToTownBTN"
-        android:layout_toEndOf="@+id/GoToTownBTN"
+        android:layout_alignTop="@+id/GoToStoreBTN"
+        android:layout_toEndOf="@+id/GoToStoreBTN"
         android:text="Restart" />
 
     <TextView

@@ -12,7 +12,7 @@ public class ShotGun {
 
     public int getDamage() {
         SharedPreferences sharedPreferences = context.getSharedPreferences("ShotGun", Context.MODE_PRIVATE);
-        return sharedPreferences.getInt("damage", 1);
+        return sharedPreferences.getInt("damage", 3);
     }
 
     public void setLvl(int lvl){
