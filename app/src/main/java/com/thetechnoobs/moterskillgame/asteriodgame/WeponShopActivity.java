@@ -178,7 +178,6 @@ public class WeponShopActivity extends AppCompatActivity {
         if (shotGun.isPurchased()) {
             userInventory.setEquippedWeapon(3);
             goldCoinIMG.setImageResource(R.drawable.gold_coin);
-            AssaultRifleIMG.setImageResource(R.drawable.assalt_rifle);
 
             if(shotGun.getlvl() == 10){
                 goldCoinIMG.setVisibility(View.GONE);

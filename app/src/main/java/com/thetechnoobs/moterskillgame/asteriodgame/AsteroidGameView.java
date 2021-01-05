@@ -19,6 +19,7 @@ import com.thetechnoobs.moterskillgame.UserInventory;
 import com.thetechnoobs.moterskillgame.asteriodgame.entites.Astriod;
 import com.thetechnoobs.moterskillgame.asteriodgame.entites.BadGuy;
 import com.thetechnoobs.moterskillgame.asteriodgame.entites.GoldCoin;
+import com.thetechnoobs.moterskillgame.asteriodgame.entites.HardEnemy;
 import com.thetechnoobs.moterskillgame.asteriodgame.entites.RayGunBeam;
 import com.thetechnoobs.moterskillgame.asteriodgame.entites.RegularBullet;
 import com.thetechnoobs.moterskillgame.asteriodgame.entites.ShotGunBullet;
@@ -32,11 +33,11 @@ import com.thetechnoobs.moterskillgame.weapons.BasicGun;
 import com.thetechnoobs.moterskillgame.weapons.ShotGun;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class AsteroidGameView extends SurfaceView implements Runnable {
     private final Paint paint, BackgroundRectPaint, scoreTextPaint, ammoTextPaint;
+    public ArrayList<HeathHeart> heathPotions = new ArrayList<>();
     UserCharecter userCharecter;
     UserInventory userInventory;
     UserData userData;
@@ -47,6 +48,7 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
     ArrayList<RegularBullet> bullets = new ArrayList<>();
     ArrayList<ShotGunBullet> shotGunBullets = new ArrayList<>();
     ArrayList<BadGuy> EasyEnemy = new ArrayList<>();
+    ArrayList<HardEnemy> hardEnemies = new ArrayList<>();
     ArrayList<GoldCoin> GoldCoins = new ArrayList<>();
     int[] screenSize = {0, 0};
     Canvas canvas;
@@ -131,32 +133,38 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
         if (getHolder().getSurface().isValid()) {
             canvas = getHolder().lockCanvas();
             canvas.drawRect(backgroundRect, BackgroundRectPaint);
-
-            drawUI();
-
             drawBackgrounStars();
+
+
+            drawItemDrops();
             drawAstroids();
             drawBullets();
             drawEasyEnemy();
+            drawHardEnemy();
             drawCoins();
 
-            checkForCollision();//needs to be in draw for collision explosion
 
-            canvas.drawBitmap(shootRegularButtonUI.bitmap, shootRegularButtonUI.getX(), shootRegularButtonUI.getY(), null);
-            canvas.drawBitmap(userCharecter.bitmap, userCharecter.getCurX(), userCharecter.getCurY(), null);
+            drawUI();
+            checkForCollision();//needs to be in draw for collision explosion
             getHolder().unlockCanvasAndPost(canvas);
         }
     }
 
     private void drawUI() {
-        drawUserHealth();
+        userCharecter.drawUserHealth(getResources(), canvas);
         drawUserScore();
         drawAmmoLeft();
+
+        canvas.drawBitmap(shootRegularButtonUI.bitmap, shootRegularButtonUI.getX(), shootRegularButtonUI.getY(), null);
+        canvas.drawBitmap(userCharecter.bitmap, userCharecter.getCurX(), userCharecter.getCurY(), null);
     }
 
     private void update() {
         //update coins position
         moveCoins();
+
+        //update item drop locations
+        moveItems();
 
         //check for dead enemy's
         checkForDeadEnemys();
@@ -289,11 +297,17 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
         bullets.clear();
         shotGunBullets.clear();
         GoldCoins.clear();
+        heathPotions.clear();
 
         for (int e = 0; e < EasyEnemy.size(); e++) {
             EasyEnemy.get(e).cleanup();
         }
 
+        for (int e = 0; e<hardEnemies.size();e++){
+            hardEnemies.get(e).cleanup();
+        }
+
+        hardEnemies.clear();
         EasyEnemy.clear();
         asteroidAudioThread.releaseAll();
         waveSpawnThread.stopAll();
@@ -319,29 +333,6 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
 
     }
 
-    public void drawUserHealth() {
-        int yOffset = screenSize[1] / 20;//needed for screens with round corners so that the heath heart doesnt get hidden
-        int xOffset = screenSize[0] / 100;//added to make nice spaceing between hearts
-        List<HeathHeart> heathHearts = new ArrayList<>();
-
-        for (int i = 0; i < userCharecter.getMaxHeath(); i++) {
-            HeathHeart heart = new HeathHeart(getResources(), screenSize, xOffset, yOffset);
-            heathHearts.add(heart);
-
-            if (i < userCharecter.getHeath()) {//if position i should be full heart
-                if (i != 0) {//if position i is not first spot
-                    heathHearts.get(i).xLoc = heathHearts.get(i).xLoc + heathHearts.get(i - 1).xLoc + heathHearts.get(i - 1).fullHeartBitmap.getWidth();
-                }
-                canvas.drawBitmap(heathHearts.get(i).fullHeartBitmap, heathHearts.get(i).xLoc, heathHearts.get(i).yLoc, paint);
-            } else {//if position i should be empty heart
-                if (i != 0) {//if position i is not first
-                    heathHearts.get(i).xLoc = heathHearts.get(i).xLoc + heathHearts.get(i - 1).xLoc + heathHearts.get(i - 1).emptyHeartBitmap.getWidth();
-                }
-                canvas.drawBitmap(heathHearts.get(i).emptyHeartBitmap, heathHearts.get(i).xLoc, heathHearts.get(i).yLoc, paint);
-            }
-        }
-    }
-
     private void drawUserScore() {
         canvas.drawText(String.valueOf(userCharecter.getUserScore()), (float) screenSize[0] / 2, (float) screenSize[1] / 20, scoreTextPaint);
     }
@@ -353,16 +344,19 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
 
     private void checkForCollision() {
         BulletHitboxDetection();
+        itemDropTouchDetection();
 
         //check if astriod hits user
         for (int i = 0; i < astriods.size(); i++) {
-            if (astriods.get(i).getCollisionBox().intersect(userCharecter.getHitBox())) {
-                explosionFrame(astriods.get(i).getCurX(), astriods.get(i).getCurY());
-                astriods.remove(i);
-                userCharecter.setHeath(userCharecter.getHeath() - 1);
-                userCharecter.setDamageTaken(userCharecter.getDamageTaken() + 1);
-                asteroidAudioThread.startUserHitSound();
-                break;
+            if (astriods.get(i) != null) {
+                if (astriods.get(i).getCollisionBox().intersect(userCharecter.getHitBox())) {
+                    explosionFrame(astriods.get(i).getCurX(), astriods.get(i).getCurY());
+                    astriods.remove(i);
+                    userCharecter.setHeath(userCharecter.getHeath() - 1);
+                    userCharecter.setDamageTaken(userCharecter.getDamageTaken() + 1);
+                    asteroidAudioThread.startUserHitSound();
+                    break;
+                }
             }
         }
 
@@ -372,6 +366,19 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
                 GoldCoins.remove(c);
                 asteroidAudioThread.startCoinCollectSound();
                 userCharecter.setGold(userCharecter.getGold() + 1);
+            }
+        }
+    }
+
+    private void itemDropTouchDetection() {
+        for (int p = 0; heathPotions.size() > p; p++) {
+            if (heathPotions.get(p).getHitbox().intersect(userCharecter.getHitBox())) {
+                heathPotions.remove(p);
+                asteroidAudioThread.startItemPickupSound();
+
+                if (userCharecter.getHeath() != userCharecter.getMaxHeath()) {
+                    userCharecter.setHeath(userCharecter.getHeath() + 1);
+                }
             }
         }
     }
@@ -403,6 +410,20 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
         for (int i = 0; i < EasyEnemy.size(); i++) {
             canvas.drawBitmap(EasyEnemy.get(i).EasyEnemyAlive, EasyEnemy.get(i).getX(), EasyEnemy.get(i).getY(), null);
             EasyEnemy.get(i).update(canvas);
+        }
+    }
+
+    public void drawHardEnemy() {
+        for (int i = 0; i < hardEnemies.size(); i++) {
+            canvas.drawBitmap(hardEnemies.get(i).hardEnemyAlive, hardEnemies.get(i).getX(), hardEnemies.get(i).getY(), null);
+            hardEnemies.get(i).update(canvas);
+        }
+    }
+
+    public void spawnHardEnemy(int numOfEnemy) {
+        for (int i = 0; i < numOfEnemy; i++) {
+            HardEnemy hardEnemy = new HardEnemy(getResources(), getContext(), userCharecter, screenSize, randomNum(screenSize[0] - (screenSize[0] / Constants.SCALE_RATIO_NUM_X_EASY_ENEMY), 0), 300);
+            hardEnemies.add(hardEnemy);
         }
     }
 
@@ -543,6 +564,8 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
                 }
             }
 
+            //check for hard Enemy Collision
+
             for (int b = 0; b < shotGunBullets.size(); b++) {
                 if (shotGunBullets.get(b).getHitbox().intersect(EasyEnemy.get(e).getHitBox())) {
                     EasyEnemy.get(e).setCurHeath(EasyEnemy.get(e).getCurHeath() - new BasicGun(getContext()).getDamage());
@@ -553,6 +576,17 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
                     }
                     brake = true;
                     break;
+                }
+            }
+
+            if(rayGunBeam != null){
+                if(rayGunBeam.getHitbox().intersect(EasyEnemy.get(e).getHitBox())){
+                    EasyEnemy.get(e).setCurHeath(0);
+                    userCharecter.setUserScore(userCharecter.getUserScore() + 3);
+                    if (EasyEnemy.get(e).getCurHeath() > 0) {
+                        asteroidAudioThread.startEasyEnemyHitSound();
+                    }
+                    brake = true;
                 }
             }
 
@@ -589,8 +623,8 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
     public void spawnRayBeam(boolean b) {
         if (b) {
             rayGunBeam = new RayGunBeam(getContext(), getResources(),
-                    (int) userCharecter.getCurX()+userCharecter.bitmap.getWidth()/2,
-                    (int) (userCharecter.getCurY()+convertDpToPixel(-260)));
+                    (int) userCharecter.getCurX() + userCharecter.bitmap.getWidth() / 2,
+                    (int) (userCharecter.getCurY() + convertDpToPixel(-260)));
         } else {
             rayGunBeam = null;
         }
@@ -599,12 +633,14 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
 
     private void moveBullets() {
         for (int i = 0; i < bullets.size(); i++) {
-            bullets.get(i).setCurY((int) (bullets.get(i).getCurY() - bullets.get(i).getSpeed()));
+            if (bullets.get(i) != null) {
+                bullets.get(i).setCurY((int) (bullets.get(i).getCurY() - bullets.get(i).getSpeed()));
+            }
         }
 
         if (rayGunBeam != null) {
-            rayGunBeam.setX((int) userCharecter.getCurX()+userCharecter.bitmap.getWidth()/2);
-            rayGunBeam.setY((int) userCharecter.getCurY()-rayGunBeam.bitmap.getHeight());
+            rayGunBeam.setX((int) userCharecter.getCurX() + userCharecter.bitmap.getWidth() / 2);
+            rayGunBeam.setY((int) userCharecter.getCurY() - rayGunBeam.bitmap.getHeight());
         }
     }
 
@@ -619,7 +655,6 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
 
         if (rayGunBeam != null) {
             canvas.drawBitmap(rayGunBeam.bitmap, rayGunBeam.getX(), rayGunBeam.getY(), null);
-            //canvas.drawRect(rayGunBeam.getHitbox(), ammoTextPaint);
         }
 
     }
@@ -637,6 +672,43 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
                 spawnCoin(x, y);
             }
         }
+
+        //check for dead hard hard enemys
+        for (int i = 0; i < hardEnemies.size(); i++) {
+            int x = hardEnemies.get(i).getX();
+            int y = hardEnemies.get(i).getY();
+
+            if (hardEnemies.get(i).getCurHeath() < 1) {
+                hardEnemies.get(i).cleanup();
+                hardEnemies.remove(i);
+                userCharecter.setEnemysKilled(userCharecter.getEnemysKilled() + 1);
+                asteroidAudioThread.startDeadEnemySound();
+                spawnCoin(x, y);
+                spawnCoin((int) (x + convertDpToPixel(5)), y);
+            }
+        }
+    }
+
+    public void spawnHeathPotion() {
+        HeathHeart heathHeart = new HeathHeart(getResources(), screenSize, 300, 40);
+        heathPotions.add(heathHeart);
+    }
+
+    public void drawItemDrops() {
+        for (int p = 0; heathPotions.size() > p; p++) {
+            canvas.drawBitmap(heathPotions.get(p).fullHeartBitmap, heathPotions.get(p).getxLoc(), heathPotions.get(p).getyLoc(), null);
+        }
+    }
+
+    private void moveItems() {
+        for (int p = 0; heathPotions.size() > p; p++) {
+            if (heathPotions.get(p).getyLoc() > screenSize[1]) {
+                heathPotions.remove(p);
+            } else {
+                heathPotions.get(p).move();
+            }
+        }
+
     }
 
     public void spawnCoin(int x, int y) {

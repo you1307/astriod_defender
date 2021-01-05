@@ -9,9 +9,10 @@ public class WaveSpawnThread extends Thread {
     AsteroidGameView asteroidGameView;
     int numberOfWavesCompleted;
     UserData userData;
-    SpawnEasyEnemy spawnEasyEnemy;
+    SpawnEnemys spawnEasyEnemy;
     SpawnAsteroid spawnAsteroid;
-    Thread enemyThread, asteroidThread;
+    ItemDropManager itemDropManager;
+    Thread enemyThread, asteroidThread, itemDropThread;
     private boolean goToEndScreen = true;
 
     public WaveSpawnThread(AsteroidGameView asteroidGameView, Context context) {
@@ -19,11 +20,14 @@ public class WaveSpawnThread extends Thread {
         userData = new UserData(context);
         numberOfWavesCompleted = userData.getCurrentWaveCount();
 
-        spawnEasyEnemy = new SpawnEasyEnemy(getAmountOfEnemyToSpawn(), asteroidGameView, numberOfWavesCompleted);
+        spawnEasyEnemy = new SpawnEnemys(getAmountOfEnemyToSpawn(), asteroidGameView, numberOfWavesCompleted);
         spawnAsteroid = new SpawnAsteroid(getAmountOfAsteroidToSpawn(), asteroidGameView, numberOfWavesCompleted);
+        itemDropManager = new ItemDropManager(asteroidGameView, numberOfWavesCompleted);
 
         enemyThread = new Thread(spawnEasyEnemy);
         asteroidThread = new Thread(spawnAsteroid);
+        itemDropThread = new Thread(itemDropManager);
+
 
 
         Log.v("testing", "wave: "+ userData.getCurrentWaveCount());
@@ -47,6 +51,7 @@ public class WaveSpawnThread extends Thread {
     public void run() {
         enemyThread.start();
         asteroidThread.start();
+        itemDropThread.start();
         waveDone();
     }
 
@@ -61,10 +66,12 @@ public class WaveSpawnThread extends Thread {
         goToEndScreen = false;
         spawnAsteroid.stopThread();
         spawnEasyEnemy.stopThread();
+        itemDropManager.stop();
 
         try{
             spawnAsteroid.join();
             spawnEasyEnemy.join();
+
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -106,13 +113,13 @@ class SpawnAsteroid extends Thread {
 }
 
 
-class SpawnEasyEnemy extends Thread {
+class SpawnEnemys extends Thread {
     int totalAmountToSpawn;
     int curWave;
     boolean run = true;
     AsteroidGameView asteroidGameView;
 
-    SpawnEasyEnemy(int amount, AsteroidGameView asteroidGameView, int curWave) {
+    SpawnEnemys(int amount, AsteroidGameView asteroidGameView, int curWave) {
         totalAmountToSpawn = amount;
         this.curWave = curWave;
         this.asteroidGameView = asteroidGameView;
@@ -124,6 +131,10 @@ class SpawnEasyEnemy extends Thread {
             if (asteroidGameView.EasyEnemy.size() < 4) {
                 asteroidGameView.spawnEasyEnemy(1);
                 totalAmountToSpawn -= 1;
+            }
+
+            if(asteroidGameView.userData.getCurrentWaveCount() > 5 && asteroidGameView.hardEnemies.size() < 1){
+                asteroidGameView.spawnHardEnemy(1);
             }
 
             try {
