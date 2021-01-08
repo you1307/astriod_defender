@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
+import com.thetechnoobs.moterskillgame.MenuSpaceBackground;
 import com.thetechnoobs.moterskillgame.R;
 import com.thetechnoobs.moterskillgame.UserData;
 import com.thetechnoobs.moterskillgame.UserInventory;
@@ -134,10 +135,16 @@ public class EndGameScreenAsteroids extends Activity {
         });
     }
 
+
+    Thread backgroundEffects;
+    MenuSpaceBackground menuSpaceBackground;
     private void startStarBackground() {
-        starThread = new starThread(this, backgroundSurface, screenSize);
-        Thread starsView = new Thread(starThread);
-        starsView.start();
+            Point point = new Point();
+            getWindowManager().getDefaultDisplay().getSize(point);
+            int[] screenSize = {point.x, point.y};
+            menuSpaceBackground = new MenuSpaceBackground(getApplicationContext(), backgroundSurface, screenSize);
+            backgroundEffects = new Thread(menuSpaceBackground);
+            backgroundEffects.start();
     }
 
     private void GoToStore() {

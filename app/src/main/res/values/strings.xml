@@ -29,4 +29,6 @@
     <string name="restart">Restart</string>
     <string name="wave_complete">Wave Complete</string>
     <string name="go_to_wave">Go to wave %d</string>
+    <string name="play">Play</string>
+    <string name="settings">settings</string>
 </resources>

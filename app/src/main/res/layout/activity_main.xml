@@ -6,13 +6,33 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
+    <SurfaceView
+        android:id="@+id/backGroundSurfaceView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/playBTN"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
+        android:onClick="PlayGame"
+        android:text="@string/play"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.529"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/settingsBTN"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="goToSettings"
+        android:text="@string/settings"
+        app:layout_constraintEnd_toEndOf="@+id/playBTN"
+        app:layout_constraintStart_toStartOf="@+id/playBTN"
+        app:layout_constraintTop_toBottomOf="@+id/playBTN" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
