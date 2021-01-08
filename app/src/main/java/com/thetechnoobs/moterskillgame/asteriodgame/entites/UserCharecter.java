@@ -114,7 +114,7 @@ public class UserCharecter {
     }
 
     public void setHeath(int heath) {
-        //CurHeath = heath;
+        CurHeath = heath;
     }
 
     public int getMaxHeath() {
