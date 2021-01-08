@@ -78,7 +78,7 @@ public class EndGameScreenAsteroids extends Activity {
         TotalGoldTXT.setText("Total GoldCoins: " + userInventory.getGoldCoins());
 
         if (waveCompleted) {
-            TitleTextView.setText("Wave " + (userData.getCurrentWaveCount() - 1) + " Completed");
+            TitleTextView.setText("Wave " + (userData.getCurrentWaveCount()) + " Completed");
             TitleTextView.setTextColor(getResources().getColor(R.color.green_800));
             RestartBTN.setText(R.string.next_wave);
         } else {
