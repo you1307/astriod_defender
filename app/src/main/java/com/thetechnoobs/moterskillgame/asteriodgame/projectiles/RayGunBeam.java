@@ -1,4 +1,4 @@
-package com.thetechnoobs.moterskillgame.asteriodgame.entites;
+package com.thetechnoobs.moterskillgame.asteriodgame.projectiles;
 
 import android.content.Context;
 import android.content.res.Resources;

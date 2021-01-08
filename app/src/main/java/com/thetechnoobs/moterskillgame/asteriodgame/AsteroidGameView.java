@@ -20,10 +20,10 @@ import com.thetechnoobs.moterskillgame.asteriodgame.entites.Astriod;
 import com.thetechnoobs.moterskillgame.asteriodgame.entites.BadGuy;
 import com.thetechnoobs.moterskillgame.asteriodgame.entites.GoldCoin;
 import com.thetechnoobs.moterskillgame.asteriodgame.entites.HardEnemy;
-import com.thetechnoobs.moterskillgame.asteriodgame.entites.RayGunBeam;
-import com.thetechnoobs.moterskillgame.asteriodgame.entites.RegularBullet;
-import com.thetechnoobs.moterskillgame.asteriodgame.entites.ShotGunBullet;
 import com.thetechnoobs.moterskillgame.asteriodgame.entites.UserCharecter;
+import com.thetechnoobs.moterskillgame.asteriodgame.projectiles.RayGunBeam;
+import com.thetechnoobs.moterskillgame.asteriodgame.projectiles.RegularBullet;
+import com.thetechnoobs.moterskillgame.asteriodgame.projectiles.ShotGunBullet;
 import com.thetechnoobs.moterskillgame.asteriodgame.ui.BackgroundStar;
 import com.thetechnoobs.moterskillgame.asteriodgame.ui.Explosion;
 import com.thetechnoobs.moterskillgame.asteriodgame.ui.HeathHeart;
@@ -183,7 +183,7 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
     }
 
     private void checkForWaveCompletion() {
-        if (EasyEnemy.size() < 1 && astriods.size() < 1 && waveDoneSending && GoldCoins.size() < 1) {
+        if (EasyEnemy.size() < 1 && astriods.size() < 1 && waveDoneSending && GoldCoins.size() < 1 && hardEnemies.size() < 1) {
             userData.addOneToCurrentWaveCount();
             gameOver();
         }
@@ -303,7 +303,7 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
             EasyEnemy.get(e).cleanup();
         }
 
-        for (int e = 0; e<hardEnemies.size();e++){
+        for (int e = 0; e < hardEnemies.size(); e++) {
             hardEnemies.get(e).cleanup();
         }
 
@@ -506,7 +506,7 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
 
     private void BulletHitboxDetection() {
 
-        //check for asteroid collision
+        //check for any bullets hitting asteroids
         for (int a = 0; a < astriods.size(); a++) {
             boolean brake = false;
             for (int b = 0; b < bullets.size(); b++) {
@@ -548,7 +548,7 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
             }
         }
 
-        //check for Enemy Collision
+        //check for any bullets hiting an easy enemy
         for (int e = 0; e < EasyEnemy.size(); e++) {
             boolean brake = false;
             for (int b = 0; b < bullets.size(); b++) {
@@ -564,8 +564,6 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
                 }
             }
 
-            //check for hard Enemy Collision
-
             for (int b = 0; b < shotGunBullets.size(); b++) {
                 if (shotGunBullets.get(b).getHitbox().intersect(EasyEnemy.get(e).getHitBox())) {
                     EasyEnemy.get(e).setCurHeath(EasyEnemy.get(e).getCurHeath() - new BasicGun(getContext()).getDamage());
@@ -579,12 +577,58 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
                 }
             }
 
-            if(rayGunBeam != null){
-                if(rayGunBeam.getHitbox().intersect(EasyEnemy.get(e).getHitBox())){
+            if (rayGunBeam != null) {
+                if (rayGunBeam.getHitbox().intersect(EasyEnemy.get(e).getHitBox())) {
                     EasyEnemy.get(e).setCurHeath(0);
                     userCharecter.setUserScore(userCharecter.getUserScore() + 3);
                     if (EasyEnemy.get(e).getCurHeath() > 0) {
                         asteroidAudioThread.startEasyEnemyHitSound();
+                    }
+                    brake = true;
+                }
+            }
+
+
+            if (brake) {
+                break;
+            }
+        }
+
+        //check for any bullets hiting an hard enemy
+        for (int e = 0; e < hardEnemies.size(); e++) {
+            boolean brake = false;
+            for (int b = 0; b < bullets.size(); b++) {
+                if (bullets.get(b).getHitbox().intersect(hardEnemies.get(e).getHitBox())) {
+                    hardEnemies.get(e).setCurHeath(hardEnemies.get(e).getCurHeath() - new BasicGun(getContext()).getDamage());
+                    bullets.remove(b);
+                    userCharecter.setUserScore(userCharecter.getUserScore() + 3);
+                    if (hardEnemies.get(e).getCurHeath() > 0) {
+                        asteroidAudioThread.startUserHitSound();//TODO implamint uniqe sound
+                    }
+                    brake = true;
+                    break;
+                }
+            }
+
+            for (int b = 0; b < shotGunBullets.size(); b++) {
+                if (shotGunBullets.get(b).getHitbox().intersect(hardEnemies.get(e).getHitBox())) {
+                    hardEnemies.get(e).setCurHeath(hardEnemies.get(e).getCurHeath() - new BasicGun(getContext()).getDamage());
+                    shotGunBullets.remove(b);
+                    userCharecter.setUserScore(userCharecter.getUserScore() + 3);
+                    if (hardEnemies.get(e).getCurHeath() > 0) {
+                        asteroidAudioThread.startUserHitSound();//TODO implamint uniqe sound
+                    }
+                    brake = true;
+                    break;
+                }
+            }
+
+            if (rayGunBeam != null) {
+                if (rayGunBeam.getHitbox().intersect(hardEnemies.get(e).getHitBox())) {
+                    hardEnemies.get(e).setCurHeath(0);
+                    userCharecter.setUserScore(userCharecter.getUserScore() + 3);
+                    if (hardEnemies.get(e).getCurHeath() > 0) {
+                        asteroidAudioThread.startUserHitSound();//TODO implamint uniqe sound
                     }
                     brake = true;
                 }

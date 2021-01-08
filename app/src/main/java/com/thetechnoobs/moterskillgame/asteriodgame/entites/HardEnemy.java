@@ -6,10 +6,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.RectF;
+import android.util.DisplayMetrics;
 
 import com.thetechnoobs.moterskillgame.R;
 import com.thetechnoobs.moterskillgame.asteriodgame.AsteroidAudioThread;
 import com.thetechnoobs.moterskillgame.asteriodgame.Constants;
+import com.thetechnoobs.moterskillgame.asteriodgame.projectiles.HardEnemyBomb;
+import com.thetechnoobs.moterskillgame.asteriodgame.ui.Explosion;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +20,7 @@ import java.util.Random;
 
 public class HardEnemy {
     public int x, y;
-    public int MaxHeath = EnemyParameters.easyEnemyHeathMax;
+    public int MaxHeath = EnemyParameters.hardEnemyHeathMax;
     public Bitmap hardEnemyAlive, hardHeathHeart;
     public int[] screenSize;
     public int speed = new Random().nextInt(Constants.DEFULT_EASY_ENEMY_SPEED);
@@ -25,7 +28,7 @@ public class HardEnemy {
     int CurHeath = MaxHeath;
     Boolean direction = false; //true means move right, false means move left
     AsteroidAudioThread asteroidAudioThread;
-    ArrayList<HardEnemyBullet> bullets = new ArrayList<>();
+    ArrayList<HardEnemyBomb> bullets = new ArrayList<>();
     Resources resources;
     UserCharecter userCharecter;
 
@@ -52,11 +55,15 @@ public class HardEnemy {
                 false);
     }
 
+    public static float convertDpToPixel(float dp) {
+        DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
+        return Math.round(dp * (metrics.densityDpi / 160f));
+    }
+
     public void update(Canvas canvas) {
         Move();
         DrawHeath(canvas);
         updateBullets(canvas);
-        CheckBulletHitBox();
     }
 
     public void Move() {
@@ -96,29 +103,38 @@ public class HardEnemy {
         }
     }
 
-    private void CheckBulletHitBox() {
-        for (int b = 0; b < bullets.size(); b++) {
-            if (bullets.get(b).getHitbox().intersect(userCharecter.getHitBox())) {
-                bullets.remove(b);
-                userCharecter.setHeath(userCharecter.getHeath() - 2);
-                asteroidAudioThread.startUserHitSound();
-                break;
-            }
-        }
+    private void bombHitUser() {
+        userCharecter.setHeath(userCharecter.getHeath() - 4);
+        asteroidAudioThread.startUserHitSound();
     }
 
     private void updateBullets(Canvas canvas) {
         for (int b = 0; b < bullets.size(); b++) {
 
-            bullets.get(b).setCurY(bullets.get(b).getCurY() + bullets.get(b).getSpeed());
+            if (bullets.get(b).getCurY() >= userCharecter.getCurY()) {
+                explode(bullets.get(b).getCurX(), bullets.get(b).getCurY(), canvas, bullets.get(b));
 
-            canvas.drawBitmap(bullets.get(b).bitmap, bullets.get(b).getCurX(), bullets.get(b).getCurY(), null);
-
+                bullets.remove(b);
+                break;
+            } else {
+                bullets.get(b).setCurY(bullets.get(b).getCurY() + bullets.get(b).getSpeed());
+                canvas.drawBitmap(bullets.get(b).bitmap, bullets.get(b).getCurX(), bullets.get(b).getCurY(), null);
+            }
 
             if (bullets.get(b).getCurY() > screenSize[1]) {
                 bullets.remove(b);
                 b--;
             }
+        }
+    }
+
+    private void explode(float X, float Y, Canvas canvas, HardEnemyBomb hardEnemyBomb) {
+        Explosion explosion = new Explosion(X - convertDpToPixel(50), Y - convertDpToPixel(50), convertDpToPixel(100), convertDpToPixel(100), resources);
+        canvas.drawBitmap(explosion.bitmap, explosion.getX(), explosion.getY(), null);
+        asteroidAudioThread.startAsteroidExplosionSound();
+
+        if (userCharecter.getHitBox().intersect(hardEnemyBomb.getHitbox())) {
+            bombHitUser();
         }
     }
 
@@ -128,8 +144,8 @@ public class HardEnemy {
     }
 
     public void Shoot() {
-        HardEnemyBullet hardEnemyBullet = new HardEnemyBullet(resources, 6, screenSize, getX() + (float) hardEnemyAlive.getWidth() / 2, getY() + hardEnemyAlive.getHeight());
-        bullets.add(hardEnemyBullet);
+        HardEnemyBomb hardEnemyBomb = new HardEnemyBomb(resources, 6, screenSize, getX() + (float) hardEnemyAlive.getWidth() / 2, getY() + hardEnemyAlive.getHeight());
+        bullets.add(hardEnemyBomb);
         asteroidAudioThread.startEasyEnemyShootingSound();
     }
 

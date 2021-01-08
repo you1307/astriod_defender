@@ -23,7 +23,6 @@ public class UserCharecter {
     int Gold = 0;
     float CurX, CurY;
     int[] screenSize;
-    private int overHeathPickups = 0;
 
 
     public UserCharecter(Resources resources, int[] screenSize, float CurX, float CurY) {

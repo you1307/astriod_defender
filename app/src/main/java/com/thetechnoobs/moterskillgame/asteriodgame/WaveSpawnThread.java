@@ -29,8 +29,7 @@ public class WaveSpawnThread extends Thread {
         itemDropThread = new Thread(itemDropManager);
 
 
-
-        Log.v("testing", "wave: "+ userData.getCurrentWaveCount());
+        Log.v("testing", "wave: " + userData.getCurrentWaveCount());
     }
 
     private int getAmountOfEnemyToSpawn() {
@@ -68,11 +67,11 @@ public class WaveSpawnThread extends Thread {
         spawnEasyEnemy.stopThread();
         itemDropManager.stop();
 
-        try{
+        try {
             spawnAsteroid.join();
             spawnEasyEnemy.join();
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -128,20 +127,29 @@ class SpawnEnemys extends Thread {
     @Override
     public void run() {
         while (totalAmountToSpawn > 0 && run) {
-            if (asteroidGameView.EasyEnemy.size() < 4) {
-                asteroidGameView.spawnEasyEnemy(1);
+
+            if (curWave % 5 == 0) {
+                bossWaveInitiate();
                 totalAmountToSpawn -= 1;
+            } else {
+                if (asteroidGameView.EasyEnemy.size() < 4) {
+                    asteroidGameView.spawnEasyEnemy(1);
+                    totalAmountToSpawn -= 1;
+                }
             }
 
-            if(asteroidGameView.userData.getCurrentWaveCount() > 5 && asteroidGameView.hardEnemies.size() < 1){
-                asteroidGameView.spawnHardEnemy(1);
-            }
 
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 break;
             }
+        }
+    }
+
+    private void bossWaveInitiate() {
+        if (asteroidGameView.hardEnemies.size() < 2) {
+            asteroidGameView.spawnHardEnemy(2);
         }
     }
 

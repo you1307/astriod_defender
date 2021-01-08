@@ -1,4 +1,4 @@
-package com.thetechnoobs.moterskillgame.asteriodgame.entites;
+package com.thetechnoobs.moterskillgame.asteriodgame.projectiles;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -9,14 +9,14 @@ import android.util.DisplayMetrics;
 
 import com.thetechnoobs.moterskillgame.R;
 
-public class HardEnemyBullet {
+public class HardEnemyBomb {
     public Bitmap bitmap;
     float CurX = 0, CurY = 0;
     int speed;
     int[] screenSize = {0, 0};
     RectF Hitbox;
 
-    public HardEnemyBullet(Resources resources, int speed, int[] screenSize, float curX, float curY) {
+    public HardEnemyBomb(Resources resources, int speed, int[] screenSize, float curX, float curY) {
         CurX = curX;
         CurY = curY;
         this.speed = speed;
@@ -40,7 +40,7 @@ public class HardEnemyBullet {
     }
 
     public RectF getHitbox() {
-        return new RectF(getCurX(), getCurY(), getCurX() + bitmap.getWidth(), getCurY() + bitmap.getHeight());
+        return new RectF(getCurX() - convertDpToPixel(50), getCurY() - convertDpToPixel(50), getCurX() + convertDpToPixel(100), getCurY() + convertDpToPixel(100));
     }
 
     public float getCurX() {
