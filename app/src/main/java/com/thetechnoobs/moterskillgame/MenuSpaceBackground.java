@@ -64,6 +64,7 @@ public class MenuSpaceBackground implements Runnable {
     private void draw() {
         if (surfaceView.getHolder().getSurface().isValid()) {
             canvas = surfaceView.getHolder().lockCanvas();
+
             canvas.drawRect(0, 0, screenSize[0], screenSize[1], paint);
 
             for (int s = 0; s < backgroundStars.size(); s++) {

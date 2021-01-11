@@ -20,7 +20,6 @@ import com.thetechnoobs.moterskillgame.MenuSpaceBackground;
 import com.thetechnoobs.moterskillgame.R;
 import com.thetechnoobs.moterskillgame.UserData;
 import com.thetechnoobs.moterskillgame.UserInventory;
-import com.thetechnoobs.moterskillgame.asteriodgame.entites.BadGuy;
 import com.thetechnoobs.moterskillgame.asteriodgame.ui.BackgroundStar;
 
 import java.util.ArrayList;
@@ -33,10 +32,11 @@ public class EndGameScreenAsteroids extends Activity {
     Button RestartBTN, GoToTownBTN;
     UserInventory userInventory = new UserInventory(this);
     UserData userData = new UserData(this);
-    starThread starThread;
     SurfaceView backgroundSurface;
     Point point = new Point();
     int[] screenSize;
+    Thread backgroundEffects;
+    MenuSpaceBackground menuSpaceBackground;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -108,7 +108,6 @@ public class EndGameScreenAsteroids extends Activity {
         return (KilledEnemys * gold) + (int) (score * 1.5) - damage;
     }
 
-
     public void Settup() {
         backgroundSurface = findViewById(R.id.surfaceView);
         ScoreTXT = findViewById(R.id.ScoreTXTView);
@@ -135,16 +134,13 @@ public class EndGameScreenAsteroids extends Activity {
         });
     }
 
-
-    Thread backgroundEffects;
-    MenuSpaceBackground menuSpaceBackground;
     private void startStarBackground() {
-            Point point = new Point();
-            getWindowManager().getDefaultDisplay().getSize(point);
-            int[] screenSize = {point.x, point.y};
-            menuSpaceBackground = new MenuSpaceBackground(getApplicationContext(), backgroundSurface, screenSize);
-            backgroundEffects = new Thread(menuSpaceBackground);
-            backgroundEffects.start();
+        Point point = new Point();
+        getWindowManager().getDefaultDisplay().getSize(point);
+        int[] screenSize = {point.x, point.y};
+        menuSpaceBackground = new MenuSpaceBackground(getApplicationContext(), backgroundSurface, screenSize);
+        backgroundEffects = new Thread(menuSpaceBackground);
+        backgroundEffects.start();
     }
 
     private void GoToStore() {
@@ -160,90 +156,14 @@ public class EndGameScreenAsteroids extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-        starThread.stopThread();
+           menuSpaceBackground.stopThread();
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        starThread.stopThread();
+        menuSpaceBackground.stopThread();
         startActivity(new Intent(this, AsteroidGameActivity.class));
         finish();
-    }
-}
-
-class starThread implements Runnable {
-    Context context;
-    SurfaceView surfaceView;
-    Canvas canvas;
-    ArrayList<BackgroundStar> backgroundStars = new ArrayList<>();
-    int[] screenSize;
-    Paint paint = new Paint();
-    private boolean shouldRun = true;
-    private int starCount = 10;
-
-    public starThread(Context context, SurfaceView surfaceView, int[] screenSize) {
-        this.context = context;
-        this.surfaceView = surfaceView;
-        this.screenSize = screenSize;
-        paint.setColor(context.getResources().getColor(R.color.black));
-
-        while (backgroundStars.size() < starCount) {
-            BackgroundStar backgroundStar = new BackgroundStar(new Random().nextInt(screenSize[0] - 10),
-                    new Random().nextInt(screenSize[1]),
-                    new Random().nextInt(10) + 1,
-                    screenSize,
-                    context.getResources());
-
-            backgroundStars.add(backgroundStar);
-        }
-    }
-
-    @Override
-    public void run() {
-        while (shouldRun) {
-            draw();
-            update();
-
-            try {
-                Thread.sleep(10);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void update() {
-        for (int s = 0; s < backgroundStars.size(); s++) {
-            if (backgroundStars.get(s).getCurY() > screenSize[1]) {
-                backgroundStars.remove(s);
-            } else {
-                backgroundStars.get(s).setCurY(backgroundStars.get(s).getCurY() + backgroundStars.get(s).getSpeed());
-            }
-
-        }
-
-        if (backgroundStars.size() < starCount) {
-            BackgroundStar backgroundStar = new BackgroundStar(new Random().nextInt(screenSize[0] - 10), 0, new Random().nextInt(10) + 1, screenSize, context.getResources());
-            backgroundStars.add(backgroundStar);
-        }
-    }
-
-    private void draw() {
-        if (surfaceView.getHolder().getSurface().isValid()) {
-            canvas = surfaceView.getHolder().lockCanvas();
-            canvas.drawRect(0, 0, screenSize[0], screenSize[1], paint);
-
-            for (int s = 0; s < backgroundStars.size(); s++) {
-                canvas.drawBitmap(backgroundStars.get(s).stareBitmap, backgroundStars.get(s).getCurX(), backgroundStars.get(s).getCurY(), null);
-            }
-
-
-            surfaceView.getHolder().unlockCanvasAndPost(canvas);
-        }
-    }
-
-    public void stopThread() {
-        shouldRun = false;
     }
 }

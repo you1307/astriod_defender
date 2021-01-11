@@ -14,6 +14,7 @@ public class WaveSpawnThread extends Thread {
     ItemDropManager itemDropManager;
     Thread enemyThread, asteroidThread, itemDropThread;
     private boolean goToEndScreen = true;
+    private boolean pause = false;
 
     public WaveSpawnThread(AsteroidGameView asteroidGameView, Context context) {
         this.asteroidGameView = asteroidGameView;
@@ -93,9 +94,11 @@ class SpawnAsteroid extends Thread {
     @Override
     public void run() {
         while (totalAmountToSpawn > 0 && run) {
-            if (asteroidGameView.EasyEnemy.size() < 5) {
-                asteroidGameView.spawnAsteroids(1);
-                totalAmountToSpawn -= 1;
+            if (!asteroidGameView.paused) {
+                if (asteroidGameView.EasyEnemy.size() < 5) {
+                    asteroidGameView.spawnAsteroids(1);
+                    totalAmountToSpawn -= 1;
+                }
             }
 
             try {
@@ -128,13 +131,15 @@ class SpawnEnemys extends Thread {
     public void run() {
         while (totalAmountToSpawn > 0 && run) {
 
-            if (curWave % 5 == 0) {
-                bossWaveInitiate();
-                totalAmountToSpawn -= 1;
-            } else {
-                if (asteroidGameView.EasyEnemy.size() < 4) {
-                    asteroidGameView.spawnEasyEnemy(1);
+            if (!asteroidGameView.paused) {
+                if (curWave % 5 == 0) {
+                    bossWaveInitiate();
                     totalAmountToSpawn -= 1;
+                } else {
+                    if (asteroidGameView.EasyEnemy.size() < 4) {
+                        asteroidGameView.spawnEasyEnemy(1);
+                        totalAmountToSpawn -= 1;
+                    }
                 }
             }
 

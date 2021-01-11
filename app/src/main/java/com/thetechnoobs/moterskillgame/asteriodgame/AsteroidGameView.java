@@ -27,6 +27,7 @@ import com.thetechnoobs.moterskillgame.asteriodgame.projectiles.ShotGunBullet;
 import com.thetechnoobs.moterskillgame.asteriodgame.ui.BackgroundStar;
 import com.thetechnoobs.moterskillgame.asteriodgame.ui.Explosion;
 import com.thetechnoobs.moterskillgame.asteriodgame.ui.HeathHeart;
+import com.thetechnoobs.moterskillgame.asteriodgame.ui.PauseButtonUI;
 import com.thetechnoobs.moterskillgame.asteriodgame.ui.ShootRegularButtonUI;
 import com.thetechnoobs.moterskillgame.weapons.AssaultRifle;
 import com.thetechnoobs.moterskillgame.weapons.BasicGun;
@@ -38,10 +39,12 @@ import java.util.Random;
 public class AsteroidGameView extends SurfaceView implements Runnable {
     private final Paint paint, BackgroundRectPaint, scoreTextPaint, ammoTextPaint;
     public ArrayList<HeathHeart> heathPotions = new ArrayList<>();
+    public boolean paused = false;
     UserCharecter userCharecter;
     UserInventory userInventory;
     UserData userData;
     ShootRegularButtonUI shootRegularButtonUI;
+    PauseButtonUI pauseButtonUI;
     RectF backgroundRect;
     ArrayList<BackgroundStar> backgroundStars = new ArrayList<>();
     ArrayList<Astriod> astriods = new ArrayList<>();
@@ -57,11 +60,11 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
     GunBulletThreads gunBulletThreads;
     boolean waveDoneSending = false;
     RayGunBeam rayGunBeam;
+    int debounce = 0;
     private Thread thread;
     private boolean isPlaying = false;
     private boolean shooting = false;
     private int ammoLeft, maxAmmoOfCurGun;
-
 
     public AsteroidGameView(Context context, int screenx, int screeny) {
         super(context);
@@ -101,11 +104,6 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
 
     }
 
-    public static float convertPixelsToDp(float px) {
-        DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
-        return Math.round(px / (metrics.densityDpi / 160f));
-    }
-
     public static float convertDpToPixel(float dp) {
         DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
         return Math.round(dp * (metrics.densityDpi / 160f));
@@ -114,13 +112,18 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
     @Override
     public void run() {
         while (isPlaying) {
-            draw();
-            update();
 
-            if (userCharecter.getHeath() > 0) {
-                checkForWaveCompletion();
+            draw();
+
+            if (!paused) {
+
+                update();
+
+                if (userCharecter.getHeath() > 0) {
+                    checkForWaveCompletion();
+                }
+                //sleep(5);
             }
-            //sleep(5);
         }
     }
 
@@ -133,8 +136,7 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
         if (getHolder().getSurface().isValid()) {
             canvas = getHolder().lockCanvas();
             canvas.drawRect(backgroundRect, BackgroundRectPaint);
-            drawBackgrounStars();
-
+            backgroundStuff();
 
             drawItemDrops();
             drawAstroids();
@@ -150,11 +152,22 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
         }
     }
 
+    private void backgroundStuff() {
+        moveBackgroundStars();
+        spawnAndDeleteBackgroundStars();
+        drawBackgrounStars();
+    }
+
     private void drawUI() {
-        userCharecter.drawUserHealth(getResources(), canvas);
+        userCharecter.drawUserHealth(getResources(), canvas, getContext());
         drawUserScore();
         drawAmmoLeft();
 
+        if (paused) {
+            canvas.drawBitmap(pauseButtonUI.playButtonBitmap, pauseButtonUI.getLocX(), pauseButtonUI.getLocY(), null);
+        } else {
+            canvas.drawBitmap(pauseButtonUI.pauseButtonBitmap, pauseButtonUI.getLocX(), pauseButtonUI.getLocY(), null);
+        }
         canvas.drawBitmap(shootRegularButtonUI.bitmap, shootRegularButtonUI.getX(), shootRegularButtonUI.getY(), null);
         canvas.drawBitmap(userCharecter.bitmap, userCharecter.getCurX(), userCharecter.getCurY(), null);
     }
@@ -178,12 +191,10 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
         checkAsteroidsOutOfBounds();
 
         //Deal with background stuff
-        moveBackgroundStars();
-        spawnAndDeleteBackgroundStars();
     }
 
     private void checkForWaveCompletion() {
-        if (EasyEnemy.size() < 1 && astriods.size() < 1 && waveDoneSending && GoldCoins.size() < 1 && hardEnemies.size() < 1) {
+        if (EasyEnemy.size() < 1 && astriods.size() < 1 && waveDoneSending && GoldCoins.size() < 1 && hardEnemies.size() < 1 && waveDoneSending) {
             userData.addOneToCurrentWaveCount();
             gameOver();
         }
@@ -226,6 +237,8 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
                 if (checkUIButtons(event.getX(), event.getY(), false)) {
                     shooting = false;
                 }
+
+                debounce = 0;
                 break;
             case MotionEvent.ACTION_POINTER_UP:
                 if (checkUIButtons(event.getX(pointerIndex), event.getY(pointerIndex), false)) {
@@ -241,8 +254,13 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
     }
 
     private boolean checkUIButtons(float x, float y, boolean actOn) {
-        if (x > shootRegularButtonUI.getX() && y > shootRegularButtonUI.getY()) {
+
+        RectF touchPoint = new RectF(x - 2, y - 2, x + 5, y + 5);
+
+        //if user taps on the shoot button
+        if (shootRegularButtonUI.getCollitionBox().intersect(touchPoint) && !paused) {
             if (actOn) {
+                //deal with appropriate thread if intended to
                 switch (userInventory.getEquippedWeapon()) {
                     case 1:
                         if (!gunBulletThreads.spawnRegularBulletThread.running) {
@@ -268,7 +286,38 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
             }
             return true;
         }
+
+        //if user hit pause button
+        if (pauseButtonUI.getHitBox().intersect(touchPoint)) {
+            if (debounce == 0) {
+                debounce++;
+                if (paused) {
+                    unPauseGame();
+                } else {
+                    pauseGame();
+                }
+                Log.v("testing", "pushed pause");
+            }
+
+            return true;
+        }
         return false;
+    }
+
+    private void pauseGame() {
+        paused = true;
+
+        for (BadGuy badGuy : EasyEnemy) {
+            badGuy.pause(true);
+        }
+    }
+
+    public void unPauseGame() {
+        paused = false;
+
+        for (BadGuy badGuy : EasyEnemy) {
+            badGuy.pause(false);
+        }
     }
 
     public void gameOver() {
@@ -338,8 +387,10 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
     }
 
     private void updateUserPos(float x, float y) {
-        userCharecter.setCurX((int) (x - userCharecter.bitmap.getWidth() / 2));
-        userCharecter.setCurY((int) (y - userCharecter.bitmap.getHeight() / 2));
+        if(!paused){
+            userCharecter.setCurX((int) (x - userCharecter.bitmap.getWidth() / 2));
+            userCharecter.setCurY((int) (y - userCharecter.bitmap.getHeight() / 2));
+        }
     }
 
     private void checkForCollision() {
@@ -477,14 +528,11 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
 
     private void settupButtonUI(Context context) {
         BackendSettings backendSettings = new BackendSettings();
+        int[] shootButtonLoc = backendSettings.getSavedShootButtonLoc(context);
+        int[] pauseButtonLoc = backendSettings.getSavedPauseButtonLoc(context);
 
-        //settup shoot button
-        shootRegularButtonUI = new ShootRegularButtonUI(getResources(), screenSize);
-        if (backendSettings.getSavedShootButtonSide(context)) {
-            shootRegularButtonUI = new ShootRegularButtonUI(0, shootRegularButtonUI.bitmap.getHeight(), true, screenSize, getResources());
-        } else {
-            shootRegularButtonUI = new ShootRegularButtonUI(screenSize[0] - shootRegularButtonUI.bitmap.getWidth(), screenSize[1] - shootRegularButtonUI.bitmap.getHeight(), true, screenSize, getResources());
-        }
+        pauseButtonUI = new PauseButtonUI(getResources(), pauseButtonLoc[0], pauseButtonLoc[1]);
+        shootRegularButtonUI = new ShootRegularButtonUI(shootButtonLoc[0], shootButtonLoc[1], screenSize, getResources());
     }
 
     private void DespawnBullets() {

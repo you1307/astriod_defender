@@ -4,45 +4,37 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.RectF;
+import android.util.DisplayMetrics;
 
 import com.thetechnoobs.moterskillgame.R;
-import com.thetechnoobs.moterskillgame.asteriodgame.Constants;
 
 public class ShootRegularButtonUI {
+    public Bitmap bitmap;
     int x = 0, y = 0;
     boolean side;
     int[] screenSize = {0, 0};
-    public Bitmap bitmap;
 
-    public ShootRegularButtonUI(int x, int y, boolean side, int[] screenSize, Resources resources) {
+    public ShootRegularButtonUI(int x, int y, int[] screenSize, Resources resources) {
         this.x = x;
         this.y = y;
         this.side = side;
         this.screenSize = screenSize;
 
         bitmap = BitmapFactory.decodeResource(resources, R.drawable.shoot_button);
-        bitmap = Bitmap.createScaledBitmap(bitmap,
-                screenSize[0] / Constants.SCALE_RATIO_NUM_X_FOREGROUND,
-                screenSize[1] / Constants.SCALE_RATIO_NUM_Y_FOREGROUND,
-                false);
-
-
+        bitmap = Bitmap.createScaledBitmap(bitmap, (int) convertDpToPixel(55), (int) convertDpToPixel(55), false);
     }
 
-    public ShootRegularButtonUI(Resources resources, int[] screenSize) {
-        bitmap = BitmapFactory.decodeResource(resources, R.drawable.shoot_button);
-        bitmap = Bitmap.createScaledBitmap(bitmap,
-                screenSize[0] / Constants.SCALE_RATIO_NUM_X_BUTTONS,
-                screenSize[1] / Constants.SCALE_RATIO_NUM_Y_BUTTONS,
-                false);
+    public static float convertDpToPixel(float dp) {
+        DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
+        return Math.round(dp * (metrics.densityDpi / 160f));
     }
 
     public RectF getCollitionBox() {
-        return new RectF(x, y, x + bitmap.getWidth(), y + bitmap.getHeight());
+        return new RectF(x - bitmap.getWidth(), y - bitmap.getHeight(), x, y);
     }
 
     public int getX() {
-        return x-bitmap.getWidth();
+        return x - bitmap.getWidth();
     }
 
     public void setX(int x) {
@@ -50,7 +42,7 @@ public class ShootRegularButtonUI {
     }
 
     public int getY() {
-        return y-bitmap.getHeight();
+        return y - bitmap.getHeight();
     }
 
     public void setY(int y) {

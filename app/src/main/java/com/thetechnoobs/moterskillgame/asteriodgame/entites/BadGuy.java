@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.RectF;
-import android.util.Log;
 
 import com.thetechnoobs.moterskillgame.R;
 import com.thetechnoobs.moterskillgame.asteriodgame.AsteroidAudioThread;
@@ -29,6 +28,7 @@ public class BadGuy {
     ArrayList<EasyEnemyBullet> bullets = new ArrayList<>();
     Resources resources;
     UserCharecter userCharecter;
+    private boolean pause;
 
     public BadGuy(Resources resources, Context context, UserCharecter userCharecter, int[] screenSize, int PosX, int PosY) {
         this.screenSize = screenSize;
@@ -54,10 +54,12 @@ public class BadGuy {
     }
 
     public void update(Canvas canvas) {
-        Move();
-        DrawHeath(canvas);
-        updateBullets(canvas);
-        CheckBulletHitBox();
+        if (!pause) {
+            Move();
+            DrawHeath(canvas);
+            updateBullets(canvas);
+            CheckBulletHitBox();
+        }
     }
 
     public void Move() {
@@ -166,6 +168,10 @@ public class BadGuy {
         CurHeath = curHeath;
     }
 
+    public void pause(boolean pause) {
+        this.pause = pause;
+    }
+
     public class ShootThread extends Thread {
         public boolean run = true;
         long WaitTime;
@@ -182,12 +188,14 @@ public class BadGuy {
         public void run() {
 
             while (run) {
-                try {
-                    Thread.sleep(WaitTime);
-                } catch (InterruptedException e) {
-                   break;
+                if (!pause) {
+                    try {
+                        Thread.sleep(WaitTime);
+                    } catch (InterruptedException e) {
+                        break;
+                    }
+                    Shoot();
                 }
-                Shoot();
             }
         }
 

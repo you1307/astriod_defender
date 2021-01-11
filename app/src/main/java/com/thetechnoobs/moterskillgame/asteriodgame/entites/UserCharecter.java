@@ -1,13 +1,16 @@
 package com.thetechnoobs.moterskillgame.asteriodgame.entites;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.RectF;
+import android.util.DisplayMetrics;
 
-import com.thetechnoobs.moterskillgame.asteriodgame.Constants;
+import com.thetechnoobs.moterskillgame.BackendSettings;
 import com.thetechnoobs.moterskillgame.R;
+import com.thetechnoobs.moterskillgame.asteriodgame.Constants;
 import com.thetechnoobs.moterskillgame.asteriodgame.ui.HeathHeart;
 
 import java.util.ArrayList;
@@ -23,6 +26,7 @@ public class UserCharecter {
     int Gold = 0;
     float CurX, CurY;
     int[] screenSize;
+    BackendSettings backendSettings = new BackendSettings();
 
 
     public UserCharecter(Resources resources, int[] screenSize, float CurX, float CurY) {
@@ -36,6 +40,11 @@ public class UserCharecter {
                 screenSize[1] / Constants.SCALE_RATIO_NUM_Y_USER,
                 false);
 
+    }
+
+    public static float convertDpToPixel(float dp) {
+        DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
+        return Math.round(dp * (metrics.densityDpi / 160f));
     }
 
     public RectF getHitBox() {
@@ -62,9 +71,10 @@ public class UserCharecter {
         }
     }
 
-    public void drawUserHealth(Resources resources, Canvas canvas) {
-        int yOffset = screenSize[1] / 20;//needed for screens with round corners so that the heath heart doesnt get hidden
-        int xOffset = screenSize[0] / 100;//added to make nice spaceing between hearts
+    public void drawUserHealth(Resources resources, Canvas canvas, Context context) {
+        int spacing = (int) convertDpToPixel(4);
+        int xOffset = backendSettings.getSavedHealthHeartLoc(context)[0];//added to make nice spaceing between hearts
+        int yOffset = backendSettings.getSavedHealthHeartLoc(context)[1];//needed for screens with round corners so that the heath heart doesnt get hidden
         List<HeathHeart> heathHearts = new ArrayList<>();
 
         for (int i = 0; i < getMaxHeath(); i++) {
@@ -73,12 +83,12 @@ public class UserCharecter {
 
             if (i < getHeath()) {//if position i should be full heart
                 if (i != 0) {//if position i is not first spot
-                    heathHearts.get(i).xLoc = heathHearts.get(i).xLoc + heathHearts.get(i - 1).xLoc + heathHearts.get(i - 1).fullHeartBitmap.getWidth();
+                    heathHearts.get(i).xLoc = spacing + heathHearts.get(i - 1).xLoc + heathHearts.get(i - 1).fullHeartBitmap.getWidth();
                 }
                 canvas.drawBitmap(heathHearts.get(i).fullHeartBitmap, heathHearts.get(i).xLoc, heathHearts.get(i).yLoc, null);
             } else {//if position i should be empty heart
                 if (i != 0) {//if position i is not first
-                    heathHearts.get(i).xLoc = heathHearts.get(i).xLoc + heathHearts.get(i - 1).xLoc + heathHearts.get(i - 1).emptyHeartBitmap.getWidth();
+                    heathHearts.get(i).xLoc = spacing + heathHearts.get(i - 1).xLoc + heathHearts.get(i - 1).emptyHeartBitmap.getWidth();
                 }
                 canvas.drawBitmap(heathHearts.get(i).emptyHeartBitmap, heathHearts.get(i).xLoc, heathHearts.get(i).yLoc, null);
             }

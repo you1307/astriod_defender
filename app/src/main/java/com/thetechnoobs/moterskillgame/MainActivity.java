@@ -25,10 +25,16 @@ public class MainActivity extends AppCompatActivity {
 
         settup();
         startBackgroundEffects();
+
+        Intent intent = new Intent(getApplicationContext(), AsteroidGameActivity.class);
+        startActivity(intent);
+        cleanup();
+        finish();
     }
 
     SurfaceView surfaceView;
     Button PlayBTN, SettingsBTN;
+
     private void settup() {
         surfaceView = findViewById(R.id.backGroundSurfaceView);
         PlayBTN = findViewById(R.id.playBTN);
@@ -37,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
     Thread backgroundEffects;
     MenuSpaceBackground menuSpaceBackground;
+
     private void startBackgroundEffects() {
         Point point = new Point();
         getWindowManager().getDefaultDisplay().getSize(point);
