@@ -35,4 +35,12 @@ public class BackendSettings {
         int yLoc = sharedPreferences.getInt("HealthBarY", (int) convertDpToPixel(30));
         return new int[]{xLoc, yLoc};
     }
+
+    public int[] getSavedAmmoLoc(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("Settings", Context.MODE_PRIVATE);
+        int xLoc = sharedPreferences.getInt("AmmoTextX", (int) convertDpToPixel(10));
+        int yLoc = sharedPreferences.getInt("AmmoTextY", (int) convertDpToPixel(20));
+
+        return new int[]{xLoc, yLoc};
+    }
 }

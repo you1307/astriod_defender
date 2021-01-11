@@ -56,6 +56,7 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
     int[] screenSize = {0, 0};
     Canvas canvas;
     AsteroidAudioThread asteroidAudioThread;
+    BackendSettings backendSettings = new BackendSettings();
     WaveSpawnThread waveSpawnThread;
     GunBulletThreads gunBulletThreads;
     boolean waveDoneSending = false;
@@ -363,8 +364,8 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
     }
 
     public void drawAmmoLeft() {
-        float xLoc = convertDpToPixel(10);
-        float yLoc = convertDpToPixel(20);
+        float xLoc = backendSettings.getSavedAmmoLoc(getContext())[0];
+        float yLoc = backendSettings.getSavedAmmoLoc(getContext())[1];
         //set color of text depending on ammo left
         if (ammoLeft > maxAmmoOfCurGun / 2) {
             ammoTextPaint.setColor(getResources().getColor(R.color.green_600));
@@ -527,7 +528,6 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
     }
 
     private void settupButtonUI(Context context) {
-        BackendSettings backendSettings = new BackendSettings();
         int[] shootButtonLoc = backendSettings.getSavedShootButtonLoc(context);
         int[] pauseButtonLoc = backendSettings.getSavedPauseButtonLoc(context);
 
