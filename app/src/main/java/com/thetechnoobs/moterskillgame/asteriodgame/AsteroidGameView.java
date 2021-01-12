@@ -331,11 +331,7 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
         GoToEndGameScreen.putExtra("damageTaken", userCharecter.getDamageTaken());
 
         //if user died send false
-        if (userCharecter.getHeath() < 1) {
-            GoToEndGameScreen.putExtra("WaveComplete", false);
-        } else {
-            GoToEndGameScreen.putExtra("WaveComplete", true);
-        }
+        GoToEndGameScreen.putExtra("WaveComplete", userCharecter.getHeath() >= 1);
 
         context.startActivity(GoToEndGameScreen);
         Cleanup();
@@ -546,7 +542,6 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
         for (int s = 0; s < shotGunBullets.size(); s++) {
             ShotGunBullet mBullit = shotGunBullets.get(s);
             if (mBullit.getCurY() < 0 || mBullit.getCurX() < 0 || mBullit.getCurX() > screenSize[0]) {
-                Log.v("testing", "despawn: " + s);
                 shotGunBullets.remove(s);
             }
         }
@@ -651,7 +646,7 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
                     bullets.remove(b);
                     userCharecter.setUserScore(userCharecter.getUserScore() + 3);
                     if (hardEnemies.get(e).getCurHeath() > 0) {
-                        asteroidAudioThread.startUserHitSound();//TODO implamint uniqe sound
+                        asteroidAudioThread.startUserHitSound();
                     }
                     brake = true;
                     break;
@@ -664,7 +659,7 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
                     shotGunBullets.remove(b);
                     userCharecter.setUserScore(userCharecter.getUserScore() + 3);
                     if (hardEnemies.get(e).getCurHeath() > 0) {
-                        asteroidAudioThread.startUserHitSound();//TODO implamint uniqe sound
+                        asteroidAudioThread.startUserHitSound();
                     }
                     brake = true;
                     break;
@@ -676,7 +671,7 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
                     hardEnemies.get(e).setCurHeath(0);
                     userCharecter.setUserScore(userCharecter.getUserScore() + 3);
                     if (hardEnemies.get(e).getCurHeath() > 0) {
-                        asteroidAudioThread.startUserHitSound();//TODO implamint uniqe sound
+                        asteroidAudioThread.startUserHitSound();
                     }
                     brake = true;
                 }

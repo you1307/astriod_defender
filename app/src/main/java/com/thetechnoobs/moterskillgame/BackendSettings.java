@@ -43,4 +43,10 @@ public class BackendSettings {
 
         return new int[]{xLoc, yLoc};
     }
+
+    public int getCurLanguage(Context context){
+        //0 = en, 1 = hindi, 2 = spanish
+        SharedPreferences sharedPreferences = context.getSharedPreferences("Settings", Context.MODE_PRIVATE);
+        return sharedPreferences.getInt("language", 0);
+    }
 }

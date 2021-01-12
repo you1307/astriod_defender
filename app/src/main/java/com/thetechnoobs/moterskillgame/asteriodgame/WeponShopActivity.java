@@ -81,6 +81,7 @@ public class WeponShopActivity extends AppCompatActivity {
         loadImgs();
         loadEquippedWeapon();
         loadUserCurrency();
+        //loadLanguageData();
 
         GoToGameBtn.setText(getResources().getString(R.string.go_to_wave, userData.getCurrentWaveCount()+1));
     }
@@ -449,7 +450,6 @@ public class WeponShopActivity extends AppCompatActivity {
             loadRayGunData();
         }
     }
-
 
     private void loadUserCurrency() {
         UserMoneyTXT.setText(String.valueOf(userInventory.getMoney()));
