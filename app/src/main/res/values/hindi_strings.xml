@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name_hindi">क्षुद्रग्रह रक्षा</string>
+    <string name="basic_gun_title_hindi">बुनियादी बंदूक</string>
+    <string name="basic_gun_description_hindi">धीमी गति से आग की दर और कम क्षति के साथ एक साधारण बंदूक</string>
+    <string name="assault_rifle_description_hindi">एक उच्च आग दर के साथ एक बंदूक, लेकिन कम क्षति</string>
+    <string name="assault_rifle_title_hindi">राइफल से हमला</string>
+    <string name="shot_gun_description_hindi">उच्च क्षति के साथ एक बंदूक, और कई प्रोजेक्टाइल लेकिन कम आग दर</string>
+    <string name="shot_gun_title_hindi">बंदूक की गोली</string>
+    <string name="ray_gun_title_hindi">रे बंदूक</string>
+    <string name="ray_gun_description_hindi">यह एक शक्तिशाली बंदूक है जो मौत और विनाश की एक निरंतर किरण को गोली मारती है</string>
+    <string name="upgrade_btn_hindi">अपग्रेड</string>
+    <string name="damage_title_hindi">क्षति</string>
+    <string name="projectiles_title_hindi">प्रोजेक्टाइल</string>
+    <string name="rate_of_fire_title_hindi">आग की दर</string>
+    <string name="_00_place_holder_hindi">0000</string>
+    <string name="basic_gun_img_content_discription_hindi">बुनियादी बंदूक IMG</string>
+    <string name="description_placeholder_hindi">विवरण</string>
+    <string name="gun_name_placeholder_hindi">गन नाम</string>
+    <string name="shot_gun_img_content_discription_hindi">Shot gun IMG</string>
+    <string name="ray_gun_img_content_discription_hindi">Ray gun IMG</string>
+    <string name="assault_rifle_img_contect_discription_hindi">Assault rifle IMG</string>
+    <string name="gold_coin_view_img_content_discription_hindi">Gold coin View IMG</string>
+    <string name="cash_view_img_content_discription_hindi">Cash view IMG</string>
+    <string name="buy_button_hindi">खरीदें</string>
+    <string name="not_enough_money_hindi">पर्याप्त पैसा नहीं</string>
+    <string name="level_title_hindi">स्तर</string>
+    <string name="max_level_hindi">सर्वोच्च स्तर</string>
+    <string name="next_wave_hindi">अगली लहर</string>
+    <string name="restart_hindi">पुनर्प्रारंभ करें</string>
+    <string name="wave_complete_hindi">वेव कम्प्लीट</string>
+    <string name="go_to_wave_hindi">तरंग पर जाएं %d</string>
+    <string name="play_hindi">खेल</string>
+    <string name="settings_hindi">समायोजन</string>
+</resources>

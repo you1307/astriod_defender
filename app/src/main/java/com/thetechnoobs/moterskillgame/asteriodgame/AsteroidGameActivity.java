@@ -40,6 +40,11 @@ public class AsteroidGameActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         asteroidGameView.destroy();
-        Log.v("testing", "destroyed");
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        asteroidGameView.destroy();
     }
 }

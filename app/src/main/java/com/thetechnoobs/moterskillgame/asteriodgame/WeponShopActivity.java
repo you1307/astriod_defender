@@ -314,7 +314,7 @@ public class WeponShopActivity extends AppCompatActivity {
                 break;
             case 4:
                 if(rayGun.isPurchased()){
-                    //upgradeRayGun();
+                    upgradeRayGun();
                 }else{
                     purchaseRayGun();
                 }
@@ -322,6 +322,22 @@ public class WeponShopActivity extends AppCompatActivity {
         }
 
         loadData();
+    }
+
+    private void upgradeRayGun() {
+        if (rayGun.getlvl() == 10) {
+            Toast.makeText(this, "Ray Gun is max level", Toast.LENGTH_SHORT).show();
+        } else {
+            if (userInventory.getGoldCoins() >= rayGun.getNextLevelCost()) {
+                userInventory.removeGoldCoins(rayGun.getNextLevelCost());
+                rayGun.setLvl(rayGun.getlvl() + 1);
+
+                rayGun.setMaxAmmo(rayGun.getMaxAmmo()+100);
+
+            } else {
+                Toast.makeText(this, "Not enough money", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     private void purchaseRayGun() {

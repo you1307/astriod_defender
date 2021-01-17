@@ -149,6 +149,7 @@ public class EndGameScreenAsteroids extends Activity {
     }
 
     private void RestartGame() {
+
         startActivity(new Intent(this, AsteroidGameActivity.class));
         finish();
     }

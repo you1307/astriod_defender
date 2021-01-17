@@ -3,27 +3,30 @@ package com.thetechnoobs.moterskillgame.asteriodgame;
 import android.content.Context;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
+
 import com.thetechnoobs.moterskillgame.UserData;
 
 public class WaveSpawnThread extends Thread {
     AsteroidGameView asteroidGameView;
     int numberOfWavesCompleted;
+    int threadsToComplete = 3;
     UserData userData;
     SpawnEnemys spawnEasyEnemy;
     SpawnAsteroid spawnAsteroid;
     ItemDropManager itemDropManager;
     Thread enemyThread, asteroidThread, itemDropThread;
-    private boolean goToEndScreen = true;
+    public boolean goToEndScreen = true;
     private boolean pause = false;
 
     public WaveSpawnThread(AsteroidGameView asteroidGameView, Context context) {
         this.asteroidGameView = asteroidGameView;
         userData = new UserData(context);
         numberOfWavesCompleted = userData.getCurrentWaveCount();
-
-        spawnEasyEnemy = new SpawnEnemys(getAmountOfEnemyToSpawn(), asteroidGameView, numberOfWavesCompleted);
-        spawnAsteroid = new SpawnAsteroid(getAmountOfAsteroidToSpawn(), asteroidGameView, numberOfWavesCompleted);
-        itemDropManager = new ItemDropManager(asteroidGameView, numberOfWavesCompleted);
+        waveDone(false);
+        spawnEasyEnemy = new SpawnEnemys(getAmountOfEnemyToSpawn(), asteroidGameView, numberOfWavesCompleted, this);
+        spawnAsteroid = new SpawnAsteroid(getAmountOfAsteroidToSpawn(), asteroidGameView, numberOfWavesCompleted, this);
+        itemDropManager = new ItemDropManager(asteroidGameView, numberOfWavesCompleted, this);
 
         enemyThread = new Thread(spawnEasyEnemy);
         asteroidThread = new Thread(spawnAsteroid);
@@ -52,13 +55,29 @@ public class WaveSpawnThread extends Thread {
         enemyThread.start();
         asteroidThread.start();
         itemDropThread.start();
-        waveDone();
+
+        while (true){
+            if(threadsToComplete<2){
+                itemDropManager.stop();
+            }
+        }
+    }
+
+    public void waveSetDone(@Nullable String identifier) {
+        threadsToComplete--;
+        if (threadsToComplete == 0) {
+            waveDone(true);
+        }
+
+        if(identifier != null){
+            Log.v("testing", identifier+" is done");
+        }
     }
 
 
-    private void waveDone() {
+    private void waveDone(boolean done) {
         if (goToEndScreen) {
-            asteroidGameView.waveDone();
+            asteroidGameView.waveDone(done);
         }
     }
 
@@ -84,9 +103,11 @@ class SpawnAsteroid extends Thread {
     int curWave;
     AsteroidGameView asteroidGameView;
     boolean run = true;
+    WaveSpawnThread waveSpawnThread;
 
-    SpawnAsteroid(int amount, AsteroidGameView asteroidGameView, int curWave) {
+    SpawnAsteroid(int amount, AsteroidGameView asteroidGameView, int curWave, WaveSpawnThread waveSpawnThread) {
         totalAmountToSpawn = amount;
+        this.waveSpawnThread = waveSpawnThread;
         this.curWave = curWave;
         this.asteroidGameView = asteroidGameView;
     }
@@ -107,6 +128,9 @@ class SpawnAsteroid extends Thread {
                 break;
             }
         }
+
+        waveSpawnThread.waveSetDone("asteriods");
+
     }
 
     public void stopThread() {
@@ -118,11 +142,13 @@ class SpawnAsteroid extends Thread {
 class SpawnEnemys extends Thread {
     int totalAmountToSpawn;
     int curWave;
+    WaveSpawnThread waveSpawnThread;
     boolean run = true;
     AsteroidGameView asteroidGameView;
 
-    SpawnEnemys(int amount, AsteroidGameView asteroidGameView, int curWave) {
+    SpawnEnemys(int amount, AsteroidGameView asteroidGameView, int curWave, WaveSpawnThread waveSpawnThread) {
         totalAmountToSpawn = amount;
+        this.waveSpawnThread = waveSpawnThread;
         this.curWave = curWave;
         this.asteroidGameView = asteroidGameView;
     }
@@ -132,9 +158,9 @@ class SpawnEnemys extends Thread {
         while (totalAmountToSpawn > 0 && run) {
 
             if (!asteroidGameView.paused) {
-                if (curWave % 5 == 0) {
+                if (curWave % 6 == 0) {
                     bossWaveInitiate();
-                    totalAmountToSpawn -= 1;
+                    totalAmountToSpawn = -1;
                 } else {
                     if (asteroidGameView.EasyEnemy.size() < 4) {
                         asteroidGameView.spawnEasyEnemy(1);
@@ -150,12 +176,11 @@ class SpawnEnemys extends Thread {
                 break;
             }
         }
+        waveSpawnThread.waveSetDone("enemys");
     }
 
     private void bossWaveInitiate() {
-        if (asteroidGameView.hardEnemies.size() < 2) {
-            asteroidGameView.spawnHardEnemy(2);
-        }
+        asteroidGameView.spawnHardEnemy(3);
     }
 
     public void stopThread() {

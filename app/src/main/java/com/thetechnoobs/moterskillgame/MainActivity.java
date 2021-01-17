@@ -78,7 +78,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void cleanup() {
-        menuSpaceBackground.stopThread();
+        MainActivity.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                menuSpaceBackground.stopThread();
+            }
+        });
+
     }
 
     @Override

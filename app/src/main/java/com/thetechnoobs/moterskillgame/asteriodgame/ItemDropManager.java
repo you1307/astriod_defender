@@ -3,10 +3,12 @@ package com.thetechnoobs.moterskillgame.asteriodgame;
 public class ItemDropManager implements Runnable {
     AsteroidGameView asteroidGameView;
     int waveCompleted;
+    WaveSpawnThread waveSpawnThread;
     private boolean run = true;
 
-    public ItemDropManager(AsteroidGameView asteroidGameView, int numberOfWavesCompleted) {
+    public ItemDropManager(AsteroidGameView asteroidGameView, int numberOfWavesCompleted, WaveSpawnThread waveSpawnThread) {
         this.asteroidGameView = asteroidGameView;
+        this.waveSpawnThread = waveSpawnThread;
         waveCompleted = numberOfWavesCompleted;
     }
 
@@ -24,6 +26,8 @@ public class ItemDropManager implements Runnable {
                 e.printStackTrace();
             }
         }
+
+        waveSpawnThread.waveSetDone("item drops");
     }
 
     public void stop() {

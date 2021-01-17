@@ -24,9 +24,16 @@ public class RayGun {
     }
 
     public int getMaxAmmo(){
-        SharedPreferences sharedPreferences = context.getSharedPreferences("ShotGun", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = context.getSharedPreferences("RayGun", Context.MODE_PRIVATE);
         return sharedPreferences.getInt("maxAmmo", 300);
     }
+
+    public void setMaxAmmo(int newAmmo){
+        SharedPreferences sharedPreferences = context.getSharedPreferences("RayGun", Context.MODE_PRIVATE);
+        SharedPreferences.Editor sharedE = sharedPreferences.edit().putInt("maxAmmo", newAmmo);
+        sharedE.apply();
+    }
+
     public int getDamage() {
         SharedPreferences sharedPreferences = context.getSharedPreferences("RayGun", Context.MODE_PRIVATE);
         return sharedPreferences.getInt("damage", 50);
