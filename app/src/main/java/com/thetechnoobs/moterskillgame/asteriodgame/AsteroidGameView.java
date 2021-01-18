@@ -171,7 +171,6 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
 
         //check if user is dead
         if (userCharecter.getHeath() < 1) {
-            userData.subtractOneFromWaveCount();
             gameOver();
         }
 
@@ -197,7 +196,6 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
 
     private void checkForWaveCompletion() {
         if (EasyEnemy.size() < 1 && astriods.size() < 1 && waveDoneSending && GoldCoins.size() < 1 && hardEnemies.size() < 1 && !cleaning) {
-            userData.addOneToCurrentWaveCount();
             gameOver();
         }
     }
@@ -750,7 +748,9 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
         }
 
         for (int s = 0; s < shotGunBullets.size(); s++) {
-            shotGunBullets.get(s).drawButtets(canvas);
+            if(shotGunBullets.get(s) != null){
+                shotGunBullets.get(s).drawButtets(canvas);
+            }
         }
 
         if (rayGunBeam != null) {

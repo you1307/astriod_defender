@@ -16,7 +16,7 @@ public class AssaultRifle {
     }
 
     public int getBuyPrice() {
-        return 1000;
+        return 600;
     }
 
     public void setLvl(int lvl) {

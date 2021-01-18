@@ -87,7 +87,7 @@ public class RayGun {
     }
 
     public int getBuyPrice() {
-        return 20000;
+        return 35000;
     }
 
     public int getNextLevelCost() {

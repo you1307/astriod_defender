@@ -81,10 +81,10 @@ public class ShotGun {
     }
 
     public int getBuyPrice() {
-        return 500;
+        return 2000;
     }
 
     public int getNextLevelCost() {
-        return getlvl()*50;
+        return getlvl()*65;
     }
 }

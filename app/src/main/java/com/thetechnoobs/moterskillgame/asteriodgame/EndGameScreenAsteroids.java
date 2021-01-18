@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class EndGameScreenAsteroids extends Activity {
-    TextView ScoreTXT, GoldTXT, MoneyTXT, TotalMoneyTXT, TotalGoldTXT, TitleTextView;
+    TextView ScoreTXT, GoldTXT, MoneyTXT, TitleTextView;
     String userScore, userGold, enemysKilled, damageTaken;
     boolean waveCompleted;
     Button RestartBTN, GoToTownBTN;
@@ -75,16 +75,16 @@ public class EndGameScreenAsteroids extends Activity {
         MoneyTXT.setText(String.valueOf(calculateMoney(enemysKilled, userScore, userGold, damageTaken)));
         GoldTXT.setText(userGold);
         ScoreTXT.setText("Score: " + userScore);
-        TotalMoneyTXT.setText("Total Money: " + userInventory.getMoney());
-        TotalGoldTXT.setText("Total GoldCoins: " + userInventory.getGoldCoins());
 
         if (waveCompleted) {
             TitleTextView.setText("Wave " + (userData.getCurrentWaveCount()) + " Completed");
             TitleTextView.setTextColor(getResources().getColor(R.color.green_800));
             RestartBTN.setText(R.string.next_wave);
+            userData.addOneToCurrentWaveCount();
         } else {
             TitleTextView.setTextColor(getResources().getColor(R.color.red_800));
             RestartBTN.setText(R.string.restart);
+            userData.subtractOneFromWaveCount();
         }
     }
 
@@ -115,8 +115,6 @@ public class EndGameScreenAsteroids extends Activity {
         MoneyTXT = findViewById(R.id.MoneyRewardTXT);
         RestartBTN = findViewById(R.id.RestartGameBTN);
         GoToTownBTN = findViewById(R.id.GoToStoreBTN);
-        TotalMoneyTXT = findViewById(R.id.TotalMoneyTXT);
-        TotalGoldTXT = findViewById(R.id.TotalGoldTXT);
         TitleTextView = findViewById(R.id.GameOverTXTView);
 
         SettupOnclickLiseners();

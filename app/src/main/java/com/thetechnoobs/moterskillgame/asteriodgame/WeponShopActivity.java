@@ -15,6 +15,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.thetechnoobs.moterskillgame.R;
 import com.thetechnoobs.moterskillgame.UserData;
 import com.thetechnoobs.moterskillgame.UserInventory;
@@ -83,7 +85,7 @@ public class WeponShopActivity extends AppCompatActivity {
         loadUserCurrency();
         //loadLanguageData();
 
-        GoToGameBtn.setText(getResources().getString(R.string.go_to_wave, userData.getCurrentWaveCount()+1));
+        GoToGameBtn.setText(getResources().getString(R.string.go_to_wave, userData.getCurrentWaveCount()));
     }
 
     private void setScrollViewLocation() {

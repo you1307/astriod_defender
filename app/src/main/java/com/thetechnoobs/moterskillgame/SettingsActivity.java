@@ -201,7 +201,7 @@ public class SettingsActivity extends AppCompatActivity {
         }
 
         private void drawSurfaceView() {
-            if (surfaceView.getHolder().getSurface().isValid()) {
+            if (surfaceView.getHolder().getSurface().isValid() && surfaceView != null) {
                 canvas = surfaceView.getHolder().lockCanvas();
 
                 canvas.drawRect(0, 0, screenSize[0], screenSize[1], paint);

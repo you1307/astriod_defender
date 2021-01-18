@@ -158,7 +158,7 @@ class SpawnEnemys extends Thread {
         while (totalAmountToSpawn > 0 && run) {
 
             if (!asteroidGameView.paused) {
-                if (curWave % 5 == 0) {
+                if (curWave % 6 == 0) {
                     bossWaveInitiate();
                     totalAmountToSpawn = -1;
                 } else {

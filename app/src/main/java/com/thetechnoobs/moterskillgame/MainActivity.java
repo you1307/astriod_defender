@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.thetechnoobs.moterskillgame.asteriodgame.AsteroidGameActivity;
 import com.thetechnoobs.moterskillgame.asteriodgame.WeponShopActivity;
 
@@ -29,17 +31,24 @@ public class MainActivity extends AppCompatActivity {
 
     SurfaceView surfaceView;
     Button PlayBTN, SettingsBTN;
-
+    TextView TitleTXT;
     private void settup() {
         surfaceView = findViewById(R.id.backGroundSurfaceView);
         PlayBTN = findViewById(R.id.playBTN);
         SettingsBTN = findViewById(R.id.settingsBTN);
+        TitleTXT = findViewById(R.id.GameTitleTXT);
     }
 
     Thread backgroundEffects;
     MenuSpaceBackground menuSpaceBackground;
 
     private void startBackgroundEffects() {
+        YoYo.with(Techniques.ZoomInRight).duration(500).playOn(PlayBTN);
+        YoYo.with(Techniques.ZoomInLeft).duration(500).playOn(SettingsBTN);
+        YoYo.with(Techniques.Shake).duration(1500).repeat(1).playOn(TitleTXT);
+
+
+
         Point point = new Point();
         getWindowManager().getDefaultDisplay().getSize(point);
         int[] screenSize = {point.x, point.y};
@@ -50,10 +59,15 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void PlayGame(View view) {
+        YoYo.with(Techniques.FadeOutUp).duration(100).playOn(PlayBTN);
+        YoYo.with(Techniques.FadeOut).duration(100).playOn(SettingsBTN);
+        YoYo.with(Techniques.SlideOutUp).duration(100).playOn(TitleTXT);
+
         if(userData.isNewPLayer()){
             Intent intent = new Intent(getApplicationContext(), AsteroidGameActivity.class);
             startActivity(intent);
             cleanup();
+            userData.saveNewPlayer(false);
             finish();
         }else{
             Intent intent = new Intent(getApplicationContext(), WeponShopActivity.class);
@@ -66,10 +80,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void goToSettings(View view) {
         //not ending activity incase user comes back from settings, but do end background thread
-
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
         cleanup();
+        finish();
     }
 
     private void cleanup() {
