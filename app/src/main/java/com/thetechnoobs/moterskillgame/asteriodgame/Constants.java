@@ -1,15 +1,24 @@
 package com.thetechnoobs.moterskillgame.asteriodgame;
 
+import android.content.res.Resources;
+import android.util.DisplayMetrics;
+
 public class Constants {
+
+    public static float convertDpToPixel(float dp) {
+        DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
+        return Math.round(dp * (metrics.densityDpi / 160f));
+    }
+
     public final static int BACKGROUND_STAR_MAX_SPEED = 30;
 
-    public static int asteriodMaxSpeed = 3;
+    public static int asteriodMaxSpeed = (int) convertDpToPixel(3);
     public static int asteriodMaxSpawn = 3;
 
     public final static int BASE_USER_MAX_HEATH = 5;
 
     public static final int BADGUY_EASY_MAX_HEATH = 3;
-    public static final int DEFULT_EASY_ENEMY_SPEED = 10;
+    public static final int DEFULT_EASY_ENEMY_SPEED = (int) convertDpToPixel(5);
 
     public final static int SCALE_RATIO_NUM_Y_FOREGROUND = 14;
     public final static int SCALE_RATIO_NUM_X_FOREGROUND = SCALE_RATIO_NUM_Y_FOREGROUND/2;

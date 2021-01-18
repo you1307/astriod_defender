@@ -7,8 +7,10 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.RectF;
 import android.util.DisplayMetrics;
+import android.util.Log;
 
 import com.thetechnoobs.moterskillgame.R;
+import com.thetechnoobs.moterskillgame.UserData;
 import com.thetechnoobs.moterskillgame.asteriodgame.AsteroidAudioThread;
 import com.thetechnoobs.moterskillgame.asteriodgame.Constants;
 import com.thetechnoobs.moterskillgame.asteriodgame.projectiles.HardEnemyBomb;
@@ -23,6 +25,7 @@ public class HardEnemy {
     public int MaxHeath = EnemyParameters.hardEnemyHeathMax;
     public Bitmap hardEnemyAlive, hardHeathHeart;
     public int[] screenSize;
+    Context context;
     public int speed = new Random().nextInt(Constants.DEFULT_EASY_ENEMY_SPEED);
     public ShootThread shootThread = new ShootThread(3000);
     int CurHeath = MaxHeath;
@@ -33,12 +36,12 @@ public class HardEnemy {
     UserCharecter userCharecter;
 
     public HardEnemy(Resources resources, Context context, UserCharecter userCharecter, int[] screenSize, int PosX, int PosY) {
+        this.context = context;
         this.screenSize = screenSize;
         x = PosX;
         y = PosY;
         this.resources = resources;
         this.userCharecter = userCharecter;
-
         asteroidAudioThread = new AsteroidAudioThread(context);
         shootThread.start();
 
@@ -53,6 +56,8 @@ public class HardEnemy {
                 screenSize[0] / Constants.SCALE_RATIO_NUM_X_ENEMY_HEART,
                 screenSize[1] / Constants.SCALE_RATIO_NUM_Y_ENEMY_HEART,
                 false);
+
+
     }
 
     public static float convertDpToPixel(float dp) {

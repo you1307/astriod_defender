@@ -25,11 +25,6 @@ public class MainActivity extends AppCompatActivity {
 
         settup();
         startBackgroundEffects();
-
-        Intent intent = new Intent(getApplicationContext(), AsteroidGameActivity.class);
-        startActivity(intent);
-        cleanup();
-        finish();
     }
 
     SurfaceView surfaceView;

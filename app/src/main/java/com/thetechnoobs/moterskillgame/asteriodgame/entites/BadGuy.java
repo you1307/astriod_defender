@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.RectF;
+import android.util.DisplayMetrics;
 
 import com.thetechnoobs.moterskillgame.R;
 import com.thetechnoobs.moterskillgame.asteriodgame.AsteroidAudioThread;
@@ -130,8 +131,13 @@ public class BadGuy {
         shootThread.stopThread();
     }
 
+    public static float convertDpToPixel(float dp) {
+        DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
+        return Math.round(dp * (metrics.densityDpi / 160f));
+    }
+
     public void Shoot() {
-        EasyEnemyBullet easyEnemyBullet = new EasyEnemyBullet(resources, 20, screenSize, getX() + (float) EasyEnemyAlive.getWidth() / 2, getY() + EasyEnemyAlive.getHeight());
+        EasyEnemyBullet easyEnemyBullet = new EasyEnemyBullet(resources, (int) convertDpToPixel(10), screenSize, getX() + (float) EasyEnemyAlive.getWidth() / 2, getY() + EasyEnemyAlive.getHeight());
         bullets.add(easyEnemyBullet);
         asteroidAudioThread.startEasyEnemyShootingSound();
     }

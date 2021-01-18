@@ -17,7 +17,6 @@ public class ShootRegularButtonUI {
     public ShootRegularButtonUI(int x, int y, int[] screenSize, Resources resources) {
         this.x = x;
         this.y = y;
-        this.side = side;
         this.screenSize = screenSize;
 
         bitmap = BitmapFactory.decodeResource(resources, R.drawable.shoot_button);
@@ -35,6 +34,14 @@ public class ShootRegularButtonUI {
 
     public int getX() {
         return x - bitmap.getWidth();
+    }
+
+    public int getAbsoulutX(){
+        return x;
+    }
+
+    public int getAbsoulutY(){
+        return y;
     }
 
     public void setX(int x) {

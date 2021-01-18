@@ -1,11 +1,14 @@
 package com.thetechnoobs.moterskillgame.asteriodgame;
 
+import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.thetechnoobs.moterskillgame.MainActivity;
 
 public class AsteroidGameActivity extends AppCompatActivity {
     private AsteroidGameView asteroidGameView;
@@ -45,6 +48,9 @@ public class AsteroidGameActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
         asteroidGameView.destroy();
+        finish();
     }
 }

@@ -3,6 +3,7 @@ package com.thetechnoobs.moterskillgame;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.thetechnoobs.moterskillgame.asteriodgame.ui.BackgroundStar;
@@ -41,7 +42,9 @@ public class MenuSpaceBackground implements Runnable {
     public void run() {
         while (shouldRun) {
             update();
-            draw();
+
+            drawSurfaceView();
+
         }
     }
 
@@ -61,7 +64,7 @@ public class MenuSpaceBackground implements Runnable {
         }
     }
 
-    private void draw() {
+    private void drawSurfaceView() {
         if (surfaceView.getHolder().getSurface().isValid()) {
             canvas = surfaceView.getHolder().lockCanvas();
 

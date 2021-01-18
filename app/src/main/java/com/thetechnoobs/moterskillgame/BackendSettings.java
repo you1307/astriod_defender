@@ -7,6 +7,21 @@ import android.util.DisplayMetrics;
 
 public class BackendSettings {
 
+    public void setSavedShootButtonLoc(Context context, int x, int y) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("Settings", Context.MODE_PRIVATE);
+        SharedPreferences.Editor prefE = sharedPreferences.edit();
+        prefE.putInt("ShootButtonSideX", x);
+        prefE.putInt("ShootButtonSideY", y);
+        prefE.apply();
+    }
+
+    public void setSavedPauseButtonLoc(Context context, int x, int y) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("Settings", Context.MODE_PRIVATE);
+        SharedPreferences.Editor prefE = sharedPreferences.edit();
+        prefE.putInt("PauseButtonX", x);
+        prefE.putInt("PauseButtonY", y);
+        prefE.apply();
+    }
 
     public static float convertDpToPixel(float dp) {
         DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();

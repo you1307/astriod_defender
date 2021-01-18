@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import com.thetechnoobs.moterskillgame.UserData;
 
 public class WaveSpawnThread extends Thread {
+    public boolean goToEndScreen = true;
     AsteroidGameView asteroidGameView;
     int numberOfWavesCompleted;
     int threadsToComplete = 3;
@@ -16,7 +17,6 @@ public class WaveSpawnThread extends Thread {
     SpawnAsteroid spawnAsteroid;
     ItemDropManager itemDropManager;
     Thread enemyThread, asteroidThread, itemDropThread;
-    public boolean goToEndScreen = true;
     private boolean pause = false;
 
     public WaveSpawnThread(AsteroidGameView asteroidGameView, Context context) {
@@ -56,8 +56,8 @@ public class WaveSpawnThread extends Thread {
         asteroidThread.start();
         itemDropThread.start();
 
-        while (true){
-            if(threadsToComplete<2){
+        while (true) {
+            if (threadsToComplete < 2) {
                 itemDropManager.stop();
             }
         }
@@ -69,8 +69,8 @@ public class WaveSpawnThread extends Thread {
             waveDone(true);
         }
 
-        if(identifier != null){
-            Log.v("testing", identifier+" is done");
+        if (identifier != null) {
+            Log.v("testing", identifier + " is done");
         }
     }
 
@@ -123,7 +123,7 @@ class SpawnAsteroid extends Thread {
             }
 
             try {
-                Thread.sleep(500);
+                Thread.sleep(700);
             } catch (InterruptedException e) {
                 break;
             }
@@ -158,7 +158,7 @@ class SpawnEnemys extends Thread {
         while (totalAmountToSpawn > 0 && run) {
 
             if (!asteroidGameView.paused) {
-                if (curWave % 6 == 0) {
+                if (curWave % 5 == 0) {
                     bossWaveInitiate();
                     totalAmountToSpawn = -1;
                 } else {
@@ -169,17 +169,12 @@ class SpawnEnemys extends Thread {
                 }
             }
 
-
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                break;
-            }
         }
         waveSpawnThread.waveSetDone("enemys");
     }
 
     private void bossWaveInitiate() {
+
         asteroidGameView.spawnHardEnemy(3);
     }
 
