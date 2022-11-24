@@ -2,10 +2,7 @@ package com.thetechnoobs.moterskillgame.asteriodgame;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,10 +17,6 @@ import com.thetechnoobs.moterskillgame.MenuSpaceBackground;
 import com.thetechnoobs.moterskillgame.R;
 import com.thetechnoobs.moterskillgame.UserData;
 import com.thetechnoobs.moterskillgame.UserInventory;
-import com.thetechnoobs.moterskillgame.asteriodgame.ui.BackgroundStar;
-
-import java.util.ArrayList;
-import java.util.Random;
 
 public class EndGameScreenAsteroids extends Activity {
     TextView ScoreTXT, GoldTXT, MoneyTXT, TitleTextView;

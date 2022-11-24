@@ -9,8 +9,6 @@ import android.graphics.RectF;
 import com.thetechnoobs.moterskillgame.R;
 import com.thetechnoobs.moterskillgame.asteriodgame.Constants;
 
-import java.util.Random;
-
 public class ShotGunBullet {
     public Bitmap bitmap;
     float CurX = 0, CurY = 0, Speed = 2;

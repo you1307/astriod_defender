@@ -3,7 +3,6 @@ package com.thetechnoobs.moterskillgame;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.thetechnoobs.moterskillgame.asteriodgame.ui.BackgroundStar;

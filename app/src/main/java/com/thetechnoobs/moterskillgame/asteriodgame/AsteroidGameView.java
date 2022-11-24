@@ -1,4 +1,4 @@
-package com.thetechnoobs.moterskillgame.asteriodgame;
+    package com.thetechnoobs.moterskillgame.asteriodgame;
 
 import android.content.Context;
 import android.content.Intent;
@@ -554,6 +554,7 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
             ShotGunBullet mBullit = shotGunBullets.get(s);
             if (mBullit.getCurY() < 0 || mBullit.getCurX() < 0 || mBullit.getCurX() > screenSize[0] || mBullit.getCurY() > screenSize[1]) {
                 shotGunBullets.remove(s);
+                break;
             }
         }
     }
@@ -698,13 +699,13 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
 
     public void spawnAssaultBullet() {
         setAmmoLeft(getAmmoLeft() - 1);
-        bullets.add(new RegularBullet(getResources(), 50, screenSize, userCharecter.getCurX() + (float) userCharecter.bitmap.getWidth() / 2, userCharecter.getCurY()));
+        bullets.add(new RegularBullet(getResources(), (int) convertDpToPixel(20), screenSize, userCharecter.getCurX() + (float) userCharecter.bitmap.getWidth() / 2, userCharecter.getCurY()));
         asteroidAudioThread.startAssaultRifleSound();
     }
 
     public void spawnRegularBullet() {
         setAmmoLeft(getAmmoLeft() - 1);
-        bullets.add(new RegularBullet(getResources(), 50, screenSize, userCharecter.getCurX() + (float) userCharecter.bitmap.getWidth() / 2, userCharecter.getCurY()));
+        bullets.add(new RegularBullet(getResources(), (int) convertDpToPixel(20), screenSize, userCharecter.getCurX() + (float) userCharecter.bitmap.getWidth() / 2, userCharecter.getCurY()));
         asteroidAudioThread.startBasicGunShootSound();
     }
 
@@ -714,7 +715,7 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
         asteroidAudioThread.startShotGunShotSound();
 
         for (int b = 0; b < shotGun.getNumberOfProjectiles(); b++) {
-            shotGunBullets.add(new ShotGunBullet(getResources(), 20, b, screenSize, userCharecter.getCurX() + (float) userCharecter.bitmap.getWidth() / 2, userCharecter.getCurY()));
+            shotGunBullets.add(new ShotGunBullet(getResources(), (int) convertDpToPixel(10), b, screenSize, userCharecter.getCurX() + (float) userCharecter.bitmap.getWidth() / 2, userCharecter.getCurY()));
         }
     }
 
@@ -811,9 +812,11 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
         for (int p = 0; heathPotions.size() > p; p++) {
             if (heathPotions.get(p).getyLoc() > screenSize[1]) {
                 heathPotions.remove(p);
+                break;
             } else {
                 heathPotions.get(p).move();
             }
+
         }
 
     }
@@ -830,6 +833,7 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
 
             if (GoldCoins.get(c).getCurY() > screenSize[1]) {
                 GoldCoins.remove(c);
+                break;
             }
         }
 
@@ -854,9 +858,12 @@ public class AsteroidGameView extends SurfaceView implements Runnable {
         this.ammoLeft = ammoLeft;
     }
 
+
     private void setAmmoData() {
+        int equipedGun = userInventory.getEquippedWeapon();
+
         //0 = none, 1 = basic gun, 2 = assault rifle, 3 = shot gun, 4 = ray gun
-        switch (userInventory.getEquippedWeapon()) {
+        switch (equipedGun) {
             case 1:
                 BasicGun basicGun = new BasicGun(getContext());
                 ammoLeft = basicGun.getMaxAmmo();

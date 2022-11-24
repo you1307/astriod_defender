@@ -7,10 +7,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.RectF;
 import android.util.DisplayMetrics;
-import android.util.Log;
 
 import com.thetechnoobs.moterskillgame.R;
-import com.thetechnoobs.moterskillgame.UserData;
 import com.thetechnoobs.moterskillgame.asteriodgame.AsteroidAudioThread;
 import com.thetechnoobs.moterskillgame.asteriodgame.Constants;
 import com.thetechnoobs.moterskillgame.asteriodgame.projectiles.HardEnemyBomb;

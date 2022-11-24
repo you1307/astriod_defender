@@ -79,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void goToSettings(View view) {
-        //not ending activity incase user comes back from settings, but do end background thread
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
         cleanup();
